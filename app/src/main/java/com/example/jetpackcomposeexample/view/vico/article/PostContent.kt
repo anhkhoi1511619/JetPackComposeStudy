@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeexample.article
+package com.example.jetpackcomposeexample.view.vico.article
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -34,12 +34,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
-import com.example.jetpackcomposeexample.data.MetaData
-import com.example.jetpackcomposeexample.data.Paragraph
-import com.example.jetpackcomposeexample.data.ParagraphType
-import com.example.jetpackcomposeexample.data.Post
-import com.example.jetpackcomposeexample.data.impl.post3
-import com.example.jetpackcomposeexample.ui.theme.JetpackComposeExampleTheme
+import com.example.jetpackcomposeexample.model.helper.dto.MetaData
+import com.example.jetpackcomposeexample.model.helper.dto.Paragraph
+import com.example.jetpackcomposeexample.model.helper.dto.ParagraphType
+import com.example.jetpackcomposeexample.model.helper.dto.Post
+import com.example.jetpackcomposeexample.model.helper.dto.impl.post3
+import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
 
 
 private val defaultSpacerSize = 16.dp

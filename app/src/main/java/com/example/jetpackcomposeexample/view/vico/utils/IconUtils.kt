@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeexample.utils
+package com.example.jetpackcomposeexample.view.vico.utils
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ThumbUp
@@ -17,7 +17,7 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.jetpackcomposeexample.R
-import com.example.jetpackcomposeexample.ui.theme.JetpackComposeExampleTheme
+import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
 
 
 @Composable

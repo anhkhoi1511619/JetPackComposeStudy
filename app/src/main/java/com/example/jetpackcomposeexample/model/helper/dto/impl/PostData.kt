@@ -1,14 +1,14 @@
-package com.example.jetpackcomposeexample.data.impl
+package com.example.jetpackcomposeexample.model.helper.dto.impl
 
 import com.example.jetpackcomposeexample.R
-import com.example.jetpackcomposeexample.data.Markup
-import com.example.jetpackcomposeexample.data.MarkupType
-import com.example.jetpackcomposeexample.data.MetaData
-import com.example.jetpackcomposeexample.data.Paragraph
-import com.example.jetpackcomposeexample.data.ParagraphType
-import com.example.jetpackcomposeexample.data.Post
-import com.example.jetpackcomposeexample.data.PostAuthor
-import com.example.jetpackcomposeexample.data.Publication
+import com.example.jetpackcomposeexample.model.helper.dto.Markup
+import com.example.jetpackcomposeexample.model.helper.dto.MarkupType
+import com.example.jetpackcomposeexample.model.helper.dto.MetaData
+import com.example.jetpackcomposeexample.model.helper.dto.Paragraph
+import com.example.jetpackcomposeexample.model.helper.dto.ParagraphType
+import com.example.jetpackcomposeexample.model.helper.dto.Post
+import com.example.jetpackcomposeexample.model.helper.dto.PostAuthor
+import com.example.jetpackcomposeexample.model.helper.dto.Publication
 
 val publication = Publication(
     "Android Developers",

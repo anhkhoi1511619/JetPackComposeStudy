@@ -1,6 +1,5 @@
-package com.example.jetpackcomposeexample.article
+package com.example.jetpackcomposeexample.view.vico.article
 
-import android.text.BoringLayout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -39,13 +37,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
-import com.example.jetpackcomposeexample.data.Post
-import com.example.jetpackcomposeexample.data.impl.post3
-import com.example.jetpackcomposeexample.ui.theme.JetpackComposeExampleTheme
-import com.example.jetpackcomposeexample.utils.BookmarkButton
-import com.example.jetpackcomposeexample.utils.FavoriteButton
-import com.example.jetpackcomposeexample.utils.ShareButton
-import com.example.jetpackcomposeexample.utils.TextSettingButton
+import com.example.jetpackcomposeexample.model.helper.dto.Post
+import com.example.jetpackcomposeexample.model.helper.dto.impl.post3
+import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
+import com.example.jetpackcomposeexample.view.vico.utils.BookmarkButton
+import com.example.jetpackcomposeexample.view.vico.utils.FavoriteButton
+import com.example.jetpackcomposeexample.view.vico.utils.ShareButton
+import com.example.jetpackcomposeexample.view.vico.utils.TextSettingButton
 
 @ExperimentalMaterial3Api
 @Composable

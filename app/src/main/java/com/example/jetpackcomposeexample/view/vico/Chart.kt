@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeexample.vico
+package com.example.jetpackcomposeexample.view.vico
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.jetpackcomposeexample.ui.theme.JetpackComposeExampleTheme
+import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
@@ -33,7 +33,7 @@ fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
     JetpackComposeExampleTheme {
         Surface {
             Chart(
-                chart = com.patrykandpatrick.vico.compose.chart.column.columnChart(
+                chart = columnChart(
                     axisValuesOverrider = AxisValuesOverrider.fixed(
                         minY = -3f,
                         maxY = 5f,
@@ -113,7 +113,7 @@ fun ChartExample4Preview(){
     val  composeChart = getColumnChart() + getLineChart()
     composeChart.setPersistentMarkers(markers = markerMap)
     Chart(chart = composeChart,
-        model = model1+ model2,
+        model = model1 + model2,
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
         endAxis = endAxis(),
