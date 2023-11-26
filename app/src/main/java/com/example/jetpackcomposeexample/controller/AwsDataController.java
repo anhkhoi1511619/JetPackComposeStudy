@@ -73,6 +73,11 @@ public class AwsDataController {
         JSONObject publication;
         String name_publication;
         String url_publication;
+        JSONObject metaData;
+        JSONObject author;
+        String name_author;
+        String url_author;
+        String date_metaData;
         try {
             id_data = (String) jsonObject.get("id");
             title_data =  (String) jsonObject.get("title");
@@ -81,6 +86,11 @@ public class AwsDataController {
             publication = (JSONObject) jsonObject.get("publication");
             name_publication = (String) publication.get("name");
             url_publication = (String) publication.get("url");
+            metaData = (JSONObject) jsonObject.get("metaData");
+            author = (JSONObject) metaData.get("author");
+            name_author = (String) author.get("name");
+            url_author = (String) author.get("url");
+            date_metaData = (String) metaData.get("date");
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -98,10 +108,10 @@ public class AwsDataController {
                 ),
                 new MetaData(
                         new PostAuthor(
-                                "Florina Muntenescu",
-                                "https://medium.com/@florina.muntenescu"
+                                name_author,
+                                url_author
                         ),
-                        "July 09",
+                        date_metaData,
                         1
                 ),
                 paragraphs,

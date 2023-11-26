@@ -39,7 +39,6 @@ import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
 import com.example.jetpackcomposeexample.model.helper.dto.Post
 import com.example.jetpackcomposeexample.model.helper.dto.impl.post3
-import com.example.jetpackcomposeexample.model.helper.dto.impl.postTest
 import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
 import com.example.jetpackcomposeexample.view.vico.utils.BookmarkButton
 import com.example.jetpackcomposeexample.view.vico.utils.FavoriteButton

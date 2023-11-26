@@ -74,8 +74,8 @@ public class AwsConnectHelper {
                     in.close();
 
                     // Output the response
-                    Log.d(TAG,"Car List:");
                     JSONObject jsonObject = new JSONObject(String.valueOf(response));
+                    Log.d(TAG,"send data what have fetched:"+jsonObject);
                     AwsDataController.sendMessage(AWS_POST_API_RESPONSE, jsonObject);
                 } else {
                     Log.d(TAG,"Failed to fetch the car list. Response Code: " + responseCode);
