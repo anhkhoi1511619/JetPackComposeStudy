@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeexample.view.vico
+package com.example.jetpackcomposeexample.view.vico.chart
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable

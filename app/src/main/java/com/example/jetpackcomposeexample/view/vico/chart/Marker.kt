@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.jetpackcomposeexample.view.vico
+package com.example.jetpackcomposeexample.view.vico.chart
 
 import android.graphics.Typeface
 import androidx.compose.material3.MaterialTheme

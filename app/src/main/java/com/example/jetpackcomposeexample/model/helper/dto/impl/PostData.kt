@@ -1,6 +1,7 @@
 package com.example.jetpackcomposeexample.model.helper.dto.impl
 
 import com.example.jetpackcomposeexample.R
+import com.example.jetpackcomposeexample.controller.AwsDataController
 import com.example.jetpackcomposeexample.model.helper.dto.Markup
 import com.example.jetpackcomposeexample.model.helper.dto.MarkupType
 import com.example.jetpackcomposeexample.model.helper.dto.MetaData
@@ -10,7 +11,7 @@ import com.example.jetpackcomposeexample.model.helper.dto.Post
 import com.example.jetpackcomposeexample.model.helper.dto.PostAuthor
 import com.example.jetpackcomposeexample.model.helper.dto.Publication
 
-val publication = Publication(
+public val publication = Publication(
     "Android Developers",
     "https://cdn-images-1.medium.com/max/258/1*u7oZc2_5mrkcFaxkXEyfYA@2x.png"
 )
@@ -118,3 +119,5 @@ val post3 = Post(
     imageId = R.drawable.post_3,
     imageThumbId = R.drawable.post_3_thumb
 )
+
+val postTest = AwsDataController.post

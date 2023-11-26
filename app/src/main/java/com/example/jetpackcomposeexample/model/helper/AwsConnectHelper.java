@@ -1,6 +1,11 @@
 package com.example.jetpackcomposeexample.model.helper;
 
+import static com.example.jetpackcomposeexample.controller.AwsDataController.AWS_POST_API_RESPONSE;
+
 import android.util.Log;
+
+import com.example.jetpackcomposeexample.controller.AwsDataController;
+import com.example.jetpackcomposeexample.model.helper.dto.Post;
 
 import org.json.JSONObject;
 
@@ -71,16 +76,16 @@ public class AwsConnectHelper {
                     // Output the response
                     Log.d(TAG,"Car List:");
                     JSONObject jsonObject = new JSONObject(String.valueOf(response));
-
-                    Log.d(TAG,jsonObject.toString());
+                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, jsonObject);
                 } else {
-                    System.out.println("Failed to fetch the car list. Response Code: " + responseCode);
+                    Log.d(TAG,"Failed to fetch the car list. Response Code: " + responseCode);
                 }
-
-                connection.disconnect();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }).start();
+    }
+    public static void disConnect(){
+        connection.disconnect();
     }
 }
