@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        AwsDataController.sendMessage(AWS_POST_API)
+//        AwsDataController.sendMessage(AWS_POST_API)
     }
 }
 
