@@ -6,19 +6,10 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
-import com.example.jetpackcomposeexample.R;
-import com.example.jetpackcomposeexample.model.helper.AwsConnectHelper;
-import com.example.jetpackcomposeexample.model.helper.dto.MetaData;
-import com.example.jetpackcomposeexample.model.helper.dto.Paragraph;
-import com.example.jetpackcomposeexample.model.helper.dto.Post;
-import com.example.jetpackcomposeexample.model.helper.dto.PostAuthor;
-import com.example.jetpackcomposeexample.model.helper.dto.Publication;
+import com.example.jetpackcomposeexample.aws.helper.AwsConnectHelper;
+import com.example.jetpackcomposeexample.model.helper.AwsDataModel;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class AwsDataController {
     static final String TAG = AwsDataController.class.getSimpleName();
@@ -26,7 +17,6 @@ public class AwsDataController {
     public static final int AWS_POST_API = 1;
     public static final int AWS_POST_API_RESPONSE = 2;
     static final int AWS_CHART_API = 3;
-    public static Post post;
     public static void startListener() {
         HandlerThread handlerThread = new HandlerThread("AwsDataController Handler Thread");
         handlerThread.start();
@@ -41,9 +31,9 @@ public class AwsDataController {
                         AwsConnectHelper.connect("https://192.168.180.42:9001/carList");
                         break;
                     case AWS_POST_API_RESPONSE:
-                        post =  parse((JSONObject) msg.obj);
+                        AwsDataModel.parse((JSONObject) msg.obj);
                         Log.d(TAG,"real data: "+msg.obj.toString());
-                        Log.d(TAG,"data after parsed: "+post.toString());
+                        Log.d(TAG,"data after parsed: "+AwsDataModel.post.toString());
                         break;
                     case AWS_CHART_API:
                     default:
@@ -65,61 +55,4 @@ public class AwsDataController {
         message.obj = object;
         controllerHandler.sendMessage(message);
     }
-    static Post parse(JSONObject jsonObject) {
-        String id_data;
-        String title_data;
-        String subtitle_data;
-        String url;
-        JSONObject publication;
-        String name_publication;
-        String url_publication;
-        JSONObject metaData;
-        JSONObject author;
-        String name_author;
-        String url_author;
-        String date_metaData;
-        try {
-            id_data = (String) jsonObject.get("id");
-            title_data =  (String) jsonObject.get("title");
-            subtitle_data = (String) jsonObject.get("subtitle");
-            url = (String) jsonObject.get("url");
-            publication = (JSONObject) jsonObject.get("publication");
-            name_publication = (String) publication.get("name");
-            url_publication = (String) publication.get("url");
-            metaData = (JSONObject) jsonObject.get("metaData");
-            author = (JSONObject) metaData.get("author");
-            name_author = (String) author.get("name");
-            url_author = (String) author.get("url");
-            date_metaData = (String) metaData.get("date");
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-
-        List<Paragraph> paragraphs = new ArrayList<>();
-
-        return new Post(
-                id_data,
-                title_data,
-                subtitle_data,
-                url,
-                new Publication(
-                        name_publication,
-                        url_publication
-                ),
-                new MetaData(
-                        new PostAuthor(
-                                name_author,
-                                url_author
-                        ),
-                        date_metaData,
-                        1
-                ),
-                paragraphs,
-                R.drawable.post_3,
-                R.drawable.post_3_thumb
-                );
-    }
-
-
-
 }

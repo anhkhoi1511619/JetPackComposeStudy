@@ -17,8 +17,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.jetpackcomposeexample.controller.AwsDataController
-import com.example.jetpackcomposeexample.model.helper.AwsConnectHelper
-import com.example.jetpackcomposeexample.model.helper.dto.impl.dataFromAWS
+import com.example.jetpackcomposeexample.controller.AwsDataController.AWS_POST_API
+import com.example.jetpackcomposeexample.aws.helper.AwsConnectHelper
+import com.example.jetpackcomposeexample.model.helper.AwsDataModel
 import com.example.jetpackcomposeexample.view.vico.article.ArticleScreen
 import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
 
@@ -46,7 +47,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        AwsDataController.sendMessage(1)
+        AwsDataController.sendMessage(AWS_POST_API)
     }
 }
 
@@ -57,17 +58,17 @@ fun Greeting(name: String) {
     if (showButton) {
         TextButton(onClick = {
             showButton = false
-            AwsDataController.sendMessage(1)
+            AwsDataController.sendMessage(AWS_POST_API)
         }){
             Text(text = name)
         }
-    } else if (AwsDataController.post == null){
-        AwsDataController.sendMessage(1)
+    } else if (AwsDataModel.post == null){
+        AwsDataController.sendMessage(AWS_POST_API)
         showButton = true
     }
     else {
         ArticleScreen(
-            post = AwsDataController.post,
+            post = AwsDataModel.post,
             isExpandedScreen = false,
             onBack = { showButton = true },
             isFavorite = false,

@@ -1,11 +1,10 @@
-package com.example.jetpackcomposeexample.model.helper;
+package com.example.jetpackcomposeexample.aws.helper;
 
 import static com.example.jetpackcomposeexample.controller.AwsDataController.AWS_POST_API_RESPONSE;
 
 import android.util.Log;
 
 import com.example.jetpackcomposeexample.controller.AwsDataController;
-import com.example.jetpackcomposeexample.model.helper.dto.Post;
 
 import org.json.JSONObject;
 
@@ -31,7 +30,7 @@ public class AwsConnectHelper {
     public static void connect(String url){
         new Thread(()->{
             try {
-                URL carListUrl = new URL(url);
+                URL urlConnect = new URL(url);
                 SSLContext sslContext = null;
                 try {
                     TrustManager[] tm = {
@@ -57,7 +56,7 @@ public class AwsConnectHelper {
                 }
 
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-                connection = (HttpsURLConnection) carListUrl.openConnection();
+                connection = (HttpsURLConnection) urlConnect.openConnection();
                 connection.setRequestMethod("GET");
 
                 int responseCode = connection.getResponseCode();

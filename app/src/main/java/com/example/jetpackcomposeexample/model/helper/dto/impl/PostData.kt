@@ -119,5 +119,3 @@ val post3 = Post(
     imageId = R.drawable.post_3,
     imageThumbId = R.drawable.post_3_thumb
 )
-
-val dataFromAWS = AwsDataController.post
