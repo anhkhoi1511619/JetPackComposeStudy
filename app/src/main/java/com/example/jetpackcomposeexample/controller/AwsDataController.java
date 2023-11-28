@@ -33,7 +33,7 @@ public class AwsDataController {
                         AwsConnectHelper.connect(POST_CONTENT_API_URL);
                         break;
                     case AWS_POST_API_RESPONSE:
-                        AwsDataModel.parse((JSONObject) msg.obj);
+                        AwsDataModel.parsePostContent((JSONObject) msg.obj);
                         Log.d(TAG,"real data: "+msg.obj.toString());
                         Log.d(TAG,"data after parsed: "+AwsDataModel.post.toString());
                         break;

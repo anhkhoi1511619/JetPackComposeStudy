@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        AwsConnectHelper.connectAsync(CHART_API_URL) {  }
+        AwsConnectHelper.connectAsync(CHART_API_URL) { result -> AwsDataModel.parseChartData(result) }
     }
 }
 
@@ -59,13 +59,13 @@ fun Greeting(name: String) {
     if (showButton) {
         TextButton(onClick = {
             showButton = false
-            AwsConnectHelper.connectAsync(POST_CONTENT_API_URL) { result -> AwsDataModel.parse(result) }
+            AwsConnectHelper.connectAsync(POST_CONTENT_API_URL) { result -> AwsDataModel.parsePostContent(result) }
         }){
             Text(text = name)
         }
     } else if (AwsDataModel.post == null){
         showButton = true
-        AwsConnectHelper.connectAsync(POST_CONTENT_API_URL) { result -> AwsDataModel.parse(result) }
+        AwsConnectHelper.connectAsync(POST_CONTENT_API_URL) { result -> AwsDataModel.parsePostContent(result) }
     }
     else {
         ArticleScreen(
