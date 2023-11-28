@@ -11,7 +11,7 @@ import com.example.jetpackcomposeexample.model.helper.dto.Post
 import com.example.jetpackcomposeexample.model.helper.dto.PostAuthor
 import com.example.jetpackcomposeexample.model.helper.dto.Publication
 
-public val publication = Publication(
+val publication = Publication(
     "Android Developers",
     "https://cdn-images-1.medium.com/max/258/1*u7oZc2_5mrkcFaxkXEyfYA@2x.png"
 )
