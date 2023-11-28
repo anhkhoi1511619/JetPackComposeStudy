@@ -16,12 +16,15 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.util.Consumer
 import com.example.jetpackcomposeexample.controller.AwsDataController
 import com.example.jetpackcomposeexample.controller.AwsDataController.AWS_POST_API
 import com.example.jetpackcomposeexample.aws.helper.AwsConnectHelper
+import com.example.jetpackcomposeexample.controller.AwsDataController.POST_API_URL
 import com.example.jetpackcomposeexample.model.helper.AwsDataModel
 import com.example.jetpackcomposeexample.view.vico.article.ArticleScreen
 import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
+import org.json.JSONObject
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,13 +61,13 @@ fun Greeting(name: String) {
     if (showButton) {
         TextButton(onClick = {
             showButton = false
-            AwsDataController.sendMessage(AWS_POST_API)
+            AwsConnectHelper.connectAsync(POST_API_URL) { result -> AwsDataModel.parse(result) }
         }){
             Text(text = name)
         }
     } else if (AwsDataModel.post == null){
-        AwsDataController.sendMessage(AWS_POST_API)
-        showButton = true
+        showButton = false
+        AwsConnectHelper.connectAsync(POST_API_URL) { result -> AwsDataModel.parse(result) }
     }
     else {
         ArticleScreen(

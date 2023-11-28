@@ -4,6 +4,8 @@ import static com.example.jetpackcomposeexample.controller.AwsDataController.AWS
 
 import android.util.Log;
 
+import androidx.core.util.Consumer;
+
 import com.example.jetpackcomposeexample.controller.AwsDataController;
 
 import org.json.JSONObject;
@@ -14,6 +16,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -27,8 +32,15 @@ public class AwsConnectHelper {
     static HttpsURLConnection connection;
 
     public static final String TAG = AwsConnectHelper.class.getSimpleName();
-    public static void connect(String url){
-        new Thread(()->{
+    static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    public static void connectAsync(String url, Consumer<JSONObject> callback){
+        executor.execute(()->{
+            callback.accept(connect(url));
+        });
+    }
+    public static JSONObject connect(String url){
+        JSONObject result = new JSONObject();
+//        new Thread(()->{
             try {
                 URL urlConnect = new URL(url);
                 SSLContext sslContext = null;
@@ -73,16 +85,18 @@ public class AwsConnectHelper {
                     in.close();
 
                     // Output the response
-                    JSONObject jsonObject = new JSONObject(String.valueOf(response));
-                    Log.d(TAG,"send data what have fetched:"+jsonObject);
-                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, jsonObject);
+                    result = new JSONObject(String.valueOf(response));
+                    Log.d(TAG,"send data what have fetched:"+result);
+//                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
+                    return result;
                 } else {
                     Log.d(TAG,"Failed to fetch the car list. Response Code: " + responseCode);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();
+            return result;
+//        }).start();
     }
     public static void disConnect(){
         connection.disconnect();
