@@ -7,7 +7,7 @@ import com.example.jetpackcomposeexample.model.helper.dto.ParagraphType;
 import com.example.jetpackcomposeexample.model.helper.dto.Post;
 import com.example.jetpackcomposeexample.model.helper.dto.PostAuthor;
 import com.example.jetpackcomposeexample.model.helper.dto.Publication;
-import com.example.jetpackcomposeexample.model.helper.dto.impl.ChartData;
+import com.example.jetpackcomposeexample.model.helper.dto.Chart;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,7 +18,7 @@ import java.util.List;
 
 public class AwsDataModel {
     public static Post post;
-    public static List<ChartData> chartDataList;
+    public static List<Chart> chartList;
     public static void parsePostContent(JSONObject jsonObject) {
         String id_data;
         String title_data;
@@ -93,8 +93,8 @@ public class AwsDataModel {
             for (int i=0; i < array.length(); i++) {
                 int x = (int)array.getJSONObject(i).get("x");
                 int y = (int)array.getJSONObject(i).get("y");
-                ChartData chart = new ChartData(x,y);
-                chartDataList.add(chart);
+                Chart chart = new Chart(x,y);
+                chartList.add(chart);
             }
         } catch (JSONException e) {
             throw new RuntimeException(e);

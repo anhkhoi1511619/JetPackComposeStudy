@@ -32,7 +32,7 @@ public class AwsConnectHelper {
     static HttpsURLConnection connection;
 
     public static final String TAG = AwsConnectHelper.class.getSimpleName();
-    static final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+    static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
     public static void connectAsync(String url, Consumer<JSONObject> callback){
         executor.execute(()->{
             callback.accept(connect(url));

@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.jetpackcomposeexample.model.helper.dto.impl.charList
 import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
@@ -24,6 +25,8 @@ import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical
 import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.chart.line.LineChart
+import com.patrykandpatrick.vico.core.entry.ChartEntry
+import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.composed.plus
 
 
@@ -47,7 +50,7 @@ fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
     }
 }
 
-private val model1 = entryModelOf(0 to 1, 1 to 2, 2 to 4, 3 to 1, 4 to 4)
+private val model1 = entryModelOf( 0 to 1, 1 to 2, 2 to 4, 3 to 1, 4 to 4)
 private val model2 = entryModelOf(1 to 4, 2 to 1, 3 to 8, 4 to 12, 5 to 5)
 @Composable
 private fun getColumnChart(
@@ -84,12 +87,18 @@ private fun getLineChart(
 private val markerMap: Map<Float, Marker>
     @Composable get() = mapOf(4f to rememberMarker())
 
+val modelK : List<FloatEntry> = listOf(
+    FloatEntry(1F, 2F),
+    FloatEntry(2F,3F),
+    FloatEntry(3F,4F)
+);
+
 @Preview
 @Composable
 fun ChartExample2Preview(){
     Chart(
         chart = getColumnChart(markerMap = markerMap),
-        model = model1,
+        model = entryModelOf(modelK),
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
         modifier = Modifier
