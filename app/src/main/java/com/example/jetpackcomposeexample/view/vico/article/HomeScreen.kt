@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +27,7 @@ import com.example.jetpackcomposeexample.R
 import com.example.jetpackcomposeexample.model.helper.dto.Post
 import com.example.jetpackcomposeexample.model.helper.dto.impl.post3
 import com.example.jetpackcomposeexample.model.helper.dto.impl.posts
+import com.example.jetpackcomposeexample.view.vico.chart.ChartCode
 
 @Composable
 fun PostList(
@@ -41,8 +43,10 @@ fun PostList(
         state = state
         ) {
         item {
+            Search(modifier = Modifier.padding(horizontal = 16.dp), onSearchInputChanged = {})
             PostTopSection(post = post3  , onArticleTapped)
             PostListSimpleSection(posts = posts, navigateToArticle = onArticleTapped, favorites = favorites)
+            ChartCode(modifier = Modifier.padding(16.dp))
             PostListPopular(posts = posts, navigateToArticle = onArticleTapped)
         }
     }
