@@ -20,14 +20,15 @@ import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.entryModelOf
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical
 import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.entry.ChartEntry
+import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.composed.plus
+import com.patrykandpatrick.vico.core.entry.entryModelOf
 
 
 @Preview
@@ -90,14 +91,15 @@ private val markerMap: Map<Float, Marker>
 val modelK : List<FloatEntry> = listOf(
     FloatEntry(1F, 2F),
     FloatEntry(2F,3F),
-    FloatEntry(3F,4F)
+    FloatEntry(3F,4F),
+    FloatEntry(4F,5F)
 );
 
 @Preview
 @Composable
 fun ChartExample2Preview(){
     Chart(
-        chart = getColumnChart(markerMap = markerMap),
+        chart = getLineChart(markerMap = markerMap),
         model = entryModelOf(modelK),
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),

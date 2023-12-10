@@ -14,7 +14,7 @@ import org.json.JSONObject;
 public class AwsDataController {
     static final String TAG = AwsDataController.class.getSimpleName();
     static Handler controllerHandler = new Handler();
-    public static final String POST_CONTENT_API_URL = "https://192.168.180.42:9001/postContent";
+    public static final String POST_CONTENT_API_URL = "http://192.168.180.42:9000/postContent";
     public static final String CHART_API_URL = "https://192.168.180.42:9001/messageRequestt";
     public static final int AWS_POST_API = 1;
     public static final int AWS_POST_API_RESPONSE = 2;

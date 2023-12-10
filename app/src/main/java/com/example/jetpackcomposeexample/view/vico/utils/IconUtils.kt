@@ -1,6 +1,8 @@
 package com.example.jetpackcomposeexample.view.vico.utils
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
@@ -46,7 +48,7 @@ fun BookmarkButton(
             this.onClick ( label = clickLabel, action = null )
         }
         ) {
-            Icon(imageVector = if (isBookmarked) Icons.Filled.Notifications else Icons.Filled.LocationOn,
+            Icon(imageVector = if (isBookmarked) Icons.Filled.Info else Icons.Filled.List,
         contentDescription = null)
     }
 }
