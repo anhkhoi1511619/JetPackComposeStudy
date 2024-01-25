@@ -1,12 +1,8 @@
 package com.example.jetpackcomposeexample.aws.helper;
 
-import static com.example.jetpackcomposeexample.controller.AwsDataController.AWS_POST_API_RESPONSE;
-
 import android.util.Log;
 
 import androidx.core.util.Consumer;
-
-import com.example.jetpackcomposeexample.controller.AwsDataController;
 
 import org.json.JSONObject;
 
@@ -16,7 +12,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -33,7 +28,7 @@ public class AwsConnectHelper {
 
     public static final String TAG = AwsConnectHelper.class.getSimpleName();
     static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
-    public static void connectAsync(String url, Consumer<JSONObject> callback){
+    public static void connect(String url, Consumer<JSONObject> callback){
         executor.execute(()->{
             callback.accept(connect(url));
         });

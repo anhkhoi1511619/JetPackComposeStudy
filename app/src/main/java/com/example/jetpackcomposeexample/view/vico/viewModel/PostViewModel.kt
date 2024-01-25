@@ -1,0 +1,32 @@
+package com.example.jetpackcomposeexample.view.vico.viewModel
+
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
+import com.example.jetpackcomposeexample.aws.helper.AwsConnectHelper
+import com.example.jetpackcomposeexample.controller.AwsDataController
+import com.example.jetpackcomposeexample.model.helper.AwsDataModel
+import com.example.jetpackcomposeexample.model.helper.dto.impl.post3
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
+class PostViewModel: ViewModel() {
+    //Ui State
+    private val _uiState = MutableStateFlow(PostUiState())
+    val uiState: StateFlow<PostUiState> = _uiState.asStateFlow()
+    var currentPost by mutableStateOf(post3)
+    private set
+    var currentId by mutableStateOf("")
+        private set
+
+
+    fun load(id: String) {
+        if (id.equals(1511619)) return
+        currentId = id
+        AwsConnectHelper.connect(AwsDataController.POST_CONTENT_API_URL) { result ->
+            currentPost = AwsDataModel.parsePostContent(result)
+        }
+    }
+}

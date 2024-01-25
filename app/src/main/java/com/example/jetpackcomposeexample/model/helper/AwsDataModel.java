@@ -19,7 +19,7 @@ import java.util.List;
 public class AwsDataModel {
     public static Post post;
     public static List<Chart> chartList;
-    public static void parsePostContent(JSONObject jsonObject) {
+    public static Post parsePostContent(JSONObject jsonObject) {
         String id_data;
         String title_data;
         String subtitle_data;
@@ -64,7 +64,7 @@ public class AwsDataModel {
             throw new RuntimeException(e);
         }
 
-        post =  new Post(
+        return new Post(
                 id_data,
                 title_data,
                 subtitle_data,

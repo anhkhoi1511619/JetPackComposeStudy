@@ -22,6 +22,7 @@ import com.example.jetpackcomposeexample.controller.AwsDataController.CHART_API_
 import com.example.jetpackcomposeexample.controller.AwsDataController.POST_CONTENT_API_URL
 import com.example.jetpackcomposeexample.model.helper.AwsDataModel
 import com.example.jetpackcomposeexample.view.vico.article.ArticleScreen
+import com.example.jetpackcomposeexample.view.vico.article.HomeScreen
 import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
 
 class MainActivity : ComponentActivity() {
@@ -34,46 +35,32 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Connect Aws")
+                    Home()
                 }
             }
         }
-        AwsDataController.startListener()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        AwsConnectHelper.disConnect();
-    }
-
-    override fun onResume() {
-        super.onResume()
-        AwsConnectHelper.connectAsync(CHART_API_URL) { result -> AwsDataModel.parseChartData(result) }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Greeting(name: String) {
-    var showButton by rememberSaveable { mutableStateOf(true) }
-    if (showButton) {
+fun Home() {
+    var isClicked by rememberSaveable { mutableStateOf(true) }
+    if (isClicked) {
         TextButton(onClick = {
-            showButton = false
-            AwsConnectHelper.connectAsync(POST_CONTENT_API_URL) { result -> AwsDataModel.parsePostContent(result) }
+            isClicked = false
         }){
-            Text(text = name)
+            Text(text = "Login")
         }
-    } else if (AwsDataModel.post == null){
-        showButton = true
-        AwsConnectHelper.connectAsync(POST_CONTENT_API_URL) { result -> AwsDataModel.parsePostContent(result) }
-    }
-    else {
-        ArticleScreen(
-            post = AwsDataModel.post,
-            isExpandedScreen = false,
-            onBack = { showButton = true },
-            isFavorite = false,
-            onToggleFavorite = { /*TODO*/ })
+    } else {
+        HomeScreen()
+//        ArticleScreen(
+//            post = AwsDataModel.post,
+//            isExpandedScreen = false,
+//            onBack = { isClicked = false },
+//            isFavorite = false,
+//            onToggleFavorite = { /*TODO*/ })
     }
 }
 
@@ -81,6 +68,6 @@ fun Greeting(name: String) {
 @Composable
 fun GreetingPreview() {
     JetpackComposeExampleTheme {
-        Greeting("Connect Aws")
+        Home()
     }
 }
