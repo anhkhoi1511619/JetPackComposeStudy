@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -39,8 +38,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun HomeScreen(postViewModel: PostViewModel =  viewModel()){
     val postUiState by postViewModel.uiState.collectAsState()
     PostList(
-        detailPost = postViewModel.currentPost,
-        posts = postUiState.postList,
+        detailPost = postViewModel.currentLoadedPost,
+        posts = postUiState.currentPostList,
         favorites = emptySet(),
         onArticleTapped = {postViewModel.load(it)})
 }

@@ -6,7 +6,6 @@ import com.example.jetpackcomposeexample.model.helper.dto.impl.post2
 import com.example.jetpackcomposeexample.model.helper.dto.impl.post3
 
 data class PostUiState (
-     val postList: List<Post> = listOf(post1, post2, post3),
-     val isLoadedData: Boolean = false,
-     val isLoadError: Boolean = false,
- )
+    val loadedDetailPost:Post = post3,
+    val showingPostList: List<Post> = listOf(post1, post2, post3)
+)
