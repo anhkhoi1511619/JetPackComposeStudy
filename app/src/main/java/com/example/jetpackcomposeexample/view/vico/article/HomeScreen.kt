@@ -15,11 +15,13 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,17 +33,34 @@ import com.example.jetpackcomposeexample.model.helper.dto.impl.posts
 import com.example.jetpackcomposeexample.view.vico.chart.ChartCode
 import com.example.jetpackcomposeexample.view.vico.viewModel.PostViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(postViewModel: PostViewModel =  viewModel()){
     val postUiState by postViewModel.uiState.collectAsState()
-    PostList(
-        detailPost = postViewModel.currentLoadedPost,
-        posts = postUiState.currentPostList,
-        favorites = emptySet(),
-        onArticleTapped = {postViewModel.load(it)})
+    // Create a CoroutineScope that follows this composable's lifecycle
+    val composableScope = rememberCoroutineScope()
+    if(postUiState.isClicking) {
+        ArticleScreen(
+            post = postUiState.loadedDetailPost,
+            isExpandedScreen = false,
+            onBack = { postViewModel.backHome() },
+            isFavorite = false,
+            onToggleFavorite = { /*TODO*/ })
+    } else {
+        PostList(
+            detailPost = postUiState.loadedDetailPost,
+            posts = postUiState.showingPostList,
+            favorites = emptySet(),
+            onArticleTapped = {
+                composableScope.launch {
+                    postViewModel.load(it)}
+            }
+        )
+
+    }
 }
 @Composable
 fun PostList(
@@ -115,7 +134,7 @@ fun PostTopSection(post: Post, navigateToArticle: (String)->Unit) {
         text = stringResource(id = R.string.home_top_section_title),
         style = MaterialTheme.typography.titleMedium
     )
-    PostCardTop(post = post, modifier = Modifier.clickable { navigateToArticle("1511619") })
+    PostCardTop(post = post, modifier = Modifier.clickable { navigateToArticle("1") })
     PostListDivider()
 }
 
@@ -141,7 +160,7 @@ fun PostListToSectionTest(){
 @Preview
 @Composable
 fun PostListTest() {
-    PostList(posts, emptySet(), {})
+    PostList(post3, posts, emptySet(), {})
 }
 @Preview
 @Composable

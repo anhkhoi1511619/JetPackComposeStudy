@@ -24,14 +24,54 @@ import javax.net.ssl.X509TrustManager;
 
 
 public class AwsConnectHelper {
-    static HttpsURLConnection connection;
-
+    static HttpsURLConnection connectionHttps;
+    static HttpURLConnection connectionHttp;
+    static final boolean IS_LOCAL_HOST = true;
     public static final String TAG = AwsConnectHelper.class.getSimpleName();
     static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
     public static void connect(String url, Consumer<JSONObject> callback){
         executor.execute(()->{
-            callback.accept(connect(url));
+            JSONObject js;
+            if(IS_LOCAL_HOST) {
+                js = connectLocalServer(url);
+            } else {
+                js = connect(url);
+            }
+            callback.accept(js);
         });
+    }
+    public static JSONObject connectLocalServer(String url){
+        JSONObject result = new JSONObject();
+        try {
+            URL urlConnect = new URL(url);
+            connectionHttp = (HttpURLConnection) urlConnect.openConnection();
+            connectionHttp.setRequestMethod("GET");
+
+            int responseCode = connectionHttp.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connectionHttp.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+
+                in.close();
+
+                // Output the response
+                result = new JSONObject(String.valueOf(response));
+                Log.d(TAG,"send data what have fetched:"+result);
+//                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
+                return result;
+            } else {
+                Log.d(TAG,"Failed to fetch the car list. Response Code: " + responseCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
     }
     public static JSONObject connect(String url){
         JSONObject result = new JSONObject();
@@ -63,13 +103,13 @@ public class AwsConnectHelper {
                 }
 
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-                connection = (HttpsURLConnection) urlConnect.openConnection();
-                connection.setRequestMethod("GET");
+                connectionHttps = (HttpsURLConnection) urlConnect.openConnection();
+                connectionHttps.setRequestMethod("GET");
 
-                int responseCode = connection.getResponseCode();
+                int responseCode = connectionHttps.getResponseCode();
 
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connectionHttps.getInputStream()));
                     String inputLine;
                     StringBuilder response = new StringBuilder();
 
@@ -94,6 +134,6 @@ public class AwsConnectHelper {
 //        }).start();
     }
     public static void disConnect(){
-        connection.disconnect();
+        connectionHttps.disconnect();
     }
 }
