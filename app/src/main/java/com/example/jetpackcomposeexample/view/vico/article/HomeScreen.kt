@@ -33,6 +33,8 @@ import com.example.jetpackcomposeexample.model.helper.dto.impl.posts
 import com.example.jetpackcomposeexample.view.vico.chart.ChartCode
 import com.example.jetpackcomposeexample.view.vico.viewModel.PostViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -41,7 +43,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(postViewModel: PostViewModel =  viewModel()){
     val postUiState by postViewModel.uiState.collectAsState()
     // Create a CoroutineScope that follows this composable's lifecycle
-    val composableScope = rememberCoroutineScope()
+//    val composableScope = rememberCoroutineScope()
     if(postUiState.isClicking) {
         ArticleScreen(
             post = postUiState.loadedDetailPost,
@@ -55,8 +57,7 @@ fun HomeScreen(postViewModel: PostViewModel =  viewModel()){
             posts = postUiState.showingPostList,
             favorites = emptySet(),
             onArticleTapped = {
-                composableScope.launch {
-                    postViewModel.load(it)}
+                postViewModel.load(it)
             }
         )
 

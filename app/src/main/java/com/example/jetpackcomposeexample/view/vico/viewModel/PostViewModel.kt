@@ -30,29 +30,46 @@ class PostViewModel: ViewModel() {
     var errorIDList: List<String> = mutableListOf()
         private set
 
-    suspend fun load(id: String) = withContext(Dispatchers.IO){
+    fun load(id: String){
 //        moveToDetail()
 //        if (loadedIDList.contains(id)) return
         loadedIDList += id
         AwsConnectHelper.connect(UrlConstants.POST_CONTENT_API_URL) { result ->
             println("result is $result")
+            moveToDetail()
             _uiState.update { currentState ->
-                currentState.copy(
-                    isClicking = true,
-                    loadedDetailPost = AwsDataModel.parsePostContent(result))
-                            }
-            println("isClicking is ${_uiState.value.isClicking}")
+                currentState.copy(loadedDetailPost = result)
+            }
             println("loadedDetailPost is ${_uiState.value.loadedDetailPost}")
-                        }
+        }
     }
-    private fun moveToDetail() {
+    //    suspend fun load(id: String) = withContext(Dispatchers.IO){
+////        moveToDetail()
+////        if (loadedIDList.contains(id)) return
+//        loadedIDList += id
+//        AwsConnectHelper.connect(UrlConstants.POST_CONTENT_API_URL) { result ->
+//            println("result is $result")
+////            moveToDetail()
+//            _uiState.update { currentState ->
+//                currentState.copy(
+////                    isClicking = true,
+//                    loadedDetailPost = AwsDataModel.parsePostContent(result))
+//                            }
+//
+//            println("isClicking is ${isClicking}")
+//            println("loadedDetailPost is ${_uiState.value.loadedDetailPost}")
+//                        }
+//    }
+    fun moveToDetail() {
         _uiState.update { currentState ->
             currentState.copy(isClicking = true)
         }
+        println("isClicking is ${_uiState.value.isClicking}")
     }
     fun backHome() {
         _uiState.update { currentState ->
             currentState.copy(isClicking = false)
         }
+        println("isClicking is ${_uiState.value.isClicking}")
     }
 }

@@ -4,6 +4,10 @@ import android.util.Log;
 
 import androidx.core.util.Consumer;
 
+import com.example.jetpackcomposeexample.model.helper.AwsDataModel;
+import com.example.jetpackcomposeexample.model.helper.dto.Post;
+import com.example.jetpackcomposeexample.utils.UrlConstants;
+
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -26,21 +30,20 @@ import javax.net.ssl.X509TrustManager;
 public class AwsConnectHelper {
     static HttpsURLConnection connectionHttps;
     static HttpURLConnection connectionHttp;
-    static final boolean IS_LOCAL_HOST = true;
     public static final String TAG = AwsConnectHelper.class.getSimpleName();
     static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
-    public static void connect(String url, Consumer<JSONObject> callback){
+    public static void connect(String url, Consumer<Post> callback){
         executor.execute(()->{
-            JSONObject js;
-            if(IS_LOCAL_HOST) {
-                js = connectLocalServer(url);
+            Post post;
+            if(UrlConstants.IS_LOCAL_HOST) {
+                post = connectLocalServer(url);
             } else {
-                js = connect(url);
+                post = connect(url);
             }
-            callback.accept(js);
+            callback.accept(post);
         });
     }
-    public static JSONObject connectLocalServer(String url){
+    public static Post connectLocalServer(String url){
         JSONObject result = new JSONObject();
         try {
             URL urlConnect = new URL(url);
@@ -62,18 +65,18 @@ public class AwsConnectHelper {
 
                 // Output the response
                 result = new JSONObject(String.valueOf(response));
-                Log.d(TAG,"send data what have fetched:"+result);
+                Log.d(TAG,"send data what have fetched from HTTP:"+result);
 //                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
-                return result;
+                return AwsDataModel.parsePostContent(result);
             } else {
                 Log.d(TAG,"Failed to fetch the car list. Response Code: " + responseCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return result;
+        return AwsDataModel.parsePostContent(result);
     }
-    public static JSONObject connect(String url){
+    public static Post connect(String url){
         JSONObject result = new JSONObject();
 //        new Thread(()->{
             try {
@@ -121,16 +124,16 @@ public class AwsConnectHelper {
 
                     // Output the response
                     result = new JSONObject(String.valueOf(response));
-                    Log.d(TAG,"send data what have fetched:"+result);
+                    Log.d(TAG,"send data what have fetched from HTTPs:"+result);
 //                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
-                    return result;
+                    return AwsDataModel.parsePostContent(result);
                 } else {
                     Log.d(TAG,"Failed to fetch the car list. Response Code: " + responseCode);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return result;
+            return AwsDataModel.parsePostContent(result);
 //        }).start();
     }
     public static void disConnect(){
