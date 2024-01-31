@@ -4,9 +4,17 @@ import com.example.jetpackcomposeexample.model.helper.dto.Post
 import com.example.jetpackcomposeexample.model.helper.dto.impl.post1
 import com.example.jetpackcomposeexample.model.helper.dto.impl.post2
 import com.example.jetpackcomposeexample.model.helper.dto.impl.post3
+import com.example.jetpackcomposeexample.model.helper.history.PostHistoryData
 
 data class PostUiState (
     val loadedDetailPost:Post = post3,
     val showingPostList: List<Post> = listOf(post1, post2) + loadedDetailPost,
-    val isClicking: Boolean = false
+    val historyPost: List<PostHistoryData>,
+    val screenID: ScreenID = ScreenID.HOME
 )
+
+enum class ScreenID {
+    HOME,
+    DETAIL_POST,
+    SETTING
+}

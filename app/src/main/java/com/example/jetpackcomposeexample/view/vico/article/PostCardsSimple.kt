@@ -18,38 +18,40 @@ import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
 import com.example.jetpackcomposeexample.model.helper.dto.Post
 import com.example.jetpackcomposeexample.model.helper.dto.impl.post3
+import com.example.jetpackcomposeexample.model.helper.history.HistoryDataModel
+import com.example.jetpackcomposeexample.model.helper.history.PostHistoryData
 import com.example.jetpackcomposeexample.view.vico.utils.BookmarkButton
 
 
 @Composable
 fun PostCardSimple(
-    post: Post,
+    data: PostHistoryData,
     isFavorite: Boolean
 ) {
     Row {
-        PostImage(post = post, modifier = Modifier.padding(16.dp))
+        PostImage(post = post3, modifier = Modifier.padding(16.dp))
         Column (
             modifier = Modifier
                 .weight(1f)
                 .padding(vertical = 10.dp)
         ) {
-            PostCardTitle(post = post)
-            AuthorAndReadTime(post = post)
+            PostCardTitle(data = data)
+            AuthorAndReadTime(data = data)
         }
         BookmarkButton(isBookmarked = isFavorite, onClick = { /*TODO*/ })
     }
 }
 @Composable
 fun AuthorAndReadTime(
-    post: Post,
+    data: PostHistoryData,
     modifier: Modifier = Modifier
 ) {
     Text(
         text = stringResource(
             id = R.string.home_post_min_read,
             formatArgs = arrayOf(
-                post.metaData.author.name,
-                post.metaData.readTimeMinutes
+                data.author,
+                data.date
             )
         ),
         style = MaterialTheme.typography.bodyMedium
@@ -57,9 +59,9 @@ fun AuthorAndReadTime(
 }
 
 @Composable
-fun PostCardTitle(post: Post){
+fun PostCardTitle(data: PostHistoryData, ){
     Text(
-        text = post.title,
+        text = data.title,
         style = MaterialTheme.typography.titleMedium,
         maxLines = 3,
         overflow = TextOverflow.Ellipsis
@@ -80,7 +82,7 @@ fun PostImage(post: Post, modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun PostCardSimpleTest() {
-    PostCardSimple(post = post3, isFavorite = false)
+    PostCardSimple(data = HistoryDataModel.model1, isFavorite = false)
 }
 
 @Preview
@@ -92,10 +94,10 @@ fun PostImageTest() {
 @Preview
 @Composable
 fun PostCardTitleTest() {
-    PostCardTitle(post = post3)
+    PostCardTitle(data = HistoryDataModel.model1)
 }
 @Preview
 @Composable
 fun AuthorAndReadTimeTest(){
-    AuthorAndReadTime(post = post3)
+    AuthorAndReadTime(data = HistoryDataModel.model1)
 }
