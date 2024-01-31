@@ -30,7 +30,7 @@ public class PostHistoryController {
 
     public static void set(Post post, long currentTime) {
         if(post == null) return;
-        PostHistoryEntity entity = new PostHistoryEntity(currentTime, post.getId(), post.getTitle());
+        PostHistoryEntity entity = new PostHistoryEntity(currentTime, post.getMetaData().getAuthor().getName(), post.getTitle());
         Log.d("PostHistoryController","data base set "+ entity);
         historyExecutor.execute(()->dao.insertPost(entity));
     }

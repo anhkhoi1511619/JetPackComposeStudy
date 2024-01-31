@@ -67,24 +67,6 @@ fun HomeScreen(postViewModel: PostViewModel =  viewModel()){
             /*TODO*/
         }
     }
-//    if(postUiState.screenID) {
-//        ArticleScreen(
-//            post = postUiState.loadedDetailPost,
-//            isExpandedScreen = false,
-//            onBack = { postViewModel.backHome() },
-//            isFavorite = false,
-//            onToggleFavorite = { /*TODO*/ })
-//    } else {
-//        PostList(
-//            detailPost = postUiState.loadedDetailPost,
-//            posts = postUiState.showingPostList,
-//            favorites = emptySet(),
-//            onArticleTapped = {
-//                postViewModel.load(it)
-//            }
-//        )
-//
-//    }
 }
 @Composable
 fun PostList(

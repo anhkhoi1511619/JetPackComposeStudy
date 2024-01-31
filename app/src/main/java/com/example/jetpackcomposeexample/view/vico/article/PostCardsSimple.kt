@@ -21,6 +21,10 @@ import com.example.jetpackcomposeexample.model.helper.dto.impl.post3
 import com.example.jetpackcomposeexample.model.helper.history.HistoryDataModel
 import com.example.jetpackcomposeexample.model.helper.history.PostHistoryData
 import com.example.jetpackcomposeexample.view.vico.utils.BookmarkButton
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 @Composable
@@ -51,7 +55,7 @@ fun AuthorAndReadTime(
             id = R.string.home_post_min_read,
             formatArgs = arrayOf(
                 data.author,
-                data.date
+                DateFormat.getInstance().format(data.date)
             )
         ),
         style = MaterialTheme.typography.bodyMedium
