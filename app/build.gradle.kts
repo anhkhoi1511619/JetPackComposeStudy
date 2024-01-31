@@ -67,6 +67,8 @@ dependencies {
     // For the view system.
     implementation("com.patrykandpatrick.vico:views:1.12.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    annotationProcessor ("androidx.room:room-compiler:2.6.1")
+
 
     //Room Library
     implementation("androidx.room:room-runtime:2.6.1")

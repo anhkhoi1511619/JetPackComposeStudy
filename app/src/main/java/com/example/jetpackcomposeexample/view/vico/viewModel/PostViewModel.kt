@@ -1,8 +1,10 @@
 package com.example.jetpackcomposeexample.view.vico.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.jetpackcomposeexample.aws.helper.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.PostHistoryController
+import com.example.jetpackcomposeexample.model.helper.dto.Post
 import com.example.jetpackcomposeexample.utils.UrlConstants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,40 +21,49 @@ class PostViewModel: ViewModel() {
     var errorIDList: List<String> = mutableListOf()
         private set
 
+    var isUpdated: Boolean = false
+
     fun update() {
+        if (isUpdated) return
         loadFromDB()
     }
 
     private fun loadFromDB() {
         PostHistoryController.get(5) { result ->
-            println("result is $result")
             _uiState.update { currentState ->
                 currentState.copy(historyPost = result)
             }
+            isUpdated = true
+            Log.d("PostViewModel","data base have $result")
         }
+    }
+    private fun addDB(post: Post) {
+        PostHistoryController.set(post, System.currentTimeMillis())
     }
 
     fun load(id: String){
         loadedIDList += id
         AwsConnectHelper.connect(UrlConstants.POST_CONTENT_API_URL) { result ->
-            println("result is $result")
+            Log.d("PostViewModel","result is $result")
             moveToDetail()
             _uiState.update { currentState ->
                 currentState.copy(loadedDetailPost = result)
             }
-            println("loadedDetailPost is ${_uiState.value.loadedDetailPost}")
+            addDB(post = result)
+            Log.d("PostViewModel","loadedDetailPost is ${_uiState.value.loadedDetailPost}")
         }
     }
     fun moveToDetail() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.DETAIL_POST)
         }
-        println("isClicking is ${_uiState.value.screenID}")
+        Log.d("PostViewModel","isClicking is ${_uiState.value.screenID}")
     }
     fun backHome() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.HOME)
         }
-        println("isClicking is ${_uiState.value.screenID}")
+        isUpdated = false
+        Log.d("PostViewModel","isClicking is ${_uiState.value.screenID}")
     }
 }

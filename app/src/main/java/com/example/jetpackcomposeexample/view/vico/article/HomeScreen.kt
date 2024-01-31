@@ -43,6 +43,7 @@ fun HomeScreen(postViewModel: PostViewModel =  viewModel()){
     val postUiState by postViewModel.uiState.collectAsState()
     when(postUiState.screenID) {
         ScreenID.HOME -> {
+            postViewModel.update()
             PostList(
                 detailPost = postUiState.loadedDetailPost,
                 historyPosts = postUiState.historyPost,

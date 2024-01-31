@@ -1,6 +1,7 @@
 package com.example.jetpackcomposeexample.controller;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.core.util.Consumer;
 
@@ -30,6 +31,7 @@ public class PostHistoryController {
     public static void set(Post post, long currentTime) {
         if(post == null) return;
         PostHistoryEntity entity = new PostHistoryEntity(currentTime, post.getId(), post.getTitle());
+        Log.d("PostHistoryController","data base set "+ entity);
         historyExecutor.execute(()->dao.insertPost(entity));
     }
 
@@ -38,6 +40,7 @@ public class PostHistoryController {
             List<PostHistoryData> list = dao.getPostHistoryList(postNumber).stream()
                     .map(e->new PostHistoryData(e.getDate(), e.getAuthor(), e.getTitle()))
                     .collect(Collectors.toList());
+            Log.d("PostHistoryController","data base get "+ list);
             callback.accept(list);
         });
     }

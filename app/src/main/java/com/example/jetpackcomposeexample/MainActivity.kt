@@ -21,6 +21,8 @@ import com.example.jetpackcomposeexample.controller.AwsDataController
 import com.example.jetpackcomposeexample.aws.helper.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.AwsDataController.CHART_API_URL
 import com.example.jetpackcomposeexample.controller.AwsDataController.POST_CONTENT_API_URL
+import com.example.jetpackcomposeexample.controller.PostHistoryController
+import com.example.jetpackcomposeexample.database.PostHistoryDatabase
 import com.example.jetpackcomposeexample.model.helper.AwsDataModel
 import com.example.jetpackcomposeexample.view.vico.article.ArticleScreen
 import com.example.jetpackcomposeexample.view.vico.article.HomeScreen
@@ -43,7 +45,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        PostHistoryController(applicationContext)
+    }
+
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
