@@ -11,7 +11,7 @@ import com.example.jetpackcomposeexample.model.helper.dto.Post
 import com.example.jetpackcomposeexample.model.helper.dto.PostAuthor
 import com.example.jetpackcomposeexample.model.helper.dto.Publication
 
-public val publication = Publication(
+val publication = Publication(
     "Android Developers",
     "https://cdn-images-1.medium.com/max/258/1*u7oZc2_5mrkcFaxkXEyfYA@2x.png"
 )
@@ -119,3 +119,36 @@ val post3 = Post(
     imageId = R.drawable.post_3,
     imageThumbId = R.drawable.post_3_thumb
 )
+val post1 = Post(
+    id = "dc523f0ed25c",
+    title = "A Little Thing about Android Module Paths",
+    subtitle = "How to configure your module paths, instead of using Gradle’s default.",
+    url = "https://medium.com/androiddevelopers/gradle-path-configuration-dc523f0ed25c",
+    publication = publication,
+    metaData = MetaData(
+        author = florina,
+        date = "August 02",
+        readTimeMinutes = 1
+    ),
+    paragraph = paragraphsPost3,
+    imageId = R.drawable.post_3,
+    imageThumbId = R.drawable.post_3_thumb
+)
+
+val post2 = Post(
+    id = "7446d8dfd7dc",
+    title = "Dagger in Kotlin: Gotchas and Optimizations",
+    subtitle = "Use Dagger in Kotlin! This article includes best practices to optimize your build time and gotchas you might encounter.",
+    url = "https://medium.com/androiddevelopers/dagger-in-kotlin-gotchas-and-optimizations-7446d8dfd7dc",
+    publication = publication,
+    metaData = MetaData(
+        author = florina,
+        date = "July 30",
+        readTimeMinutes = 3
+    ),
+    paragraph = paragraphsPost3,
+    imageId = R.drawable.post_3,
+    imageThumbId = R.drawable.post_3_thumb
+)
+
+val posts = listOf<Post>(post1, post2, post3)

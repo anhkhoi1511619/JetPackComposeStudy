@@ -1,11 +1,18 @@
 package com.example.jetpackcomposeexample.view.vico.chart
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.jetpackcomposeexample.R
+import com.example.jetpackcomposeexample.model.helper.dto.impl.charList
 import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
@@ -19,14 +26,40 @@ import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.entryModelOf
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical
 import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.chart.line.LineChart
+import com.patrykandpatrick.vico.core.entry.ChartEntry
+import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.composed.plus
+import com.patrykandpatrick.vico.core.entry.entryModelOf
 
+@Composable
+fun ChartCode(
+    modifier: Modifier
+){
+    val  composeChart = getColumnChart() + getLineChart()
+    composeChart.setPersistentMarkers(markers = markerMap)
 
+    Column(
+        modifier = modifier
+    ) {
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = stringResource(id = R.string.home_chart) ,
+            style = MaterialTheme.typography.titleLarge
+        )
+        Chart(chart = composeChart,
+            model = model1 + model2,
+            startAxis = startAxis(),
+            bottomAxis = bottomAxis(),
+            endAxis = endAxis(),
+            modifier = Modifier
+        )
+    }
+}
 @Preview
 @Composable
 fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
@@ -47,10 +80,10 @@ fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
     }
 }
 
-private val model1 = entryModelOf(0 to 1, 1 to 2, 2 to 4, 3 to 1, 4 to 4)
-private val model2 = entryModelOf(1 to 4, 2 to 1, 3 to 8, 4 to 12, 5 to 5)
+val model1 = entryModelOf( 0 to 1, 1 to 2, 2 to 4, 3 to 1, 4 to 4)
+val model2 = entryModelOf(1 to 4, 2 to 1, 3 to 8, 4 to 12, 5 to 5)
 @Composable
-private fun getColumnChart(
+fun getColumnChart(
     markerMap: Map<Float, Marker> = emptyMap(),
     targetVerticalAxisPosition: Vertical? = null,
 ): ColumnChart = columnChart(
@@ -65,7 +98,7 @@ private fun getColumnChart(
     targetVerticalAxisPosition = targetVerticalAxisPosition,
 )
 @Composable
-private fun getLineChart(
+fun getLineChart(
     markerMap: Map<Float, Marker> = emptyMap(),
     targetVerticalAxisPosition: Vertical? = null,
 ): LineChart = lineChart(
@@ -81,15 +114,22 @@ private fun getLineChart(
     targetVerticalAxisPosition = targetVerticalAxisPosition,
 )
 
-private val markerMap: Map<Float, Marker>
+val markerMap: Map<Float, Marker>
     @Composable get() = mapOf(4f to rememberMarker())
+
+val modelK : List<FloatEntry> = listOf(
+    FloatEntry(1F, 2F),
+    FloatEntry(2F,3F),
+    FloatEntry(3F,4F),
+    FloatEntry(4F,5F)
+);
 
 @Preview
 @Composable
 fun ChartExample2Preview(){
     Chart(
-        chart = getColumnChart(markerMap = markerMap),
-        model = model1,
+        chart = getLineChart(markerMap = markerMap),
+        model = entryModelOf(modelK),
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
         modifier = Modifier

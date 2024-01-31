@@ -1,10 +1,12 @@
 package com.example.jetpackcomposeexample.aws.helper;
 
-import static com.example.jetpackcomposeexample.controller.AwsDataController.AWS_POST_API_RESPONSE;
-
 import android.util.Log;
 
-import com.example.jetpackcomposeexample.controller.AwsDataController;
+import androidx.core.util.Consumer;
+
+import com.example.jetpackcomposeexample.model.helper.AwsDataModel;
+import com.example.jetpackcomposeexample.model.helper.dto.Post;
+import com.example.jetpackcomposeexample.utils.UrlConstants;
 
 import org.json.JSONObject;
 
@@ -14,6 +16,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -24,11 +28,57 @@ import javax.net.ssl.X509TrustManager;
 
 
 public class AwsConnectHelper {
-    static HttpsURLConnection connection;
-
+    static HttpsURLConnection connectionHttps;
+    static HttpURLConnection connectionHttp;
     public static final String TAG = AwsConnectHelper.class.getSimpleName();
-    public static void connect(String url){
-        new Thread(()->{
+    static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+    public static void connect(String url, Consumer<Post> callback){
+        executor.execute(()->{
+            Post post;
+            if(UrlConstants.IS_LOCAL_HOST) {
+                post = connectLocalServer(url);
+            } else {
+                post = connect(url);
+            }
+            callback.accept(post);
+        });
+    }
+    public static Post connectLocalServer(String url){
+        JSONObject result = new JSONObject();
+        try {
+            URL urlConnect = new URL(url);
+            connectionHttp = (HttpURLConnection) urlConnect.openConnection();
+            connectionHttp.setRequestMethod("GET");
+
+            int responseCode = connectionHttp.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connectionHttp.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+
+                in.close();
+
+                // Output the response
+                result = new JSONObject(String.valueOf(response));
+                Log.d(TAG,"send data what have fetched from HTTP:"+result);
+//                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
+                return AwsDataModel.parsePostContent(result);
+            } else {
+                Log.d(TAG,"Failed to fetch the car list. Response Code: " + responseCode);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AwsDataModel.parsePostContent(result);
+    }
+    public static Post connect(String url){
+        JSONObject result = new JSONObject();
+//        new Thread(()->{
             try {
                 URL urlConnect = new URL(url);
                 SSLContext sslContext = null;
@@ -56,13 +106,13 @@ public class AwsConnectHelper {
                 }
 
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
-                connection = (HttpsURLConnection) urlConnect.openConnection();
-                connection.setRequestMethod("GET");
+                connectionHttps = (HttpsURLConnection) urlConnect.openConnection();
+                connectionHttps.setRequestMethod("GET");
 
-                int responseCode = connection.getResponseCode();
+                int responseCode = connectionHttps.getResponseCode();
 
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    BufferedReader in = new BufferedReader(new InputStreamReader(connectionHttps.getInputStream()));
                     String inputLine;
                     StringBuilder response = new StringBuilder();
 
@@ -73,18 +123,20 @@ public class AwsConnectHelper {
                     in.close();
 
                     // Output the response
-                    JSONObject jsonObject = new JSONObject(String.valueOf(response));
-                    Log.d(TAG,"send data what have fetched:"+jsonObject);
-                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, jsonObject);
+                    result = new JSONObject(String.valueOf(response));
+                    Log.d(TAG,"send data what have fetched from HTTPs:"+result);
+//                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
+                    return AwsDataModel.parsePostContent(result);
                 } else {
                     Log.d(TAG,"Failed to fetch the car list. Response Code: " + responseCode);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).start();
+            return AwsDataModel.parsePostContent(result);
+//        }).start();
     }
     public static void disConnect(){
-        connection.disconnect();
+        connectionHttps.disconnect();
     }
 }

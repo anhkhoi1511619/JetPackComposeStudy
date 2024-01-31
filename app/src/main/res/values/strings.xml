@@ -35,7 +35,8 @@
     <string name="home_title">Home</string>
     <string name="home_tap_to_load_content">Tap to load content</string>
     <string name="home_top_section_title">Top stories for you</string>
-    <string name="home_popular_section_title">Popular on Jetnews</string>
+    <string name="home_popular_section_title">Popular very resume</string>
+    <string name="home_chart">Activity on LeetCode</string>
     <string name="home_post_min_read">%1$s - %2$d min read</string>
     <string name="home_post_based_on_history">BASED ON YOUR HISTORY</string>
     <string name="home_search">Search articles</string>
