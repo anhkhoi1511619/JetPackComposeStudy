@@ -10,6 +10,7 @@ import com.example.jetpackcomposeexample.database.PostHistoryDatabase;
 import com.example.jetpackcomposeexample.database.PostHistoryEntity;
 import com.example.jetpackcomposeexample.model.helper.dto.Post;
 import com.example.jetpackcomposeexample.model.helper.history.PostHistoryData;
+import com.example.jetpackcomposeexample.utils.TLog;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -17,6 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 public class PostHistoryController {
+    static final String TAG = PostHistoryController.class.getSimpleName();
     static PostHistoryDatabase db;
     static PostHistoryDao dao;
     static final ScheduledExecutorService historyExecutor = Executors.newScheduledThreadPool(2);
@@ -31,7 +33,7 @@ public class PostHistoryController {
     public static void set(Post post, long currentTime) {
         if(post == null) return;
         PostHistoryEntity entity = new PostHistoryEntity(currentTime, post.getMetaData().getAuthor().getName(), post.getTitle());
-        Log.d("PostHistoryController","data base set "+ entity);
+        TLog.d(TAG,"data base set "+ entity);
         historyExecutor.execute(()->dao.insertPost(entity));
     }
 
@@ -40,7 +42,7 @@ public class PostHistoryController {
             List<PostHistoryData> list = dao.getPostHistoryList(postNumber).stream()
                     .map(e->new PostHistoryData(e.getDate(), e.getAuthor(), e.getTitle()))
                     .collect(Collectors.toList());
-            Log.d("PostHistoryController","data base get "+ list);
+            TLog.d(TAG,"data base get "+ list);
             callback.accept(list);
         });
     }
