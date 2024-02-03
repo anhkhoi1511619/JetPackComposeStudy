@@ -3,14 +3,17 @@ package com.example.jetpackcomposeexample.controller.helper;
 import androidx.core.util.Consumer;
 
 import com.example.jetpackcomposeexample.model.post.AwsDataModel;
-import com.example.jetpackcomposeexample.model.post.Post;
+import com.example.jetpackcomposeexample.model.post.dto.Post;
+import com.example.jetpackcomposeexample.model.post.dto.PostRequest;
 import com.example.jetpackcomposeexample.utils.TLog;
 import com.example.jetpackcomposeexample.utils.UrlConstants;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.cert.CertificateException;
@@ -66,18 +69,27 @@ public class AwsConnectHelper {
                 result = new JSONObject(String.valueOf(response));
                 TLog.d(TAG,"Received data what have fetched from HTTPs:"+result);
 //                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
-                return AwsDataModel.parsePostContent(result);
+                return AwsDataModel.deserializePost(result);
             } else {
                 TLog.d(TAG,"Failed when fetch data. Response Code: " + responseCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return AwsDataModel.parsePostContent(result);
+        return AwsDataModel.deserializePost(result);
+    }
+    static JSONObject get() {
+        JSONObject object = new JSONObject();
+        try {
+            object.put("id", 1);
+            object.put("machine", "Samsung");
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+        return object;
     }
     public static Post fetchContentByHTPPs(String url){
         JSONObject result = new JSONObject();
-//        new Thread(()->{
             try {
                 URL urlConnect = new URL(url);
                 SSLContext sslContext = null;
@@ -106,7 +118,15 @@ public class AwsConnectHelper {
 
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
                 connectionHttps = (HttpsURLConnection) urlConnect.openConnection();
-                connectionHttps.setRequestMethod("GET");
+                connectionHttps.setRequestMethod("PUT");
+                // 3.リクエスとボディに書き込みを行う
+                //HttpURLConnectionからOutputStreamを取得し、json文字列を書き込む
+                //リクエスト形式をJsonに指定
+                connectionHttps.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+                PostRequest request = new PostRequest().fill();
+                PrintStream ps = new PrintStream(connectionHttps.getOutputStream());
+                ps.print(request.serialize());
+                ps.close();
 
                 int responseCode = connectionHttps.getResponseCode();
 
@@ -125,14 +145,14 @@ public class AwsConnectHelper {
                     result = new JSONObject(String.valueOf(response));
                     TLog.d(TAG,"Received data what have fetched from HTTPs:"+result);
 //                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
-                    return AwsDataModel.parsePostContent(result);
+                    return AwsDataModel.deserializePost(result);
                 } else {
                     TLog.d(TAG,"Failed when fetch data. Response Code: " + responseCode);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return AwsDataModel.parsePostContent(result);
+            return AwsDataModel.deserializePost(result);
     }
     public static void disConnect(){
         connectionHttps.disconnect();

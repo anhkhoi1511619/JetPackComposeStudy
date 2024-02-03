@@ -34,10 +34,10 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
-import com.example.jetpackcomposeexample.model.post.MetaData
-import com.example.jetpackcomposeexample.model.post.Paragraph
-import com.example.jetpackcomposeexample.model.post.ParagraphType
-import com.example.jetpackcomposeexample.model.post.Post
+import com.example.jetpackcomposeexample.model.post.dto.MetaData
+import com.example.jetpackcomposeexample.model.post.dto.Paragraph
+import com.example.jetpackcomposeexample.model.post.dto.ParagraphType
+import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.model.post.post3
 import com.example.jetpackcomposeexample.view.theme.JetpackComposeExampleTheme
 

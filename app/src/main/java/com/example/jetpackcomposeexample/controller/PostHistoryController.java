@@ -7,7 +7,7 @@ import androidx.core.util.Consumer;
 import com.example.jetpackcomposeexample.database.PostHistoryDao;
 import com.example.jetpackcomposeexample.database.PostHistoryDatabase;
 import com.example.jetpackcomposeexample.database.PostHistoryEntity;
-import com.example.jetpackcomposeexample.model.post.Post;
+import com.example.jetpackcomposeexample.model.post.dto.Post;
 import com.example.jetpackcomposeexample.model.history.PostHistoryData;
 import com.example.jetpackcomposeexample.utils.TLog;
 

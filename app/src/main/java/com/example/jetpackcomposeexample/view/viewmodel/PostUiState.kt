@@ -1,6 +1,6 @@
 package com.example.jetpackcomposeexample.view.viewmodel
 
-import com.example.jetpackcomposeexample.model.post.Post
+import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.model.post.post1
 import com.example.jetpackcomposeexample.model.post.post2
 import com.example.jetpackcomposeexample.model.post.post3

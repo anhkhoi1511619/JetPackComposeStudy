@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeexample.model.post
+package com.example.jetpackcomposeexample.model.post.dto
 
 import androidx.annotation.DrawableRes
 

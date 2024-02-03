@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
-import com.example.jetpackcomposeexample.model.post.Post
+import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.model.post.post3
 import com.example.jetpackcomposeexample.model.history.HistoryDataModel
 import com.example.jetpackcomposeexample.model.history.PostHistoryData

@@ -2,6 +2,12 @@ package com.example.jetpackcomposeexample.model.post;
 
 import com.example.jetpackcomposeexample.R;
 import com.example.jetpackcomposeexample.model.chart.Chart;
+import com.example.jetpackcomposeexample.model.post.dto.MetaData;
+import com.example.jetpackcomposeexample.model.post.dto.Paragraph;
+import com.example.jetpackcomposeexample.model.post.dto.ParagraphType;
+import com.example.jetpackcomposeexample.model.post.dto.Post;
+import com.example.jetpackcomposeexample.model.post.dto.PostAuthor;
+import com.example.jetpackcomposeexample.model.post.dto.Publication;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,9 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AwsDataModel {
-    public static Post post;
-    public static List<Chart> chartList;
-    public static Post parsePostContent(JSONObject jsonObject) {
+    public static Post deserializePost(JSONObject jsonObject) {
         String id_data;
         String title_data;
         String subtitle_data;
@@ -80,7 +84,8 @@ public class AwsDataModel {
                 R.drawable.post_3_thumb
         );
     }
-    public static void parseChartData(JSONObject jsonObject) {
+    public static List<Chart> deserializeChart(JSONObject jsonObject) {
+        List<Chart> chartList = new ArrayList<>();
         JSONArray array;
         try {
             array = (JSONArray) jsonObject.get("chart");
@@ -90,6 +95,7 @@ public class AwsDataModel {
                 Chart chart = new Chart(x,y);
                 chartList.add(chart);
             }
+            return chartList;
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

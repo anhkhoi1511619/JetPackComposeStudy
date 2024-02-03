@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.jetpackcomposeexample.controller.helper.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.PostHistoryController
-import com.example.jetpackcomposeexample.model.post.Post
+import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.UrlConstants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
