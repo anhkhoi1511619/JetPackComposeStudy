@@ -86,20 +86,25 @@ fun PostList(
         item {
             Search(modifier = Modifier.padding(horizontal = 16.dp), onSearchInputChanged = {})
             PostTopSection(post = detailPost  , onArticleTapped)
-            PostListSimpleSection(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
+            PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
             ChartCode(modifier = Modifier.padding(16.dp))
-            PostListPopular(posts = posts, navigateToArticle = onArticleTapped)
+            PostSocialActivities(posts = posts, navigateToArticle = onArticleTapped)
         }
     }
 }
 
 @Composable
-fun PostListSimpleSection(
+fun PostListHistory(
     historyPosts: List<PostHistoryData>,
     navigateToArticle: (String) -> Unit,
     favorites: Set<String>
 ) {
     Column {
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = stringResource(id = R.string.home_history_title) ,
+            style = MaterialTheme.typography.titleLarge
+        )
         historyPosts.forEach { list ->
             PostCardSimple(data = list, isFavorite =favorites.contains(""))
             PostListDivider()
@@ -108,14 +113,14 @@ fun PostListSimpleSection(
 }
 
 @Composable
-fun PostListPopular(
+fun PostSocialActivities(
     posts: List<Post>,
     navigateToArticle: (String) -> Unit
 ) {
     Column {
         Text(
             modifier = Modifier.padding(16.dp),
-            text = stringResource(id = R.string.home_popular_section_title) ,
+            text = stringResource(id = R.string.home_social_activities_title) ,
             style = MaterialTheme.typography.titleLarge
         )
         Row (
@@ -172,7 +177,7 @@ fun PostListTest() {
 @Preview
 @Composable
 fun PostListPopularTest() {
-    PostListPopular(posts, navigateToArticle = {})
+    PostSocialActivities(posts, navigateToArticle = {})
 }
 @Preview
 @Composable
