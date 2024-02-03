@@ -1,15 +1,14 @@
 package com.example.jetpackcomposeexample.controller;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.core.util.Consumer;
 
 import com.example.jetpackcomposeexample.database.PostHistoryDao;
 import com.example.jetpackcomposeexample.database.PostHistoryDatabase;
 import com.example.jetpackcomposeexample.database.PostHistoryEntity;
-import com.example.jetpackcomposeexample.model.helper.dto.Post;
-import com.example.jetpackcomposeexample.model.helper.history.PostHistoryData;
+import com.example.jetpackcomposeexample.model.post.Post;
+import com.example.jetpackcomposeexample.model.history.PostHistoryData;
 import com.example.jetpackcomposeexample.utils.TLog;
 
 import java.util.List;

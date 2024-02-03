@@ -16,19 +16,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.lifecycleScope
-import com.example.jetpackcomposeexample.controller.AwsDataController
-import com.example.jetpackcomposeexample.aws.helper.AwsConnectHelper
-import com.example.jetpackcomposeexample.controller.AwsDataController.CHART_API_URL
-import com.example.jetpackcomposeexample.controller.AwsDataController.POST_CONTENT_API_URL
 import com.example.jetpackcomposeexample.controller.PostHistoryController
-import com.example.jetpackcomposeexample.database.PostHistoryDatabase
-import com.example.jetpackcomposeexample.model.helper.AwsDataModel
 import com.example.jetpackcomposeexample.utils.TLog
-import com.example.jetpackcomposeexample.view.vico.article.ArticleScreen
-import com.example.jetpackcomposeexample.view.vico.article.HomeScreen
-import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
-import kotlinx.coroutines.launch
+import com.example.jetpackcomposeexample.view.article.HomeScreen
+import com.example.jetpackcomposeexample.view.theme.JetpackComposeExampleTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

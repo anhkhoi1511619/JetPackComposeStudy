@@ -6,8 +6,8 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.util.Log;
 
-import com.example.jetpackcomposeexample.aws.helper.AwsConnectHelper;
-import com.example.jetpackcomposeexample.model.helper.AwsDataModel;
+import com.example.jetpackcomposeexample.controller.helper.AwsConnectHelper;
+import com.example.jetpackcomposeexample.model.post.AwsDataModel;
 
 import org.json.JSONObject;
 
@@ -30,7 +30,7 @@ public class AwsDataController {
 
                 switch (cmd) {
                     case AWS_POST_API:
-                        AwsConnectHelper.connect(POST_CONTENT_API_URL);
+                        AwsConnectHelper.fetchContentByHTPPs(POST_CONTENT_API_URL);
                         break;
                     case AWS_POST_API_RESPONSE:
                         AwsDataModel.parsePostContent((JSONObject) msg.obj);
