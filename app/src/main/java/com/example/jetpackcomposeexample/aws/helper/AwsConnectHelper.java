@@ -6,6 +6,7 @@ import androidx.core.util.Consumer;
 
 import com.example.jetpackcomposeexample.model.helper.AwsDataModel;
 import com.example.jetpackcomposeexample.model.helper.dto.Post;
+import com.example.jetpackcomposeexample.utils.TLog;
 import com.example.jetpackcomposeexample.utils.UrlConstants;
 
 import org.json.JSONObject;
@@ -65,11 +66,11 @@ public class AwsConnectHelper {
 
                 // Output the response
                 result = new JSONObject(String.valueOf(response));
-                Log.d(TAG,"send data what have fetched from HTTP:"+result);
+                TLog.d(TAG,"Received data what have fetched from HTTPs:"+result);
 //                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
                 return AwsDataModel.parsePostContent(result);
             } else {
-                Log.d(TAG,"Failed to fetch the car list. Response Code: " + responseCode);
+                TLog.d(TAG,"Failed when fetch data. Response Code: " + responseCode);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -124,11 +125,11 @@ public class AwsConnectHelper {
 
                     // Output the response
                     result = new JSONObject(String.valueOf(response));
-                    Log.d(TAG,"send data what have fetched from HTTPs:"+result);
+                    TLog.d(TAG,"Received data what have fetched from HTTPs:"+result);
 //                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
                     return AwsDataModel.parsePostContent(result);
                 } else {
-                    Log.d(TAG,"Failed to fetch the car list. Response Code: " + responseCode);
+                    TLog.d(TAG,"Failed when fetch data. Response Code: " + responseCode);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

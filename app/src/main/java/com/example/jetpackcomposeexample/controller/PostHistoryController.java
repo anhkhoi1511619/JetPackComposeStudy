@@ -32,8 +32,10 @@ public class PostHistoryController {
 
     public static void set(Post post, long currentTime) {
         if(post == null) return;
-        PostHistoryEntity entity = new PostHistoryEntity(currentTime, post.getMetaData().getAuthor().getName(), post.getTitle());
-        TLog.d(TAG,"data base set "+ entity);
+        String authorName = post.getMetaData().getAuthor().getName();
+        String title = post.getTitle();
+        PostHistoryEntity entity = new PostHistoryEntity(currentTime, authorName, title);
+        TLog.d(TAG,"Set system time  "+ currentTime+"  author: "+authorName+"  title"+title+" to Database");
         historyExecutor.execute(()->dao.insertPost(entity));
     }
 
@@ -42,7 +44,9 @@ public class PostHistoryController {
             List<PostHistoryData> list = dao.getPostHistoryList(postNumber).stream()
                     .map(e->new PostHistoryData(e.getDate(), e.getAuthor(), e.getTitle()))
                     .collect(Collectors.toList());
-            TLog.d(TAG,"data base get "+ list);
+            list.stream().forEach(value->{
+                TLog.d(TAG,"Get System Time  "+ value.getDate()+" Author: "+value.getAuthor()+" Title:   "+value.getTitle()+"  from Database");
+            });
             callback.accept(list);
         });
     }

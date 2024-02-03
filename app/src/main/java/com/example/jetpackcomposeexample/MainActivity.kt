@@ -24,6 +24,7 @@ import com.example.jetpackcomposeexample.controller.AwsDataController.POST_CONTE
 import com.example.jetpackcomposeexample.controller.PostHistoryController
 import com.example.jetpackcomposeexample.database.PostHistoryDatabase
 import com.example.jetpackcomposeexample.model.helper.AwsDataModel
+import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.view.vico.article.ArticleScreen
 import com.example.jetpackcomposeexample.view.vico.article.HomeScreen
 import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
@@ -43,6 +44,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        TLog.d("MainActivity", "App is starting")
     }
 
     override fun onResume() {

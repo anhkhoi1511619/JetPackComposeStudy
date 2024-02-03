@@ -13,25 +13,31 @@ public class CsvLogger {
     private int idx = 1;
     private File file;
     public CsvLogger(String fileName, String[] cols) {
-        File folder = new File("/sdcard/postApp");
+        File folder = new File("/sdcard/DCIM/ProfileApp");
         boolean isFolderExists = folder.mkdirs();
         if(isFolderExists) {
             Log.d(TAG, "Folder is created successfully");
         } else {
-            Log.d(TAG, "Error when creating folder");
+            Log.d(TAG, "Folder is exists");
         }
-        file = new File("/sdcard/postApp", fileName);
+        file = new File("/sdcard/DCIM/ProfileApp/"+fileName);
         if(file.exists())return;
 
         try {
+            if (file.createNewFile()) {
+                Log.d(TAG, "File created: " + file.getName());
+            } else {
+                Log.d(TAG, "File already exists.");
+            }
             FileOutputStream fos = new FileOutputStream(file, true);
             for (String header : cols) {
                 fos.write((","+header).getBytes());
             }
             fos.write(("\r\n").getBytes());
             fos.close();
+            Log.d(TAG, "Write header in File is done");
         } catch (Exception e) {
-
+            Log.d(TAG, "Error when writing header in file");
         }
     }
 
@@ -42,8 +48,9 @@ public class CsvLogger {
             fos.write((line+"\r\n").getBytes());
             fos.close();
             idx++;
+            Log.d(TAG, "Write content in File is done");
         } catch (Exception e) {
-
+            Log.d(TAG, "Error when writing content in file");
         }
     }
 }
