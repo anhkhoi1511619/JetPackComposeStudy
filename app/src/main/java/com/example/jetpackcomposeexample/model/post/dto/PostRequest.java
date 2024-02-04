@@ -7,10 +7,6 @@ public class PostRequest {
     int id;
     String machine;
 
-    public PostRequest() {
-        this.id = 1;
-        this.machine = "Samsung SM-N960U";
-    }
 
     public PostRequest fill() {
         this.id = 1;

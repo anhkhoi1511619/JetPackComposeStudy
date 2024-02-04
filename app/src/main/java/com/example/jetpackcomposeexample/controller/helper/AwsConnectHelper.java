@@ -1,6 +1,13 @@
 package com.example.jetpackcomposeexample.controller.helper;
 
+import android.util.Log;
+
 import androidx.core.util.Consumer;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import com.example.jetpackcomposeexample.model.post.AwsDataModel;
 import com.example.jetpackcomposeexample.model.post.dto.Post;
@@ -8,14 +15,17 @@ import com.example.jetpackcomposeexample.model.post.dto.PostRequest;
 import com.example.jetpackcomposeexample.utils.TLog;
 import com.example.jetpackcomposeexample.utils.UrlConstants;
 
+import org.conscrypt.Conscrypt;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.Executors;
@@ -30,6 +40,8 @@ import javax.net.ssl.X509TrustManager;
 
 
 public class AwsConnectHelper {
+    public static final MediaType MEDIA_TYPE_JSON = MediaType.get("application/json");
+    static OkHttpClient client = new OkHttpClient();
     static HttpsURLConnection connectionHttps;
     static HttpURLConnection connectionHttp;
     public static final String TAG = AwsConnectHelper.class.getSimpleName();
@@ -40,12 +52,71 @@ public class AwsConnectHelper {
             if(UrlConstants.IS_LOCAL_HOST) {
                 post = fetchContentByHTTP(url);
             } else {
-                post = fetchContentByHTPPs(url);
+                post = fetchContentByOkHttp(url);
+//                post = fetchContentByHTPPs(url);
             }
             callback.accept(post);
         });
     }
-    public static Post fetchContentByHTTP(String url){
+    static Post fetchContentByOkHttp(String url) {
+        client = disableCertificateValidation();
+
+        PostRequest requestBody = new PostRequest().fill();
+        RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
+        Request request = new Request.Builder()
+                    .url(url)
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+        try {
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                    JSONObject object = new JSONObject(response.body().string());
+                    TLog.d(TAG, "Received data what have fetched from HTTPs:" + object);
+                    return AwsDataModel.deserializePost(object);
+            }
+        } catch (IOException | JSONException e) {
+                Log.d(TAG, "Exception");
+        }
+        return AwsDataModel.deserializePost(new JSONObject());
+    }
+    static OkHttpClient disableCertificateValidation() {
+        try {
+            // Create a trust manager that does not validate certificate chains
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+
+            // Install the all-trusting trust manager
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            // Create an OkHttpClient that trusts all certificates
+            OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0])
+                    .hostnameVerifier((hostname, session) -> true);
+
+            return builder.build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new OkHttpClient();
+    }
+    static Post fetchContentByHTTP(String url){
         JSONObject result = new JSONObject();
         try {
             URL urlConnect = new URL(url);
@@ -78,17 +149,7 @@ public class AwsConnectHelper {
         }
         return AwsDataModel.deserializePost(result);
     }
-    static JSONObject get() {
-        JSONObject object = new JSONObject();
-        try {
-            object.put("id", 1);
-            object.put("machine", "Samsung");
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-        return object;
-    }
-    public static Post fetchContentByHTPPs(String url){
+    static Post fetchContentByHTPPs(String url){
         JSONObject result = new JSONObject();
             try {
                 URL urlConnect = new URL(url);
@@ -118,7 +179,7 @@ public class AwsConnectHelper {
 
                 HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
                 connectionHttps = (HttpsURLConnection) urlConnect.openConnection();
-                connectionHttps.setRequestMethod("PUT");
+                connectionHttps.setRequestMethod("POST");
                 // 3.リクエスとボディに書き込みを行う
                 //HttpURLConnectionからOutputStreamを取得し、json文字列を書き込む
                 //リクエスト形式をJsonに指定

@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.jetpackcomposeexample.controller.PostHistoryController
+import com.example.jetpackcomposeexample.controller.helper.AwsConnectHelper
 import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.view.article.HomeScreen
 import com.example.jetpackcomposeexample.view.theme.JetpackComposeExampleTheme
@@ -41,6 +42,11 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         PostHistoryController(applicationContext)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        AwsConnectHelper.disConnect()
     }
 
 }
