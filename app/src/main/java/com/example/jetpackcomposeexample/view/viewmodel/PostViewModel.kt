@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.jetpackcomposeexample.controller.helper.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.PostHistoryController
 import com.example.jetpackcomposeexample.model.post.dto.Post
+import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.utils.UrlConstants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -57,13 +58,13 @@ class PostViewModel: ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.DETAIL_POST)
         }
-        Log.d("PostViewModel","isClicking is ${_uiState.value.screenID}")
+        TLog.d("PostViewModel","isClicking is ${_uiState.value.screenID}")
     }
     fun backHome() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.HOME)
         }
         isUpdated = false
-        Log.d("PostViewModel","isClicking is ${_uiState.value.screenID}")
+        TLog.d("PostViewModel","isClicking is ${_uiState.value.screenID}")
     }
 }
