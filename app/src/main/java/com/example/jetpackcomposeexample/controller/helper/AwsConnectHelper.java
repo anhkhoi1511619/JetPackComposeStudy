@@ -15,7 +15,6 @@ import com.example.jetpackcomposeexample.model.post.dto.PostRequest;
 import com.example.jetpackcomposeexample.utils.TLog;
 import com.example.jetpackcomposeexample.utils.UrlConstants;
 
-import org.conscrypt.Conscrypt;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,13 +39,21 @@ import javax.net.ssl.X509TrustManager;
 
 
 public class AwsConnectHelper {
-    public static final MediaType MEDIA_TYPE_JSON = MediaType.get("application/json");
-    static OkHttpClient client = new OkHttpClient();
-    static HttpsURLConnection connectionHttps;
-    static HttpURLConnection connectionHttp;
-    public static final String TAG = AwsConnectHelper.class.getSimpleName();
-    static final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
-    public static void fetchContent(String url, Consumer<Post> callback){
+    //Use singleton to manage
+    static AwsConnectHelper instance = null;
+    public static synchronized AwsConnectHelper getInstance() {
+        if(instance == null) {
+            instance = new AwsConnectHelper();
+        }
+        return instance;
+    }
+    final MediaType MEDIA_TYPE_JSON = MediaType.get("application/json");
+    OkHttpClient client = new OkHttpClient();
+    HttpsURLConnection connectionHttps;
+    HttpURLConnection connectionHttp;
+    final String TAG = AwsConnectHelper.class.getSimpleName();
+    final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+    public void fetchContent(String url, Consumer<Post> callback){
         executor.execute(()->{
             Post post;
             if(UrlConstants.IS_LOCAL_HOST) {
@@ -58,7 +65,7 @@ public class AwsConnectHelper {
             callback.accept(post);
         });
     }
-    static Post fetchContentByOkHttp(String url) {
+    Post fetchContentByOkHttp(String url) {
         client = disableCertificateValidation();
 
         PostRequest requestBody = new PostRequest().fill();
@@ -80,7 +87,7 @@ public class AwsConnectHelper {
         }
         return AwsDataModel.deserializePost(new JSONObject());
     }
-    static OkHttpClient disableCertificateValidation() {
+    OkHttpClient disableCertificateValidation() {
         try {
             // Create a trust manager that does not validate certificate chains
             TrustManager[] trustAllCerts = new TrustManager[]{
@@ -116,7 +123,7 @@ public class AwsConnectHelper {
         }
         return new OkHttpClient();
     }
-    static Post fetchContentByHTTP(String url){
+    Post fetchContentByHTTP(String url){
         JSONObject result = new JSONObject();
         try {
             URL urlConnect = new URL(url);
@@ -149,7 +156,7 @@ public class AwsConnectHelper {
         }
         return AwsDataModel.deserializePost(result);
     }
-    static Post fetchContentByHTPPs(String url){
+    Post fetchContentByHTPPs(String url){
         JSONObject result = new JSONObject();
             try {
                 URL urlConnect = new URL(url);
@@ -215,7 +222,7 @@ public class AwsConnectHelper {
             }
             return AwsDataModel.deserializePost(result);
     }
-    public static void disConnect(){
+    void disConnect(){
         connectionHttps.disconnect();
     }
 }

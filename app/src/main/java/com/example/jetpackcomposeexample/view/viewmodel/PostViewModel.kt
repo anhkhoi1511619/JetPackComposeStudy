@@ -43,7 +43,7 @@ class PostViewModel: ViewModel() {
 
     fun load(id: String){
         loadedIDList += id
-        AwsConnectHelper.fetchContent(UrlConstants.POST_CONTENT_API_URL) { result ->
+        AwsConnectHelper.getInstance().fetchContent(UrlConstants.POST_CONTENT_API_URL) { result ->
             Log.d("PostViewModel","result is $result")
             moveToDetail()
             _uiState.update { currentState ->
