@@ -11,10 +11,12 @@ data class PostUiState (
     val loadedDetailPost: Post = post3,
     val showingPostList: List<Post> = listOf(post1, post2) + loadedDetailPost,
     val historyPost: List<PostHistoryData> = HistoryDataModel.list,
-    val screenID: ScreenID = ScreenID.HOME
+    val upLoadDone: Boolean = false,
+    val screenID: ScreenID = ScreenID.LOGIN
 )
 
 enum class ScreenID {
+    LOGIN,
     HOME,
     DETAIL_POST,
     SETTING

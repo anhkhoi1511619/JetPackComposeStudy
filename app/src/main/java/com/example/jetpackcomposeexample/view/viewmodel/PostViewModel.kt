@@ -7,6 +7,7 @@ import com.example.jetpackcomposeexample.controller.PostHistoryController
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.utils.UrlConstants
+import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_LOG_API_URL_HTTP
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,6 +53,17 @@ class PostViewModel: ViewModel() {
             }
             addDB(post = result)
             Log.d("PostViewModel","loadedDetailPost is ${_uiState.value.loadedDetailPost}")
+        }
+    }
+
+    fun uploadLog() {
+        AwsConnectHelper.getInstance().upload(UPLOAD_LOG_API_URL_HTTP) { result ->
+            _uiState.update { currentState ->
+                currentState.copy(
+                        upLoadDone = result,
+                        screenID = ScreenID.HOME
+                    )
+            }
         }
     }
     fun moveToDetail() {

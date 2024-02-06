@@ -18,12 +18,18 @@ import com.example.jetpackcomposeexample.utils.UrlConstants;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.Buffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
@@ -65,6 +71,42 @@ public class AwsConnectHelper {
             callback.accept(post);
         });
     }
+    public void upload(String url, Consumer<Boolean> callback) {
+        executor.execute(()->{
+            callback.accept(uploadLog(url));
+        });
+    }
+    Boolean uploadLog(String url) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) (new URL(url)).openConnection();
+            connection.setDoInput(true);
+            connection.setDoOutput(true);
+            connection.setRequestMethod("PUT");
+            connection.setRequestProperty("Content-type", "application/gzip");
+            connection.connect();
+
+            BufferedOutputStream count = new BufferedOutputStream(connection.getOutputStream());
+            BufferedInputStream fin = new BufferedInputStream(Files.newInputStream(Paths.get("/sdcard/DCIM/ProfileApp/logcat.tar.gz")));///sdcard/DCIM/ProfileApp/logcat.tar.gz
+            int x;
+            final int UPLOAD_CHUNK_SIZE = 1024;
+            byte[] bytes = new byte[UPLOAD_CHUNK_SIZE];
+            while ((x = fin.read(bytes, 0, bytes.length)) > 0) {
+                count.write(bytes, 0, x);
+            }
+            fin.close();
+            count.close();
+            int code = connection.getResponseCode();
+            String message = connection.getResponseMessage();
+            if(code == 200) {
+                Log.d(TAG, "upload finished done with code = "+code+", message: "+message);
+                return true;
+            }
+            Log.d(TAG, "upload finished fail with code = "+code+", message: "+message);
+            return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
     Post fetchContentByOkHttp(String url) {
         client = disableCertificateValidation();
 
@@ -86,42 +128,6 @@ public class AwsConnectHelper {
                 Log.d(TAG, "Exception");
         }
         return AwsDataModel.deserializePost(new JSONObject());
-    }
-    OkHttpClient disableCertificateValidation() {
-        try {
-            // Create a trust manager that does not validate certificate chains
-            TrustManager[] trustAllCerts = new TrustManager[]{
-                    new X509TrustManager() {
-                        @Override
-                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                        }
-
-                        @Override
-                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                        }
-
-                        @Override
-                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                            return new java.security.cert.X509Certificate[]{};
-                        }
-                    }
-            };
-
-            // Install the all-trusting trust manager
-            SSLContext sslContext = SSLContext.getInstance("SSL");
-            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
-
-            // Create an OkHttpClient that trusts all certificates
-            OkHttpClient.Builder builder = new OkHttpClient.Builder()
-                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0])
-                    .hostnameVerifier((hostname, session) -> true);
-
-            return builder.build();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new OkHttpClient();
     }
     Post fetchContentByHTTP(String url){
         JSONObject result = new JSONObject();
@@ -160,31 +166,7 @@ public class AwsConnectHelper {
         JSONObject result = new JSONObject();
             try {
                 URL urlConnect = new URL(url);
-                SSLContext sslContext = null;
-                try {
-                    TrustManager[] tm = {
-                            new X509TrustManager() {
-                                @Override
-                                public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
-                                @Override
-                                public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
-                                @Override
-                                public X509Certificate[] getAcceptedIssuers() { return null; }
-                            }
-                    };
-                    sslContext = SSLContext.getInstance("SSL");
-                    sslContext.init(null, tm, null);
-                    HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            return true;
-                        }
-                    });
-                } catch(Exception e) {
-                    e.printStackTrace();
-                }
-
-                HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
+                disableCertificateValidationHTTPs();
                 connectionHttps = (HttpsURLConnection) urlConnect.openConnection();
                 connectionHttps.setRequestMethod("POST");
                 // 3.リクエスとボディに書き込みを行う
@@ -221,6 +203,69 @@ public class AwsConnectHelper {
                 e.printStackTrace();
             }
             return AwsDataModel.deserializePost(result);
+    }
+    OkHttpClient disableCertificateValidation() {
+        try {
+            // Create a trust manager that does not validate certificate chains
+            TrustManager[] trustAllCerts = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+
+            // Install the all-trusting trust manager
+            SSLContext sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, trustAllCerts, new java.security.SecureRandom());
+
+            // Create an OkHttpClient that trusts all certificates
+            OkHttpClient.Builder builder = new OkHttpClient.Builder()
+                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustAllCerts[0])
+                    .hostnameVerifier((hostname, session) -> true);
+
+            return builder.build();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new OkHttpClient();
+    }
+    void disableCertificateValidationHTTPs() {
+        SSLContext sslContext = null;
+        try {
+            TrustManager[] tm = {
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
+                        @Override
+                        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {}
+                        @Override
+                        public X509Certificate[] getAcceptedIssuers() { return null; }
+                    }
+            };
+            sslContext = SSLContext.getInstance("SSL");
+            sslContext.init(null, tm, null);
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        HttpsURLConnection.setDefaultSSLSocketFactory(sslContext.getSocketFactory());
     }
     void disConnect(){
         connectionHttps.disconnect();

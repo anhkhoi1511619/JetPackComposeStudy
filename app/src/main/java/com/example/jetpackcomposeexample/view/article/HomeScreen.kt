@@ -39,7 +39,7 @@ import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(postViewModel: PostViewModel =  viewModel()){
+fun HomeScreen(postViewModel: PostViewModel){
     val postUiState by postViewModel.uiState.collectAsState()
     when(postUiState.screenID) {
         ScreenID.HOME -> {
@@ -64,6 +64,10 @@ fun HomeScreen(postViewModel: PostViewModel =  viewModel()){
         }
 
         ScreenID.SETTING -> {
+            /*TODO*/
+        }
+
+        else -> {
             /*TODO*/
         }
     }
@@ -182,5 +186,5 @@ fun PostListPopularTest() {
 @Preview
 @Composable
 fun HomeScreenTest() {
-    HomeScreen()
+    HomeScreen(postViewModel = viewModel())
 }
