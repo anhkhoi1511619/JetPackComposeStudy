@@ -8,6 +8,10 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okio.Buffer;
+import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.Okio;
 
 import com.example.jetpackcomposeexample.model.post.AwsDataModel;
 import com.example.jetpackcomposeexample.model.post.dto.Post;
@@ -21,13 +25,13 @@ import org.json.JSONObject;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.Security;
@@ -76,6 +80,42 @@ public class AwsConnectHelper {
             callback.accept(uploadLog(url));
         });
     }
+
+    public void download(String url, Consumer<Boolean> callback) {
+        executor.execute(()->{
+            callback.accept(download(url, "/sdcard/DCIM/ProfileApp/"));
+        });
+    }
+    Boolean download(String url, String saveTo) {
+        try {
+            File dir = new File(saveTo);
+            if(dir.mkdirs()) {
+                Log.d(TAG, "Folder is created successfully");
+            } else {
+                Log.d(TAG, "Folder is exists");
+            }
+
+            File file = new File(saveTo+"/"+"11");
+            Request request = new Request.Builder().url(url).build();
+            Response response = client.newCall(request).execute();
+            if(response.body() == null) return false;
+
+            BufferedSource source = response.body().source();
+            BufferedSink sink = Okio.buffer(Okio.sink(file));
+            Buffer buffer = sink.getBuffer();
+            final int DOWNLOAD_CHUNK_SIZE = 8*1024;
+            while (source.read(buffer, DOWNLOAD_CHUNK_SIZE) != -1) {
+                sink.emit();
+            }
+            sink.flush();
+            sink.close();
+            source.close();
+            return true;
+        } catch (IOException e) {
+            Log.d(TAG, "download fail");
+        }
+        return false;
+    }
     Boolean uploadLog(String url) {
         try {
             HttpURLConnection connection = (HttpURLConnection) (new URL(url)).openConnection();
@@ -113,19 +153,19 @@ public class AwsConnectHelper {
         PostRequest requestBody = new PostRequest().fill();
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
-                    .url(url)
-                    .method("POST", body)
-                    .addHeader("Content-Type", "application/json")
-                    .build();
+                .url(url)
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .build();
         try {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
-                    JSONObject object = new JSONObject(response.body().string());
-                    TLog.d(TAG, "Received data what have fetched from HTTPs:" + object);
-                    return AwsDataModel.deserializePost(object);
+                JSONObject object = new JSONObject(response.body().string());
+                TLog.d(TAG, "Received data what have fetched from HTTPs:" + object);
+                return AwsDataModel.deserializePost(object);
             }
         } catch (IOException | JSONException e) {
-                Log.d(TAG, "Exception");
+            Log.d(TAG, "Exception");
         }
         return AwsDataModel.deserializePost(new JSONObject());
     }
@@ -164,45 +204,45 @@ public class AwsConnectHelper {
     }
     Post fetchContentByHTPPs(String url){
         JSONObject result = new JSONObject();
-            try {
-                URL urlConnect = new URL(url);
-                disableCertificateValidationHTTPs();
-                connectionHttps = (HttpsURLConnection) urlConnect.openConnection();
-                connectionHttps.setRequestMethod("POST");
-                // 3.リクエスとボディに書き込みを行う
-                //HttpURLConnectionからOutputStreamを取得し、json文字列を書き込む
-                //リクエスト形式をJsonに指定
-                connectionHttps.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-                PostRequest request = new PostRequest().fill();
-                PrintStream ps = new PrintStream(connectionHttps.getOutputStream());
-                ps.print(request.serialize());
-                ps.close();
+        try {
+            URL urlConnect = new URL(url);
+            disableCertificateValidationHTTPs();
+            connectionHttps = (HttpsURLConnection) urlConnect.openConnection();
+            connectionHttps.setRequestMethod("POST");
+            // 3.リクエスとボディに書き込みを行う
+            //HttpURLConnectionからOutputStreamを取得し、json文字列を書き込む
+            //リクエスト形式をJsonに指定
+            connectionHttps.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            PostRequest request = new PostRequest().fill();
+            PrintStream ps = new PrintStream(connectionHttps.getOutputStream());
+            ps.print(request.serialize());
+            ps.close();
 
-                int responseCode = connectionHttps.getResponseCode();
+            int responseCode = connectionHttps.getResponseCode();
 
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(connectionHttps.getInputStream()));
-                    String inputLine;
-                    StringBuilder response = new StringBuilder();
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connectionHttps.getInputStream()));
+                String inputLine;
+                StringBuilder response = new StringBuilder();
 
-                    while ((inputLine = in.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-
-                    in.close();
-
-                    // Output the response
-                    result = new JSONObject(String.valueOf(response));
-                    TLog.d(TAG,"Received data what have fetched from HTTPs:"+result);
-//                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
-                    return AwsDataModel.deserializePost(result);
-                } else {
-                    TLog.d(TAG,"Failed when fetch data. Response Code: " + responseCode);
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+
+                in.close();
+
+                // Output the response
+                result = new JSONObject(String.valueOf(response));
+                TLog.d(TAG,"Received data what have fetched from HTTPs:"+result);
+//                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
+                return AwsDataModel.deserializePost(result);
+            } else {
+                TLog.d(TAG,"Failed when fetch data. Response Code: " + responseCode);
             }
-            return AwsDataModel.deserializePost(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AwsDataModel.deserializePost(result);
     }
     OkHttpClient disableCertificateValidation() {
         try {
