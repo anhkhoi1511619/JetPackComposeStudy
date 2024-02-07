@@ -1,15 +1,15 @@
 package com.example.jetpackcomposeexample.controller;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.core.util.Consumer;
 
 import com.example.jetpackcomposeexample.database.PostHistoryDao;
 import com.example.jetpackcomposeexample.database.PostHistoryDatabase;
 import com.example.jetpackcomposeexample.database.PostHistoryEntity;
-import com.example.jetpackcomposeexample.model.helper.dto.Post;
-import com.example.jetpackcomposeexample.model.helper.history.PostHistoryData;
+import com.example.jetpackcomposeexample.model.post.dto.Post;
+import com.example.jetpackcomposeexample.model.history.PostHistoryData;
+import com.example.jetpackcomposeexample.utils.TLog;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -17,6 +17,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.stream.Collectors;
 
 public class PostHistoryController {
+    static final String TAG = PostHistoryController.class.getSimpleName();
     static PostHistoryDatabase db;
     static PostHistoryDao dao;
     static final ScheduledExecutorService historyExecutor = Executors.newScheduledThreadPool(2);
@@ -30,8 +31,10 @@ public class PostHistoryController {
 
     public static void set(Post post, long currentTime) {
         if(post == null) return;
-        PostHistoryEntity entity = new PostHistoryEntity(currentTime, post.getMetaData().getAuthor().getName(), post.getTitle());
-        Log.d("PostHistoryController","data base set "+ entity);
+        String authorName = post.getMetaData().getAuthor().getName();
+        String title = post.getTitle();
+        PostHistoryEntity entity = new PostHistoryEntity(currentTime, authorName, title);
+        TLog.d(TAG,"Set system time  "+ currentTime+"  author: "+authorName+"  title"+title+" to Database");
         historyExecutor.execute(()->dao.insertPost(entity));
     }
 
@@ -40,7 +43,9 @@ public class PostHistoryController {
             List<PostHistoryData> list = dao.getPostHistoryList(postNumber).stream()
                     .map(e->new PostHistoryData(e.getDate(), e.getAuthor(), e.getTitle()))
                     .collect(Collectors.toList());
-            Log.d("PostHistoryController","data base get "+ list);
+            list.stream().forEach(value->{
+                TLog.d(TAG,"Get System Time  "+ value.getDate()+" Author: "+value.getAuthor()+" Title:   "+value.getTitle()+"  from Database");
+            });
             callback.accept(list);
         });
     }

@@ -10,24 +10,22 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.lifecycleScope
-import com.example.jetpackcomposeexample.controller.AwsDataController
-import com.example.jetpackcomposeexample.aws.helper.AwsConnectHelper
-import com.example.jetpackcomposeexample.controller.AwsDataController.CHART_API_URL
-import com.example.jetpackcomposeexample.controller.AwsDataController.POST_CONTENT_API_URL
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetpackcomposeexample.controller.PostHistoryController
-import com.example.jetpackcomposeexample.database.PostHistoryDatabase
-import com.example.jetpackcomposeexample.model.helper.AwsDataModel
-import com.example.jetpackcomposeexample.view.vico.article.ArticleScreen
-import com.example.jetpackcomposeexample.view.vico.article.HomeScreen
-import com.example.jetpackcomposeexample.view.vico.theme.JetpackComposeExampleTheme
-import kotlinx.coroutines.launch
+import com.example.jetpackcomposeexample.controller.helper.AwsConnectHelper
+import com.example.jetpackcomposeexample.utils.TLog
+import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_LOG_API_URL_HTTP
+import com.example.jetpackcomposeexample.view.article.HomeScreen
+import com.example.jetpackcomposeexample.view.theme.JetpackComposeExampleTheme
+import com.example.jetpackcomposeexample.view.viewmodel.PostViewModel
+import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +41,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        TLog.d("MainActivity", "App is starting")
     }
 
     override fun onResume() {
@@ -55,16 +54,19 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home() {
-    var isClicked by rememberSaveable { mutableStateOf(true) }
-    if (isClicked) {
-        TextButton(onClick = {
-            isClicked = false
-        }){
-            Text(text = "Login")
+fun Home(postViewModel: PostViewModel =  viewModel()) {
+    val postUiState by postViewModel.uiState.collectAsState()
+    when(postUiState.screenID) {
+        ScreenID.LOGIN -> {
+            TextButton(onClick = {
+                postViewModel.uploadLog()
+            }){
+                Text(text = "Login")
+            }
         }
-    } else {
-        HomeScreen()
+        else -> {
+            HomeScreen(postViewModel)
+        }
     }
 }
 

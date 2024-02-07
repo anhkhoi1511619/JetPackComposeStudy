@@ -69,9 +69,11 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
     annotationProcessor ("androidx.room:room-compiler:2.6.1")
 
-
     //Room Library
     implementation("androidx.room:room-runtime:2.6.1")
+
+    //OkHttp
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
