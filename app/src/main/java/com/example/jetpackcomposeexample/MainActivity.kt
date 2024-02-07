@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -15,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.jetpackcomposeexample.controller.bus.connection.CommClient
+import com.example.jetpackcomposeexample.controller.bus.connection.CommServer
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
 import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.view.article.HomeScreen
@@ -45,7 +44,7 @@ class MainActivity : ComponentActivity() {
         PostHistoryController(
             applicationContext
         )
-        CommClient.start()
+        CommServer.start()
     }
 
 }
