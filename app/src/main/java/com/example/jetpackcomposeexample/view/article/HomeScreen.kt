@@ -90,9 +90,9 @@ fun PostList(
         item {
             Search(modifier = Modifier.padding(horizontal = 16.dp), onSearchInputChanged = {})
             PostTopSection(post = detailPost  , onArticleTapped)
-            PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
-            ChartCode(modifier = Modifier.padding(16.dp))
             PostSocialActivities(posts = posts, navigateToArticle = onArticleTapped)
+            ChartCode(modifier = Modifier.padding(16.dp))
+            PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
         }
     }
 }

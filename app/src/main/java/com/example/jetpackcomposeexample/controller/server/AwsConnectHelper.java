@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeexample.controller.helper;
+package com.example.jetpackcomposeexample.controller.server;
 
 import android.util.Log;
 
@@ -26,7 +26,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -34,7 +33,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.concurrent.Executors;
@@ -76,15 +74,11 @@ public class AwsConnectHelper {
         });
     }
     public void upload(String url, Consumer<Boolean> callback) {
-        executor.execute(()->{
-            callback.accept(uploadLog(url));
-        });
+        executor.execute(()->callback.accept(uploadLog(url)));
     }
 
     public void download(String url, Consumer<Boolean> callback) {
-        executor.execute(()->{
-            callback.accept(download(url, "/sdcard/DCIM/ProfileApp/"));
-        });
+        executor.execute(()-> callback.accept(download(url, "/sdcard/DCIM/ProfileApp/")));
     }
     Boolean download(String url, String saveTo) {
         try {
@@ -161,7 +155,7 @@ public class AwsConnectHelper {
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
-                TLog.d(TAG, "Received data what have fetched from HTTPs:" + object);
+                TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
                 return AwsDataModel.deserializePost(object);
             }
         } catch (IOException | JSONException e) {
@@ -174,8 +168,12 @@ public class AwsConnectHelper {
         try {
             URL urlConnect = new URL(url);
             connectionHttp = (HttpURLConnection) urlConnect.openConnection();
-            connectionHttp.setRequestMethod("GET");
-
+            connectionHttp.setRequestMethod("POST");
+            connectionHttp.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            PostRequest request = new PostRequest().fill();
+            PrintStream ps = new PrintStream(connectionHttp.getOutputStream());
+            ps.print(request.serialize());
+            ps.close();
             int responseCode = connectionHttp.getResponseCode();
 
             if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -191,7 +189,7 @@ public class AwsConnectHelper {
 
                 // Output the response
                 result = new JSONObject(String.valueOf(response));
-                TLog.d(TAG,"Received data what have fetched from HTTPs:"+result);
+                TLog.d(TAG,"Received data what have fetched from HTTP:"+result);
 //                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
                 return AwsDataModel.deserializePost(result);
             } else {

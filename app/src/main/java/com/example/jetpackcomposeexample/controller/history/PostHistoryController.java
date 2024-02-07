@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeexample.controller;
+package com.example.jetpackcomposeexample.controller.history;
 
 import android.content.Context;
 

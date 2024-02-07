@@ -2,8 +2,8 @@ package com.example.jetpackcomposeexample.view.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.jetpackcomposeexample.controller.helper.AwsConnectHelper
-import com.example.jetpackcomposeexample.controller.PostHistoryController
+import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper
+import com.example.jetpackcomposeexample.controller.history.PostHistoryController
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.utils.UrlConstants
@@ -57,26 +57,34 @@ class PostViewModel: ViewModel() {
     }
 
     fun uploadLog() {
+        TLog.d("PostViewModel","Screen ID is ${_uiState.value.screenID}")
         AwsConnectHelper.getInstance().upload(UPLOAD_LOG_API_URL_HTTP) { result ->
             _uiState.update { currentState ->
                 currentState.copy(
                         upLoadDone = result,
-                        screenID = ScreenID.HOME
+                        screenID = ScreenID.LOGIN
                     )
             }
+            TLog.d("PostViewModel","Screen ID is ${_uiState.value.screenID}")
         }
+    }
+    fun moveToHome() {
+        _uiState.update { currentState ->
+            currentState.copy(screenID = ScreenID.HOME)
+        }
+        TLog.d("PostViewModel","Screen ID is ${_uiState.value.screenID}")
     }
     fun moveToDetail() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.DETAIL_POST)
         }
-        TLog.d("PostViewModel","isClicking is ${_uiState.value.screenID}")
+        TLog.d("PostViewModel","Screen ID is ${_uiState.value.screenID}")
     }
     fun backHome() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.HOME)
         }
         isUpdated = false
-        TLog.d("PostViewModel","isClicking is ${_uiState.value.screenID}")
+        TLog.d("PostViewModel","Screen ID is ${_uiState.value.screenID}")
     }
 }
