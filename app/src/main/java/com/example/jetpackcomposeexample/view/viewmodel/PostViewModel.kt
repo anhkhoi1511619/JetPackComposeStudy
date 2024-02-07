@@ -44,6 +44,14 @@ class PostViewModel: ViewModel() {
     }
 
     fun load(id: String){
+        if(loadedIDList.contains(id)) {//Avoid duplicate
+            moveToDetail()
+            Log.d("PostViewModel","Duplicate id")
+            return
+        }
+        loadNew(id)
+    }
+    private fun loadNew(id: String){
         loadedIDList += id
         AwsConnectHelper.getInstance().fetchContent(UrlConstants.POST_CONTENT_API_URL) { result ->
             Log.d("PostViewModel","result is $result")
