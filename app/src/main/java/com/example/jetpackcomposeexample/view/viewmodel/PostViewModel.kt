@@ -46,9 +46,10 @@ class PostViewModel: ViewModel() {
     fun load(id: String){
         if(loadedIDList.contains(id)) {//Avoid duplicate
             moveToDetail()
-            Log.d("PostViewModel","Duplicate id")
+            TLog.d("PostViewModel","Load with duplicate id")
             return
         }
+        TLog.d("PostViewModel","Load new id")
         loadNew(id)
     }
     private fun loadNew(id: String){
@@ -82,7 +83,7 @@ class PostViewModel: ViewModel() {
         }
         TLog.d("PostViewModel","Screen ID is ${_uiState.value.screenID}")
     }
-    fun moveToDetail() {
+    private fun moveToDetail() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.DETAIL_POST)
         }
