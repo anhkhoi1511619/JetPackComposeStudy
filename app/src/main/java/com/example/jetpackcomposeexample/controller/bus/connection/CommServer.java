@@ -43,10 +43,10 @@ public class CommServer {
                         TLog.d("BUS_DATA", "socket read: "+ Arrays.toString(buffers));
                     }
                     TLog.d("BUS_DATA", "Read raw data successfully");
-                    //TODO: Add DTO data
-                    socket.getOutputStream().write(new byte[]{1,2});
+                    socket.getOutputStream().write(new byte[]{1,2});//TODO: Add DTO data
                     socket.getOutputStream().flush();
                 } catch (SocketTimeoutException e) {
+                    //TODO: Add Error
                     TLog.d("BUS_DATA", "SocketTimeoutException");
                 }
             }

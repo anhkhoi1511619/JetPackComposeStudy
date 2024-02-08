@@ -1,6 +1,6 @@
-package com.example.jetpackcomposeexample.model.bus;
+package com.example.jetpackcomposeexample.model.bus.dto;
 
-public class BusData {
+public class BusResponse {
     int staffNo;
     int routeID;
 
@@ -9,7 +9,7 @@ public class BusData {
 
     int signalStrength;
 
-    public BusData() {
+    public BusResponse() {
         this.staffNo = 123456;
         this.routeID = 12345678;
         this.firstDate = 123456;
