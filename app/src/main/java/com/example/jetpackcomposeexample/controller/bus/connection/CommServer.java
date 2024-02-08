@@ -1,5 +1,7 @@
 package com.example.jetpackcomposeexample.controller.bus.connection;
 
+import android.util.Log;
+
 import androidx.core.util.Consumer;
 
 import com.example.jetpackcomposeexample.utils.TLog;
@@ -34,18 +36,16 @@ public class CommServer {
                     TLog.d("BUS_DATA", "Bus Comm is waiting for connecting....");
                     socket = serverSocket.accept();
                     TLog.d("BUS_DATA", "Bus Comm is connecting....");
-                    BufferedInputStream fin = new BufferedInputStream(socket.getInputStream());
-                    BufferedOutputStream count = new BufferedOutputStream(socket.getOutputStream());
-                    int x;
-                    final int UPLOAD_CHUNK_SIZE = 1024;
-                    byte[] bytes = new byte[UPLOAD_CHUNK_SIZE];
-                    while ((x = fin.read(bytes, 0, bytes.length)) > 0) {
-                        TLog.d("BUS_DATA", Arrays.toString(bytes) + "Length: "+x);
+                    final int BUFFER_SIZE = 1024;
+                    while(socket.getInputStream().available() > 0) {
+                        byte[] buffers = new byte[BUFFER_SIZE];
+                        socket.getInputStream().read(buffers);                    //TODO: Add callback
+                        TLog.d("BUS_DATA", "socket read: "+ Arrays.toString(buffers));
                     }
-                    count.write(new byte[]{1,2});
-                    fin.close();
-                    count.flush();
-//                    count.close();
+                    TLog.d("BUS_DATA", "Read raw data successfully");
+                    //TODO: Add DTO data
+                    socket.getOutputStream().write(new byte[]{1,2});
+                    socket.getOutputStream().flush();
                 } catch (SocketTimeoutException e) {
                     TLog.d("BUS_DATA", "SocketTimeoutException");
                 }
