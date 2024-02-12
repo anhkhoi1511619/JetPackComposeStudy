@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.core.util.Consumer;
 
+import com.example.jetpackcomposeexample.controller.bus.ResultCallback;
 import com.example.jetpackcomposeexample.utils.TLog;
 
 import java.io.BufferedInputStream;
@@ -17,7 +18,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class CommServer {
-    Consumer<byte[]> callback;
+    static ResultCallback callback;
     static final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public static void start() {
@@ -26,6 +27,7 @@ public class CommServer {
     }
      static final Runnable runnable = () -> {
         try {
+            callback = new ResultCallback();
             ServerSocket serverSocket;
             Socket socket;
             serverSocket = new ServerSocket(53001);
@@ -37,14 +39,16 @@ public class CommServer {
                     socket = serverSocket.accept();
                     TLog.d("BUS_DATA", "Bus Comm is connecting....");
                     final int BUFFER_SIZE = 1024;
+                    byte[] buffers = new byte[BUFFER_SIZE];
                     while(socket.getInputStream().available() > 0) {
-                        byte[] buffers = new byte[BUFFER_SIZE];
-                        socket.getInputStream().read(buffers);                    //TODO: Add callback
+                        socket.getInputStream().read(buffers);
                         TLog.d("BUS_DATA", "socket read: "+ Arrays.toString(buffers));
                     }
                     TLog.d("BUS_DATA", "Read raw data successfully");
-                    socket.getOutputStream().write(new byte[]{1,2});//TODO: Add DTO data
+                    byte[] response = callback.parse(buffers);
+                    socket.getOutputStream().write(response);
                     socket.getOutputStream().flush();
+                    TLog.d("BUS_DATA", "send response: "+Arrays.toString(response));
                 } catch (SocketTimeoutException e) {
                     //TODO: Add Error
                     TLog.d("BUS_DATA", "SocketTimeoutException");
