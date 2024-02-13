@@ -19,7 +19,7 @@ import com.example.jetpackcomposeexample.controller.history.PostHistoryControlle
 import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.view.article.HomeScreen
 import com.example.jetpackcomposeexample.view.theme.JetpackComposeExampleTheme
-import com.example.jetpackcomposeexample.view.viewmodel.PostViewModel
+import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
 
 class MainActivity : ComponentActivity() {
@@ -51,22 +51,22 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun Home(postViewModel: PostViewModel =  viewModel()) {
-    val postUiState by postViewModel.uiState.collectAsState()
+fun Home(UIViewModel: UIViewModel =  viewModel()) {
+    val postUiState by UIViewModel.uiState.collectAsState()
     when(postUiState.screenID) {
         ScreenID.FLASH -> {
             Text(text = "Updating")
-            postViewModel.uploadLog()
+            UIViewModel.uploadLog()
         }
         ScreenID.LOGIN -> {
             TextButton(onClick = {
-                postViewModel.moveToHome()
+                UIViewModel.moveToHome()
             }){
                 Text(text = "Login")
             }
         }
         else -> {
-            HomeScreen(postViewModel)
+            HomeScreen(UIViewModel)
         }
     }
 }

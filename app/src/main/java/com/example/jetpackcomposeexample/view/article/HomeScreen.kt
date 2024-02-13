@@ -30,7 +30,7 @@ import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.model.post.post3
 import com.example.jetpackcomposeexample.model.post.posts
 import com.example.jetpackcomposeexample.view.chart.ChartCode
-import com.example.jetpackcomposeexample.view.viewmodel.PostViewModel
+import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetpackcomposeexample.model.history.HistoryDataModel
 import com.example.jetpackcomposeexample.model.history.PostHistoryData
@@ -39,18 +39,18 @@ import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(postViewModel: PostViewModel){
-    val postUiState by postViewModel.uiState.collectAsState()
+fun HomeScreen(UIViewModel: UIViewModel){
+    val postUiState by UIViewModel.uiState.collectAsState()
     when(postUiState.screenID) {
         ScreenID.HOME -> {
-            postViewModel.update()
+            UIViewModel.update()
             PostList(
                 detailPost = postUiState.loadedDetailPost,
                 historyPosts = postUiState.historyPost,
                 posts = postUiState.showingPostList,
                 favorites = emptySet(),
                 onArticleTapped = {
-                    postViewModel.load(it)
+                    UIViewModel.load(it)
                 }
             )
         }
@@ -58,7 +58,7 @@ fun HomeScreen(postViewModel: PostViewModel){
             ArticleScreen(
                 post = postUiState.loadedDetailPost,
                 isExpandedScreen = false,
-                onBack = { postViewModel.backHome() },
+                onBack = { UIViewModel.backHome() },
                 isFavorite = false,
                 onToggleFavorite = { /*TODO*/ })
         }
@@ -186,5 +186,5 @@ fun PostListPopularTest() {
 @Preview
 @Composable
 fun HomeScreenTest() {
-    HomeScreen(postViewModel = viewModel())
+    HomeScreen(UIViewModel = viewModel())
 }

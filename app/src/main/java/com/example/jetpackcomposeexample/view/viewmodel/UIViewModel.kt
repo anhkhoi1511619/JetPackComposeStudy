@@ -13,10 +13,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class PostViewModel: ViewModel() {
+class UIViewModel: ViewModel() {
     //Ui State
-    private val _uiState = MutableStateFlow(PostUiState())
-    val uiState: StateFlow<PostUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow(UiState())
+    val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
     var loadedIDList: List<String> = mutableListOf("1511619")
         private set

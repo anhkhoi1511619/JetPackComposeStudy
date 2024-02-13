@@ -7,7 +7,7 @@ import com.example.jetpackcomposeexample.model.post.post3
 import com.example.jetpackcomposeexample.model.history.HistoryDataModel
 import com.example.jetpackcomposeexample.model.history.PostHistoryData
 
-data class PostUiState (
+data class UiState (
     val loadedDetailPost: Post = post3,
     val showingPostList: List<Post> = listOf(post1, post2) + loadedDetailPost,
     val historyPost: List<PostHistoryData> = HistoryDataModel.list,
