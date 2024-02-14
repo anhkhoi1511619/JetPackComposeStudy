@@ -8,8 +8,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class CommPackageDTO {
-    static final String TAG = CommPackageDTO.class.getSimpleName();
+public class BusDataResponse {
+    static final String TAG = BusDataResponse.class.getSimpleName();
     byte stx =  0x02;
     short dataSize;
     byte dataSizeSum;
@@ -32,6 +32,30 @@ public class CommPackageDTO {
     }
     public byte[] error() {
         return new byte[]{0};
+    }
+
+    public byte getStx() {
+        return stx;
+    }
+
+    public short getDataSize() {
+        return dataSize;
+    }
+
+    public byte getDataSizeSum() {
+        return dataSizeSum;
+    }
+
+    public byte getDataSum() {
+        return dataSum;
+    }
+
+    public byte getEtx() {
+        return etx;
+    }
+
+    public byte[] getData() {
+        return data;
     }
 
     public byte[] serialize() throws IOException {

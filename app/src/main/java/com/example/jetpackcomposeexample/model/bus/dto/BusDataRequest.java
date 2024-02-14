@@ -4,17 +4,12 @@ import android.util.Log;
 
 import com.example.jetpackcomposeexample.utils.DataTypeConverter;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.IOException;
 import java.lang.reflect.Field;
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Calendar;
 
-public class BusData {
-    static final String TAG = BusData.class.getSimpleName();
+public class BusDataRequest {
+    static final String TAG = BusDataRequest.class.getSimpleName();
 
     public static class Data {
         int staffId; // 3 bytes

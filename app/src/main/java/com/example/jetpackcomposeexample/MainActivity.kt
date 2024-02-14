@@ -16,13 +16,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetpackcomposeexample.controller.bus.connection.CommServer
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
-import com.example.jetpackcomposeexample.model.bus.dto.BusData
 import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.view.article.HomeScreen
 import com.example.jetpackcomposeexample.view.theme.JetpackComposeExampleTheme
 import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
-import java.util.concurrent.Future
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
