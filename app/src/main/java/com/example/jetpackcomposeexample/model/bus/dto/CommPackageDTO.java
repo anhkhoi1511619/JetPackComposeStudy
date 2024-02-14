@@ -1,11 +1,15 @@
 package com.example.jetpackcomposeexample.model.bus.dto;
 
+import android.util.Log;
+
 import com.example.jetpackcomposeexample.utils.DataTypeConverter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class CommPackageDTO {
+    static final String TAG = CommPackageDTO.class.getSimpleName();
     byte stx =  0x02;
     short dataSize;
     byte dataSizeSum;
@@ -25,6 +29,9 @@ public class CommPackageDTO {
 
     public void setCommand(byte command) {
         this.command = command;
+    }
+    public byte[] error() {
+        return new byte[]{0};
     }
 
     public byte[] serialize() throws IOException {
@@ -46,5 +53,30 @@ public class CommPackageDTO {
         stream.write(etx);
 
         return stream.toByteArray();
+    }
+
+    public void deserialize(byte[] data) {
+        Log.d(TAG, "CommPackageDTO is ready to deserialize");
+        int offset = 0;
+        stx = data[0];
+        Log.d(TAG, "stx: "+stx);
+        offset++;
+        byte[] dataSizeArr = Arrays.copyOfRange(data, offset, offset+2);
+        Log.d(TAG, "dataSizeArr: "+Arrays.toString(dataSizeArr));
+        dataSize = (short) DataTypeConverter.castInt(dataSizeArr);
+        Log.d(TAG, "dataSize: "+dataSize);
+        offset+=2;
+        dataSizeSum = data[offset];
+        Log.d(TAG, "dataSizeSum: "+dataSizeSum);
+        offset++;
+        command = data[offset];
+        Log.d(TAG, "command: "+command);
+        offset++;
+        sequenceNum = data[offset];
+        Log.d(TAG, "sequenceNum: "+sequenceNum);
+        dataSum = data[data.length-2];
+        Log.d(TAG, "dataSum: "+dataSum);
+        etx = data[data.length-1];
+        Log.d(TAG, "etx: "+etx);
     }
 }

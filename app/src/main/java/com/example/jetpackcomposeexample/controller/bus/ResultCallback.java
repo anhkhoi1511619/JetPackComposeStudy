@@ -12,6 +12,7 @@ public class ResultCallback {
     CommPackageDTO commPackageDTO = new CommPackageDTO();
     public byte[] parse(byte[] request) {
         try {
+            if(!isCorrectData(request)) return commPackageDTO.error();
             busData.deserialize(request);
             Log.d("ResultCallback", "Data: "+busData.data.toString());
             commPackageDTO.setCommand((byte) (busData.getCommand()+1));
@@ -22,5 +23,9 @@ public class ResultCallback {
             e.printStackTrace();
         }
         return new byte[]{0};
+    }
+    boolean isCorrectData(byte[] request) {
+        commPackageDTO.deserialize(request);
+        return true;
     }
 }

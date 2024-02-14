@@ -44,12 +44,14 @@ public class CommServer {
                     TLog.d(TAG, "Bus Comm is connecting....");
                     final int BUFFER_SIZE = 1024;
                     byte[] buffers = new byte[BUFFER_SIZE];
+                    int size = 0;
                     while(socket.getInputStream().available() > 0) {
-                        socket.getInputStream().read(buffers);
+                        size = socket.getInputStream().read(buffers);
                         TLog.d(TAG, "socket read: "+ Arrays.toString(buffers));
                     }
-                    TLog.d(TAG, "Read raw data successfully");
-                    byte[] response = callback.parse(buffers);
+                    byte[] rawData = Arrays.copyOfRange(buffers, 0, size);
+                    TLog.d(TAG, "Read raw data successfully: "+Arrays.toString(rawData));
+                    byte[] response = callback.parse(rawData);
                     socket.getOutputStream().write(response);
                     socket.getOutputStream().flush();
                     TLog.d(TAG, "send response: "+Arrays.toString(response));
