@@ -68,7 +68,7 @@ public class BusData {
     short dataSize;
     byte dataSizeSum;
     byte command = 0x00;
-    static int sequenceNum = 1; // 1 byte
+    int sequenceNum = 1; // 1 byte
     public Data data = new Data();
     byte dataSum;
     byte etx = 0x03;
@@ -80,21 +80,15 @@ public class BusData {
         data.deserialize(Arrays.copyOfRange(ret, 6, 19));
     }
 
-    public byte[] serialize() throws IOException {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        dataSize = 0x00f0;
-        dataSizeSum = 0x10;
-        dataSum = 0x09;
-        command +=1;
+    public byte getCommand() {
+        return command;
+    }
 
-        stream.write(stx);
-        stream.write(DataTypeConverter.toBytes(dataSize,2));
-        stream.write(dataSizeSum);
-        stream.write(command);
-        stream.write(sequenceNum);
-        stream.write(dataSum);
-        stream.write(etx);
+    public int getSequenceNum() {
+        return sequenceNum;
+    }
 
-        return stream.toByteArray();
+    public Data getData() {
+        return data;
     }
 }

@@ -39,4 +39,9 @@ public class DataTypeConverter {
         }
         return ret;
     }
+    public static byte sum(byte[] input) {
+        byte ret = 0;
+        for(byte x: input) ret += x;
+        return ret;
+    }
 }
