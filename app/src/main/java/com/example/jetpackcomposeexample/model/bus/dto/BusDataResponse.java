@@ -34,26 +34,6 @@ public class BusDataResponse {
         return new byte[]{0};
     }
 
-    public byte getStx() {
-        return stx;
-    }
-
-    public short getDataSize() {
-        return dataSize;
-    }
-
-    public byte getDataSizeSum() {
-        return dataSizeSum;
-    }
-
-    public byte getDataSum() {
-        return dataSum;
-    }
-
-    public byte getEtx() {
-        return etx;
-    }
-
     public byte[] getData() {
         return data;
     }
