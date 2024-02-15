@@ -87,7 +87,8 @@ public class BusDataRequest {
         offset++;
         sequenceNum = ret[offset];
         Log.d(TAG, "sequenceNum: "+sequenceNum);
-        dataArr = Arrays.copyOfRange(ret, 6, 20);
+        offset++;
+        dataArr = Arrays.copyOfRange(ret, offset, ret.length-2);
         Log.d(TAG, "dataArr: "+Arrays.toString(dataArr));
         dataSum = ret[ret.length-2];
         Log.d(TAG, "dataSum: "+dataSum);

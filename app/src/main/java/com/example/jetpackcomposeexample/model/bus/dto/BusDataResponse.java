@@ -15,7 +15,7 @@ public class BusDataResponse {
     byte dataSizeSum;
     byte command = 0x00;
     int sequenceNum = 1; // 1 byte
-    byte[] data = new byte[]{0};
+    byte[] data;
     byte dataSum;
     byte etx = 0x03;
 
@@ -40,7 +40,7 @@ public class BusDataResponse {
 
     public byte[] serialize() throws IOException {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        byte[] dataBuffer = data;
+        byte[] dataBuffer = (data == null) ? new byte[]{0} : data;
         byte[] cmdSeqDataBuffer = new byte[dataBuffer.length+2];
         cmdSeqDataBuffer[0] = command;
         cmdSeqDataBuffer[1] = (byte) sequenceNum;
@@ -53,6 +53,7 @@ public class BusDataResponse {
         stream.write(dataSizeSum);
         stream.write(command);
         stream.write(sequenceNum);
+        if(data != null) stream.write(data);
         stream.write(dataSum);
         stream.write(etx);
 
