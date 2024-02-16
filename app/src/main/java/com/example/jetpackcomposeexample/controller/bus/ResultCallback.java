@@ -21,6 +21,7 @@ public class ResultCallback {
             Log.d(TAG, "Data: "+ request.data.toString());
             response.setCommand((byte) (request.getCommand()+1));
             response.setSequenceNum(request.getSequenceNum());
+            response.start();
             return response.serialize();
         } catch (IOException e) {
             e.printStackTrace();
