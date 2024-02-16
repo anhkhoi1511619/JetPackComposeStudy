@@ -8,10 +8,10 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Calendar;
 
-public class BusDataRequest {
+public class BusDataRequest extends CommPackageDTO {
     static final String TAG = BusDataRequest.class.getSimpleName();
 
-    public class Data {
+    public class BusData {
         int staffId; // 3 bytes
         int routeId; // BCD
         Calendar sendTime = Calendar.getInstance(); // 3 bytes BCD, HHmmSS
@@ -59,76 +59,11 @@ public class BusDataRequest {
             return ret.toString();
         }
     }
-    byte stx;
-    short dataSize;
-    byte dataSizeSum;
-    byte command = 0x00;
-    int sequenceNum = 1; // 1 byte
-    public Data data = new Data();
-    byte[] dataArr;
-    byte dataSum;
-    byte etx;
-    public void deserialize(byte[] ret) {
-        if(ret.length<=0) return;
-        int offset = 0;
-        stx = ret[offset];
-        Log.d(TAG, "stx: "+stx);
-        offset++;
-        byte[] dataSizeArr = Arrays.copyOfRange(ret, offset, offset+2);
-        Log.d(TAG, "dataSizeArr: "+Arrays.toString(dataSizeArr));
-        dataSize = (short) DataTypeConverter.castInt(dataSizeArr);
-        Log.d(TAG, "dataSize: "+dataSize);
-        offset+=2;
-        dataSizeSum = ret[offset];
-        Log.d(TAG, "dataSizeSum: "+dataSizeSum);
-        offset++;
-        command = ret[offset];
-        Log.d(TAG, "command: "+command);
-        offset++;
-        sequenceNum = ret[offset];
-        Log.d(TAG, "sequenceNum: "+sequenceNum);
-        offset++;
-        dataArr = Arrays.copyOfRange(ret, offset, ret.length-2);
-        Log.d(TAG, "dataArr: "+Arrays.toString(dataArr));
-        dataSum = ret[ret.length-2];
-        Log.d(TAG, "dataSum: "+dataSum);
-        etx = ret[ret.length-1];
-        Log.d(TAG, "etx: "+etx);
-    }
+    public BusData busData = new BusData();
 
-    public byte getCommand() {
-        return command;
-    }
-
-    public int getSequenceNum() {
-        return sequenceNum;
-    }
-
-    public Data getData() {
-        return data;
-    }
-
-    public byte getStx() {
-        return stx;
-    }
-
-    public short getDataSize() {
-        return dataSize;
-    }
-
-    public byte getDataSizeSum() {
-        return dataSizeSum;
-    }
-
-    public byte getDataSum() {
-        return dataSum;
-    }
-
-    public byte getEtx() {
-        return etx;
-    }
-
-    public byte[] getDataArr() {
-        return dataArr;
+    @Override
+    protected void doRun() {
+        busData.deserialize(data);
+        Log.d(TAG, "Data: "+ busData.toString());
     }
 }
