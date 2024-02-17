@@ -37,6 +37,7 @@
     <string name="home_top_section_title">Top stories for you</string>
     <string name="home_history_title">Posted History</string>
     <string name="home_social_activities_title">Social Activities</string>
+    <string name="home_experience_working_title">Experience Of Working</string>
     <string name="home_chart">Activity on LeetCode</string>
     <string name="home_post_min_read">%1$s - %2$s posted</string>
     <string name="home_post_based_on_history">BASED ON YOUR HISTORY</string>
@@ -46,6 +47,8 @@
     <string name="article_functionality_not_available">Functionality not available \uD83D\uDE48</string>
     <string name="article_share_post">Share post</string>
     <string name="article_post_min_read">%1$s • %2$d min read</string>
+    <string name="article_like_comment_experience">%1$d Liked • %2$d Comment</string>
+    <string name="article_subtitle_experience">%1$s • %2$d years</string>
 
     <!-- Interests Screen -->
     <string name="interests_title">Interests</string>

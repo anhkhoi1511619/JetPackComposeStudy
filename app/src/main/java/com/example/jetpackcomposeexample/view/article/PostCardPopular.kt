@@ -22,6 +22,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
+import com.example.jetpackcomposeexample.model.experience.Experiences
+import com.example.jetpackcomposeexample.model.experience.experiencesExample1
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.model.post.post3
 
@@ -74,8 +76,68 @@ fun PostCardPopular(
     }
 }
 
+@Composable
+fun PostCardExperienceWorking(
+    experiences: Experiences,
+    navigateToArticle: (String) -> Unit,
+    modifier: Modifier
+) {
+    Card (
+        onClick = {navigateToArticle(experiences.id)},
+        shape = MaterialTheme.shapes.medium,
+        modifier = Modifier.width(280.dp)
+    ) {
+        Column {
+            Image(
+                painter = painterResource(id = experiences.imageId),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .height(100.dp)
+                    .fillMaxWidth()
+            )
+            Column (modifier.padding(16.dp)){
+                Text(
+                    text = experiences.title,
+                    style = MaterialTheme.typography.headlineSmall,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = stringResource(
+                        id = R.string.article_subtitle_experience,
+                        formatArgs = arrayOf(
+                            experiences.subtitle,
+                            experiences.years
+                        )
+                    ),
+                    maxLines = 1,
+                    style = MaterialTheme.typography.bodyMedium,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(
+                    text = stringResource(
+                        id = R.string.article_like_comment_experience,
+                        formatArgs = arrayOf(
+                            experiences.likeCounter,
+                            experiences.commentCounter
+                        )
+                    ),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 fun PostCardPopularTest() {
     PostCardPopular(post = post3, navigateToArticle = {}, modifier = Modifier)
+}
+@Preview
+@Composable
+fun PostCardExperienceWorkingTest() {
+    PostCardExperienceWorking(experiences = experiencesExample1, navigateToArticle = {}, modifier = Modifier)
 }

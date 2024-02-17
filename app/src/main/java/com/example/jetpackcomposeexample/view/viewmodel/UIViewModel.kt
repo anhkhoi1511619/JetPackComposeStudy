@@ -8,6 +8,7 @@ import com.example.jetpackcomposeexample.controller.history.PostHistoryControlle
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.utils.UrlConstants
+import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_LOG_API_URL_HTTP
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -70,7 +71,7 @@ class UIViewModel: ViewModel() {
 
     fun uploadLog() {
         TLog.d("PostViewModel","Screen ID is ${_uiState.value.screenID}")
-        AwsConnectHelper.getInstance().upload(UPLOAD_LOG_API_URL_HTTP) { result ->
+        AwsConnectHelper.getInstance().upload(UPLOAD_API_URL) { result ->
             _uiState.update { currentState ->
                 currentState.copy(
                         upLoadDone = result,

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetpackcomposeexample.controller.bus.connection.CommServer
@@ -54,9 +55,8 @@ fun Home(uiViewModel: UIViewModel =  viewModel()) {
     val postUiState by uiViewModel.uiState.collectAsState()
     when(postUiState.screenID) {
         ScreenID.FLASH -> {
-            Text(text = uiViewModel.BusConnectStatus)
-            uiViewModel.startBusComm()
-//            UIViewModel.uploadLog()
+            Text(text = "Flash Screen", textAlign = TextAlign.Center)
+            uiViewModel.uploadLog()
         }
         ScreenID.LOGIN -> {
             TextButton(onClick = {

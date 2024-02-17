@@ -32,6 +32,8 @@ import com.example.jetpackcomposeexample.model.post.posts
 import com.example.jetpackcomposeexample.view.chart.ChartCode
 import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.jetpackcomposeexample.model.experience.Experiences
+import com.example.jetpackcomposeexample.model.experience.experiencesExampleList
 import com.example.jetpackcomposeexample.model.history.HistoryDataModel
 import com.example.jetpackcomposeexample.model.history.PostHistoryData
 import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
@@ -39,18 +41,18 @@ import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(UIViewModel: UIViewModel){
-    val postUiState by UIViewModel.uiState.collectAsState()
+fun HomeScreen(uiViewModel: UIViewModel){
+    val postUiState by uiViewModel.uiState.collectAsState()
     when(postUiState.screenID) {
         ScreenID.HOME -> {
-            UIViewModel.update()
+            uiViewModel.update()
             PostList(
                 detailPost = postUiState.loadedDetailPost,
                 historyPosts = postUiState.historyPost,
                 posts = postUiState.showingPostList,
                 favorites = emptySet(),
                 onArticleTapped = {
-                    UIViewModel.load(it)
+                    uiViewModel.load(it)
                 }
             )
         }
@@ -58,7 +60,7 @@ fun HomeScreen(UIViewModel: UIViewModel){
             ArticleScreen(
                 post = postUiState.loadedDetailPost,
                 isExpandedScreen = false,
-                onBack = { UIViewModel.backHome() },
+                onBack = { uiViewModel.backHome() },
                 isFavorite = false,
                 onToggleFavorite = { /*TODO*/ })
         }
@@ -76,7 +78,8 @@ fun HomeScreen(UIViewModel: UIViewModel){
 fun PostList(
     detailPost: Post,
     historyPosts: List<PostHistoryData>,
-    posts: List<Post>,
+//    posts: List<Post>,
+    posts: List<Experiences>,
     favorites: Set<String>,
     onArticleTapped: (postId: String) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -90,7 +93,8 @@ fun PostList(
         item {
             Search(modifier = Modifier.padding(horizontal = 16.dp), onSearchInputChanged = {})
             PostTopSection(post = detailPost  , onArticleTapped)
-            PostSocialActivities(posts = posts, navigateToArticle = onArticleTapped)
+            ExperienceWorking(posts = posts, navigateToArticle = onArticleTapped)
+//            PostSocialActivities(posts = posts, navigateToArticle = onArticleTapped)
             ChartCode(modifier = Modifier.padding(16.dp))
             PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
         }
@@ -115,16 +119,15 @@ fun PostListHistory(
         }
     }
 }
-
 @Composable
-fun PostSocialActivities(
-    posts: List<Post>,
+fun ExperienceWorking(
+    posts: List<Experiences>,
     navigateToArticle: (String) -> Unit
 ) {
     Column {
         Text(
             modifier = Modifier.padding(16.dp),
-            text = stringResource(id = R.string.home_social_activities_title) ,
+            text = stringResource(id = R.string.home_experience_working_title) ,
             style = MaterialTheme.typography.titleLarge
         )
         Row (
@@ -135,13 +138,40 @@ fun PostSocialActivities(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             posts.forEach { x ->
-                PostCardPopular(post = x, navigateToArticle =navigateToArticle, modifier =Modifier)
+                PostCardExperienceWorking(experiences = x, navigateToArticle =navigateToArticle, modifier =Modifier)
             }
             Spacer(Modifier.height(16.dp))
             PostListDivider()
         }
     }
 }
+
+//@Composable
+//fun ExperienceWorking(
+//    posts: List<Post>,
+//    navigateToArticle: (String) -> Unit
+//) {
+//    Column {
+//        Text(
+//            modifier = Modifier.padding(16.dp),
+//            text = stringResource(id = R.string.home_social_activities_title) ,
+//            style = MaterialTheme.typography.titleLarge
+//        )
+//        Row (
+//            modifier = Modifier
+//                .horizontalScroll(rememberScrollState())
+//                .height(IntrinsicSize.Max)
+//                .padding(16.dp),
+//            horizontalArrangement = Arrangement.spacedBy(8.dp)
+//        ) {
+//            posts.forEach { x ->
+//                PostCardPopular(post = x, navigateToArticle =navigateToArticle, modifier =Modifier)
+//            }
+//            Spacer(Modifier.height(16.dp))
+//            PostListDivider()
+//        }
+//    }
+//}
 
 @Composable
 fun PostTopSection(post: Post, navigateToArticle: (String)->Unit) {
@@ -176,15 +206,15 @@ fun PostListToSectionTest(){
 @Preview
 @Composable
 fun PostListTest() {
-    PostList(post3, HistoryDataModel.list, posts, emptySet(), {})
+    PostList(post3, HistoryDataModel.list, experiencesExampleList, emptySet(), {})
 }
 @Preview
 @Composable
 fun PostListPopularTest() {
-    PostSocialActivities(posts, navigateToArticle = {})
+    ExperienceWorking(experiencesExampleList, navigateToArticle = {})
 }
 @Preview
 @Composable
 fun HomeScreenTest() {
-    HomeScreen(UIViewModel = viewModel())
+    HomeScreen(uiViewModel = viewModel())
 }

@@ -111,6 +111,11 @@ public class AwsConnectHelper {
         return false;
     }
     Boolean uploadLog(String url) {
+//        return uploadLogByHTTP(url);
+        if(UrlConstants.IS_LOCAL_HOST) return uploadLogByHTTP(url);
+        return uploadLogByHTTPS(url);
+    }
+    Boolean uploadLogByHTTP(String url) {
         try {
             HttpURLConnection connection = (HttpURLConnection) (new URL(url)).openConnection();
             connection.setDoInput(true);
@@ -131,6 +136,38 @@ public class AwsConnectHelper {
             count.close();
             int code = connection.getResponseCode();
             String message = connection.getResponseMessage();
+            if(code == 200) {
+                Log.d(TAG, "upload finished done with code = "+code+", message: "+message);
+                return true;
+            }
+            Log.d(TAG, "upload finished fail with code = "+code+", message: "+message);
+            return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    Boolean uploadLogByHTTPS(String url) {
+        try {
+            disableCertificateValidationHTTPs();
+            connectionHttps = (HttpsURLConnection) (new URL(url)).openConnection();
+            connectionHttps.setDoInput(true);
+            connectionHttps.setDoOutput(true);
+            connectionHttps.setRequestMethod("PUT");
+            connectionHttps.setRequestProperty("Content-type", "application/gzip");
+            connectionHttps.connect();
+
+            BufferedOutputStream count = new BufferedOutputStream(connectionHttps.getOutputStream());
+            BufferedInputStream fin = new BufferedInputStream(Files.newInputStream(Paths.get("/sdcard/DCIM/ProfileApp/logcat.tar.gz")));///sdcard/DCIM/ProfileApp/logcat.tar.gz
+            int x;
+            final int UPLOAD_CHUNK_SIZE = 1024;
+            byte[] bytes = new byte[UPLOAD_CHUNK_SIZE];
+            while ((x = fin.read(bytes, 0, bytes.length)) > 0) {
+                count.write(bytes, 0, x);
+            }
+            fin.close();
+            count.close();
+            int code = connectionHttps.getResponseCode();
+            String message = connectionHttps.getResponseMessage();
             if(code == 200) {
                 Log.d(TAG, "upload finished done with code = "+code+", message: "+message);
                 return true;
