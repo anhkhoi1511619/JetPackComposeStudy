@@ -44,32 +44,29 @@ class MainActivity : ComponentActivity() {
         PostHistoryController(
             applicationContext
         )
-        val future = CommServer.start()
-        while (!future.isDone) {
-            TLog.d("MainActivity", "Result from concurrent: "+future.get().toString())
-        }
     }
 
 }
 
 
 @Composable
-fun Home(UIViewModel: UIViewModel =  viewModel()) {
-    val postUiState by UIViewModel.uiState.collectAsState()
+fun Home(uiViewModel: UIViewModel =  viewModel()) {
+    val postUiState by uiViewModel.uiState.collectAsState()
     when(postUiState.screenID) {
         ScreenID.FLASH -> {
-            Text(text = "Updating")
-            UIViewModel.uploadLog()
+            Text(text = uiViewModel.BusConnectStatus)
+            uiViewModel.startBusComm()
+//            UIViewModel.uploadLog()
         }
         ScreenID.LOGIN -> {
             TextButton(onClick = {
-                UIViewModel.moveToHome()
+                uiViewModel.moveToHome()
             }){
                 Text(text = "Login")
             }
         }
         else -> {
-            HomeScreen(UIViewModel)
+            HomeScreen(uiViewModel)
         }
     }
 }

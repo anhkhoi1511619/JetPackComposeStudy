@@ -2,6 +2,7 @@ package com.example.jetpackcomposeexample.view.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.example.jetpackcomposeexample.controller.bus.connection.CommServer
 import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
 import com.example.jetpackcomposeexample.model.post.dto.Post
@@ -25,6 +26,8 @@ class UIViewModel: ViewModel() {
 
     var isUpdated: Boolean = false
 
+    var BusConnectStatus: String = CommServer.status.toString()
+        private set
     fun update() {
         if (isUpdated) return
         loadFromDB()
@@ -75,6 +78,13 @@ class UIViewModel: ViewModel() {
                     )
             }
             TLog.d("PostViewModel","Screen ID is ${_uiState.value.screenID}")
+        }
+    }
+    fun startBusComm() {
+        val future = CommServer.start()
+        while (!future.isDone) {
+            BusConnectStatus = "FAIL"
+            TLog.d("MainActivity", "Result from concurrent: "+future.get().toString())
         }
     }
     fun moveToHome() {
