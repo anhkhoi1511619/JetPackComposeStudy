@@ -3,6 +3,8 @@ package com.example.jetpackcomposeexample
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -11,14 +13,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.jetpackcomposeexample.controller.bus.connection.CommServer
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
 import com.example.jetpackcomposeexample.utils.TLog
-import com.example.jetpackcomposeexample.view.article.HomeScreen
+import com.example.jetpackcomposeexample.view.HomeScreen
+import com.example.jetpackcomposeexample.view.login.LoginForm
 import com.example.jetpackcomposeexample.view.theme.JetpackComposeExampleTheme
 import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
@@ -55,15 +58,16 @@ fun Home(uiViewModel: UIViewModel =  viewModel()) {
     val postUiState by uiViewModel.uiState.collectAsState()
     when(postUiState.screenID) {
         ScreenID.FLASH -> {
-            Text(text = "Flash Screen", textAlign = TextAlign.Center)
-            uiViewModel.uploadLog()
+            Column (
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Flash Screen")
+                uiViewModel.uploadLog()
+            }
         }
         ScreenID.LOGIN -> {
-            TextButton(onClick = {
-                uiViewModel.moveToHome()
-            }){
-                Text(text = "Login")
-            }
+            LoginForm(uiViewModel)
         }
         else -> {
             HomeScreen(uiViewModel)

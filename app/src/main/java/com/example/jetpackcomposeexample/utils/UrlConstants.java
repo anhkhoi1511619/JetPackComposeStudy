@@ -7,8 +7,8 @@ public class UrlConstants {
 
     public static final String POST_CONTENT_API_URL_HTTP = "http://192.168.254.249:3000/postContent";
     public static final String UPLOAD_LOG_API_URL_HTTP = "http://192.168.254.249:3000/uploadLog";
-    public static final String UPLOAD_LOG_API_URL_HTTPS = "https://192.168.12.42:4000/uploadLog";
-    public static final String POST_CONTENT_API_URL_HTTPS = "https://192.168.12.42:4000/postContent";
+    public static final String UPLOAD_LOG_API_URL_HTTPS = "https://192.168.0.42:4000/uploadLog";
+    public static final String POST_CONTENT_API_URL_HTTPS = "https://192.168.0.42:4000/postContent";
 
     static String getContentUrl() {
         if(IS_LOCAL_HOST) return POST_CONTENT_API_URL_HTTP;

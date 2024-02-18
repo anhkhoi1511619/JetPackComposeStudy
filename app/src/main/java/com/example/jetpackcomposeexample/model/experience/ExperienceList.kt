@@ -29,5 +29,14 @@ val experiencesExample3 = Experiences(
     commentCounter = 1,
     imageId = R.drawable.post_3
 )
+val experiencesExample4 = Experiences(
+    id = "1",
+    title = "Ngon ngu trao doi",
+    subtitle = "Tieng Nhat",
+    years = 3,
+    likeCounter = 97,
+    commentCounter = 1,
+    imageId = R.drawable.post_3
+)
 
-val experiencesExampleList = listOf<Experiences>(experiencesExample1, experiencesExample2, experiencesExample3)
+val experiencesExampleList = listOf<Experiences>(experiencesExample1, experiencesExample2, experiencesExample3, experiencesExample4)

@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeexample.view.article
+package com.example.jetpackcomposeexample.view
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -28,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.model.post.post3
-import com.example.jetpackcomposeexample.model.post.posts
 import com.example.jetpackcomposeexample.view.chart.ChartCode
 import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -36,6 +35,11 @@ import com.example.jetpackcomposeexample.model.experience.Experiences
 import com.example.jetpackcomposeexample.model.experience.experiencesExampleList
 import com.example.jetpackcomposeexample.model.history.HistoryDataModel
 import com.example.jetpackcomposeexample.model.history.PostHistoryData
+import com.example.jetpackcomposeexample.view.article.ArticleScreen
+import com.example.jetpackcomposeexample.view.article.PostCardExperienceWorking
+import com.example.jetpackcomposeexample.view.article.PostCardSimple
+import com.example.jetpackcomposeexample.view.article.PostCardTop
+import com.example.jetpackcomposeexample.view.article.Search
 import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
 
 
