@@ -9,6 +9,7 @@ import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.utils.UrlConstants
+import com.example.jetpackcomposeexample.utils.UrlConstants.LOGIN_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_LOG_API_URL_HTTP
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,8 +85,11 @@ class UIViewModel: ViewModel() {
         }
     }
     fun login() {
-        //TODO: Send ip, password to server
-        moveToHome()
+        AwsConnectHelper.getInstance().login(LOGIN_API_URL, {result ->
+            if (result) moveToHome()
+            TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+
+        },_uiState.value.credentials)
     }
     fun typingID(ID: String) {
 //        _uiState.value.credentials.login = ID

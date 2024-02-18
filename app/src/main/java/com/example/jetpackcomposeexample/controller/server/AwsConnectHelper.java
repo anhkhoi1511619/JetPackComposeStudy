@@ -13,6 +13,8 @@ import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
 
+import com.example.jetpackcomposeexample.model.login.Credentials;
+import com.example.jetpackcomposeexample.model.login.dto.CredentialsRequest;
 import com.example.jetpackcomposeexample.model.post.AwsDataModel;
 import com.example.jetpackcomposeexample.model.post.dto.Post;
 import com.example.jetpackcomposeexample.model.post.dto.PostRequest;
@@ -72,6 +74,9 @@ public class AwsConnectHelper {
             }
             callback.accept(post);
         });
+    }
+    public void login(String url, Consumer<Boolean> callback, Credentials credentials) {
+        executor.execute(()->callback.accept(loginByOkHttp(url, credentials.getLogin(), credentials.getPassword())));
     }
     public void upload(String url, Consumer<Boolean> callback) {
         executor.execute(()->callback.accept(uploadLog(url)));
@@ -177,6 +182,27 @@ public class AwsConnectHelper {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+    Boolean loginByOkHttp(String url, String id, String password) {
+        client = disableCertificateValidation();
+
+        CredentialsRequest requestBody = new CredentialsRequest().fill(id, password);
+        RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
+        Request request = new Request.Builder()
+                .url(url)
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+        try {
+            Response response = client.newCall(request).execute();
+            if (response.isSuccessful()) {
+                TLog.d(TAG, "Login from OkHttps Successfully");
+                return true;
+            }
+        } catch (IOException e) {
+            Log.d(TAG, "Exception");
+        }
+        return false;
     }
     Post fetchContentByOkHttp(String url) {
         client = disableCertificateValidation();
