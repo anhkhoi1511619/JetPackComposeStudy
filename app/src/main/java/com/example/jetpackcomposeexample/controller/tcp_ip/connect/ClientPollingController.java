@@ -30,6 +30,11 @@ public class ClientPollingController {
     static final String TAG_POLLING = "POLLING_CLIENT";
     HandlerThread clientSocketHandlerThread;
     Handler clientSocketHandler;
+
+    public Handler getClientSocketHandler() {
+        return clientSocketHandler;
+    }
+
     String name;
     List<ClientController> clientControllerList;
 

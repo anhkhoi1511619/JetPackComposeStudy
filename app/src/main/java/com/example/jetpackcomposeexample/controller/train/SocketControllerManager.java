@@ -58,7 +58,7 @@ public class SocketControllerManager {
         return controllerArr;
     }
 
-    int controllerID = 2;
+    int controllerID = 1;
     ClientPollingController clientPollingController;
     ServerPollingController serverPollingController;
     final int MASTER_KEY = 1;
@@ -319,9 +319,11 @@ public class SocketControllerManager {
     public void close() {
         if(clientPollingController == null) return;
         clientPollingController.getClientControllerList().forEach(ClientController::doClose);
+        clientPollingController.getClientSocketHandler().removeCallbacksAndMessages(null);
         clientPollingController = null;
         if(serverPollingController == null) return;
         serverPollingController.getServerControllerList().forEach(ServerController::doClose);
+        serverPollingController.getSocketHandler().removeCallbacksAndMessages(null);
         serverPollingController = null;
     }
 
@@ -330,6 +332,7 @@ public class SocketControllerManager {
     // if having bug or want to maintenance---------------------//
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void run() {
+            close();
             setup();
             polling();
             handleMessage(messageConsumer);

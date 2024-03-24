@@ -27,6 +27,11 @@ public class ServerPollingController {
     }
     HandlerThread socketHandlerThread;
     Handler socketHandler;
+
+    public Handler getSocketHandler() {
+        return socketHandler;
+    }
+
     HandlerThread receiveMessageHandlerThread;
     Handler receiveMessageHandler;
     String name;
