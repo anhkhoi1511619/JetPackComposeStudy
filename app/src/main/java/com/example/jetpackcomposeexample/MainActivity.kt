@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
+import com.example.jetpackcomposeexample.controller.train.SocketControllerManager
 import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.view.HomeScreen
 import com.example.jetpackcomposeexample.view.login.LoginForm
@@ -50,6 +51,11 @@ class MainActivity : ComponentActivity() {
         )
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        SocketControllerManager.getInstance().close()
+    }
+
 }
 
 
@@ -63,7 +69,7 @@ fun Home(uiViewModel: UIViewModel =  viewModel()) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = "Flash Screen")
-                uiViewModel.uploadLog()
+                uiViewModel.openSocket()
             }
         }
         ScreenID.LOGIN -> {

@@ -253,7 +253,6 @@ public class AwsConnectHelper {
                 // Output the response
                 result = new JSONObject(String.valueOf(response));
                 TLog.d(TAG,"Received data what have fetched from HTTP:"+result);
-//                    AwsDataController.sendMessage(AWS_POST_API_RESPONSE, result);
                 return AwsDataModel.deserializePost(result);
             } else {
                 TLog.d(TAG,"Failed when fetch data. Response Code: " + responseCode);

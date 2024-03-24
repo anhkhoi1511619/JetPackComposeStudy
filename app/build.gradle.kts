@@ -74,6 +74,11 @@ dependencies {
 
     //OkHttp
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
+    // More icon for UI
+    implementation ("androidx.compose.material:material-icons-extended:1.4.3")
+
+
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)

@@ -2,16 +2,15 @@ package com.example.jetpackcomposeexample.view.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.example.jetpackcomposeexample.controller.bus.connection.CommServer
 import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
+import com.example.jetpackcomposeexample.controller.train.SocketControllerManager
 import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.utils.UrlConstants
 import com.example.jetpackcomposeexample.utils.UrlConstants.LOGIN_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_API_URL
-import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_LOG_API_URL_HTTP
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,7 +29,6 @@ class UIViewModel: ViewModel() {
 
     var isUpdated: Boolean = false
 
-    var BusConnectStatus: String = CommServer.status.toString()
         private set
     fun update() {
         if (isUpdated) return
@@ -84,7 +82,18 @@ class UIViewModel: ViewModel() {
             TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
         }
     }
+    fun openSocket() {
+        SocketControllerManager.getInstance().run();
+        //TODO: Socket Comm is OK then next step
+        _uiState.update { currentState ->
+            currentState.copy(
+                screenID = ScreenID.LOGIN
+            )
+        }
+        TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+    }
     fun login() {
+        if(!SocketControllerManager.getInstance().isMainController) return
         AwsConnectHelper.getInstance().login(LOGIN_API_URL, {result ->
             if (result) moveToHome()
             TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
@@ -92,7 +101,6 @@ class UIViewModel: ViewModel() {
         },_uiState.value.credentials)
     }
     fun typingID(ID: String) {
-//        _uiState.value.credentials.login = ID
         _uiState.update { currentState ->
             currentState.copy(
                 credentials = Credentials(
@@ -122,13 +130,6 @@ class UIViewModel: ViewModel() {
                 )
             )
         }    }
-    fun startBusComm() {
-        val future = CommServer.start()
-        while (!future.isDone) {
-            BusConnectStatus = "FAIL"
-            TLog.d(TAG, "Result from concurrent: "+future.get().toString())
-        }
-    }
     fun moveToHome() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.HOME)
