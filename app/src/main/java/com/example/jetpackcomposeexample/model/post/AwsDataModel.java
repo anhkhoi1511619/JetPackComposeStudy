@@ -45,19 +45,19 @@ public class AwsDataModel {
             name_author = (String) author.get("name");
             url_author = (String) author.get("url");
             date_metaData = (String) metaData.get("date");
-            paragraphArray = (JSONArray) jsonObject.get("paragraph");
-
-            for (int i=0; i < paragraphArray.length(); i++) {
-                int type = (int)paragraphArray.getJSONObject(i).get("type");
-                String text = (String) paragraphArray.getJSONObject(i).get("text");
-                int markups = (int)paragraphArray.getJSONObject(i).get("markups");
-                Paragraph paragraph = new Paragraph(
-                        ParagraphType.Header,
-                        text,
-                        new ArrayList<>()
-                );
-                paragraphs.add(paragraph);
-            }
+//            paragraphArray = (JSONArray) jsonObject.get("paragraph");
+//
+//            for (int i=0; i < paragraphArray.length(); i++) {
+//                int type = (int)paragraphArray.getJSONObject(i).get("type");
+//                String text = (String) paragraphArray.getJSONObject(i).get("text");
+//                int markups = (int)paragraphArray.getJSONObject(i).get("markups");
+//                Paragraph paragraph = new Paragraph(
+//                        ParagraphType.Header,
+//                        text,
+//                        new ArrayList<>()
+//                );
+//                paragraphs.add(paragraph);
+//            }
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

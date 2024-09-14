@@ -8,7 +8,7 @@ import com.example.jetpackcomposeexample.controller.train.SocketControllerManage
 import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
-import com.example.jetpackcomposeexample.utils.UrlConstants
+import com.example.jetpackcomposeexample.utils.UrlConstants.DETAIL_PROFILE_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.LOGIN_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_API_URL
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,11 +55,11 @@ class UIViewModel: ViewModel() {
             return
         }
         TLog.d(TAG,"Load new id")
-        loadNew(id)
+        loadDetailProfile(id)
     }
-    private fun loadNew(id: String){
+    private fun loadDetailProfile(id: String){
         loadedIDList += id
-        AwsConnectHelper.getInstance().fetchContent(UrlConstants.POST_CONTENT_API_URL) { result ->
+        AwsConnectHelper.getInstance().fetchDetailProfile(id, DETAIL_PROFILE_API_URL) { result ->
             Log.d(TAG,"result is $result")
             moveToDetail()
             _uiState.update { currentState ->
@@ -83,7 +83,7 @@ class UIViewModel: ViewModel() {
         }
     }
     fun openSocket() {
-        SocketControllerManager.getInstance().run();
+//        SocketControllerManager.getInstance().run();
         //TODO: Socket Comm is OK then next step
         _uiState.update { currentState ->
             currentState.copy(
@@ -97,7 +97,6 @@ class UIViewModel: ViewModel() {
         AwsConnectHelper.getInstance().login(LOGIN_API_URL, {result ->
             if (result) moveToHome()
             TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
-
         },_uiState.value.credentials)
     }
     fun typingID(ID: String) {
