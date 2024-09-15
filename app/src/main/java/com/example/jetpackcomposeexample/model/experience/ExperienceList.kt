@@ -12,7 +12,7 @@ val experiencesExample1 = Experiences(
     imageId = R.drawable.post_3
 )
 val experiencesExample2 = Experiences(
-    id = "1",
+    id = "2",
     title = "Quan li duong di cho Benh Vien",
     subtitle = "Vai tro: Developer",
     years = 2,
@@ -21,7 +21,7 @@ val experiencesExample2 = Experiences(
     imageId = R.drawable.post_3
 )
 val experiencesExample3 = Experiences(
-    id = "1",
+    id = "3",
     title = "Nhan dien giong noi",
     subtitle = "Vai tro: Developer",
     years = 1,
@@ -30,7 +30,7 @@ val experiencesExample3 = Experiences(
     imageId = R.drawable.post_3
 )
 val experiencesExample4 = Experiences(
-    id = "1",
+    id = "4",
     title = "Ngon ngu trao doi",
     subtitle = "Tieng Nhat",
     years = 3,

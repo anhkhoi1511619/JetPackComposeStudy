@@ -71,16 +71,17 @@ class UIViewModel: ViewModel() {
     }
 
     fun uploadLog() {
-        TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
-        AwsConnectHelper.getInstance().upload(UPLOAD_API_URL) { result ->
-            _uiState.update { currentState ->
-                currentState.copy(
-                        upLoadDone = result,
-                        screenID = ScreenID.LOGIN
-                    )
-            }
-            TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
-        }
+        //TODO: Add Upload Feature
+//        TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+//        AwsConnectHelper.getInstance().upload(UPLOAD_API_URL) { result ->
+//            _uiState.update { currentState ->
+//                currentState.copy(
+//                        upLoadDone = result,
+//                        screenID = ScreenID.LOGIN
+//                    )
+//            }
+//            TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+//        }
     }
     fun openSocket() {
 //        SocketControllerManager.getInstance().run();

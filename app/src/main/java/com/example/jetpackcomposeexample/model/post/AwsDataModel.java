@@ -4,7 +4,6 @@ import com.example.jetpackcomposeexample.R;
 import com.example.jetpackcomposeexample.model.chart.Chart;
 import com.example.jetpackcomposeexample.model.post.dto.MetaData;
 import com.example.jetpackcomposeexample.model.post.dto.Paragraph;
-import com.example.jetpackcomposeexample.model.post.dto.ParagraphType;
 import com.example.jetpackcomposeexample.model.post.dto.Post;
 import com.example.jetpackcomposeexample.model.post.dto.PostAuthor;
 import com.example.jetpackcomposeexample.model.post.dto.Publication;
@@ -17,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AwsDataModel {
-    public static Post deserializePost(JSONObject jsonObject) {
+    public static Post deserializeDetailProfile(JSONObject jsonObject) {
         String id_data;
         String title_data;
         String subtitle_data;

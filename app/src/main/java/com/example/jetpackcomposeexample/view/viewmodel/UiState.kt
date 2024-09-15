@@ -14,7 +14,6 @@ import com.example.jetpackcomposeexample.model.login.credentialsExample
 data class UiState (
     val credentials: Credentials = credentialsExample,
     val loadedDetailPost: Post = post3,
-//    val showingPostList: List<Post> = listOf(post1, post2) + loadedDetailPost,
     val showingPostList: List<Experiences> = experiencesExampleList,
     val historyPost: List<PostHistoryData> = HistoryDataModel.list,
     val upLoadDone: Boolean = false,
