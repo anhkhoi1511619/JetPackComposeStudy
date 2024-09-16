@@ -3,7 +3,7 @@ package com.example.jetpackcomposeexample.model.post.dto
 import androidx.annotation.DrawableRes
 
 data class Post(
-    val id: String,
+    val id: Int,
     val title: String,
     val subtitle: String? = null,
     val url: String,

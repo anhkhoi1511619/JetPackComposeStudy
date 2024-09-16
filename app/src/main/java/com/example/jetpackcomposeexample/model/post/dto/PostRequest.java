@@ -4,11 +4,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class PostRequest {
-    String id;
+    int id;
     String machine;
 
 
-    public PostRequest fill(String id) {
+    public PostRequest fill(int id) {
         this.id = id;
         this.machine = "Samsung SM-N960U";
         return this;

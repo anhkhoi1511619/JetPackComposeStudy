@@ -85,7 +85,7 @@ fun PostList(
 //    posts: List<Post>,
     posts: List<Experiences>,
     favorites: Set<String>,
-    onArticleTapped: (postId: String) -> Unit,
+    onArticleTapped: (postId: Int) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     state: LazyListState = rememberLazyListState(),
     ) {
@@ -108,7 +108,7 @@ fun PostList(
 @Composable
 fun PostListHistory(
     historyPosts: List<PostHistoryData>,
-    navigateToArticle: (String) -> Unit,
+    navigateToArticle: (Int) -> Unit,
     favorites: Set<String>
 ) {
     Column {
@@ -126,7 +126,7 @@ fun PostListHistory(
 @Composable
 fun ExperienceWorking(
     posts: List<Experiences>,
-    navigateToArticle: (String) -> Unit
+    navigateToArticle: (Int) -> Unit
 ) {
     Column {
         Text(
@@ -178,13 +178,13 @@ fun ExperienceWorking(
 //}
 
 @Composable
-fun PostTopSection(post: Post, navigateToArticle: (String)->Unit) {
+fun PostTopSection(post: Post, navigateToArticle: (Int)->Unit) {
     Text(
         modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
         text = stringResource(id = R.string.home_top_section_title),
         style = MaterialTheme.typography.titleMedium
     )
-    PostCardTop(post = post, modifier = Modifier.clickable { navigateToArticle("1") })
+    PostCardTop(post = post, modifier = Modifier.clickable { navigateToArticle(1) })
     PostListDivider()
 }
 

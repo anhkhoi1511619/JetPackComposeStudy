@@ -22,7 +22,7 @@ class UIViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    var loadedIDList: List<String> = mutableListOf("1511619")
+    var loadedIDList: List<Int> = mutableListOf(0)
         private set
     var errorIDList: List<String> = mutableListOf()
         private set
@@ -48,7 +48,7 @@ class UIViewModel: ViewModel() {
         PostHistoryController.set(post, System.currentTimeMillis())
     }
 
-    fun load(id: String){
+    fun load(id: Int){
         if(loadedIDList.contains(id)) {//Avoid duplicate
             moveToDetail()
             TLog.d(TAG,"Load with duplicate id")
@@ -57,7 +57,7 @@ class UIViewModel: ViewModel() {
         TLog.d(TAG,"Load new id")
         loadDetailProfile(id)
     }
-    private fun loadDetailProfile(id: String){
+    private fun loadDetailProfile(id: Int){
         loadedIDList += id
         AwsConnectHelper.getInstance().fetchDetailProfile(id, DETAIL_PROFILE_API_URL) { result ->
             Log.d(TAG,"result is $result")

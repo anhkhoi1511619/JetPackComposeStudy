@@ -3,7 +3,7 @@ package com.example.jetpackcomposeexample.model.experience
 import com.example.jetpackcomposeexample.R
 
 val experiencesExample1 = Experiences(
-    id = "1",
+    id = 1511619,
     title = "Quan li He thong tau/bus tai Hiroshima",
     subtitle = "Vai tro: Developer",
     years = 2,
@@ -12,7 +12,7 @@ val experiencesExample1 = Experiences(
     imageId = R.drawable.post_3
 )
 val experiencesExample2 = Experiences(
-    id = "2",
+    id = 1511621,
     title = "Quan li duong di cho Benh Vien",
     subtitle = "Vai tro: Developer",
     years = 2,
@@ -21,7 +21,7 @@ val experiencesExample2 = Experiences(
     imageId = R.drawable.post_3
 )
 val experiencesExample3 = Experiences(
-    id = "3",
+    id = 1511623,
     title = "Nhan dien giong noi",
     subtitle = "Vai tro: Developer",
     years = 1,
@@ -30,7 +30,7 @@ val experiencesExample3 = Experiences(
     imageId = R.drawable.post_3
 )
 val experiencesExample4 = Experiences(
-    id = "4",
+    id = 1511625,
     title = "Ngon ngu trao doi",
     subtitle = "Tieng Nhat",
     years = 3,

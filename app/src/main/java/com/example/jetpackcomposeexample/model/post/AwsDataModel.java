@@ -7,6 +7,7 @@ import com.example.jetpackcomposeexample.model.post.dto.Paragraph;
 import com.example.jetpackcomposeexample.model.post.dto.Post;
 import com.example.jetpackcomposeexample.model.post.dto.PostAuthor;
 import com.example.jetpackcomposeexample.model.post.dto.Publication;
+import com.example.jetpackcomposeexample.utils.TLog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +18,7 @@ import java.util.List;
 
 public class AwsDataModel {
     public static Post deserializeDetailProfile(JSONObject jsonObject) {
-        String id_data;
+        int id_data;
         String title_data;
         String subtitle_data;
         String url;
@@ -32,7 +33,7 @@ public class AwsDataModel {
         JSONArray paragraphArray;
         List<Paragraph> paragraphs = new ArrayList<>();
         try {
-            id_data = (String) jsonObject.get("id");
+            id_data = (int) jsonObject.get("id");
             title_data =  (String) jsonObject.get("title");
             subtitle_data = (String) jsonObject.get("subtitle");
             url = (String) jsonObject.get("url");
@@ -57,7 +58,8 @@ public class AwsDataModel {
 //                );
 //                paragraphs.add(paragraph);
 //            }
-        } catch (JSONException e) {
+        } catch (Exception e) {
+            TLog.d("AwsDataModel", "Exception: "+e);
             throw new RuntimeException(e);
         }
 

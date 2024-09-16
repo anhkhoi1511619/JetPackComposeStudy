@@ -30,7 +30,7 @@ import com.example.jetpackcomposeexample.model.post.post3
 @Composable
 fun PostCardPopular(
     post: Post,
-    navigateToArticle: (String) -> Unit,
+    navigateToArticle: (Int) -> Unit,
     modifier: Modifier
 ) {
     Card (
@@ -79,7 +79,7 @@ fun PostCardPopular(
 @Composable
 fun PostCardExperienceWorking(
     experiences: Experiences,
-    navigateToArticle: (String) -> Unit,
+    navigateToArticle: (Int) -> Unit,
     modifier: Modifier
 ) {
     Card (

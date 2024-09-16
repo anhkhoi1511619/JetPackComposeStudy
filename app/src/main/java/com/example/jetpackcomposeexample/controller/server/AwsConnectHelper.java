@@ -275,13 +275,13 @@ public class AwsConnectHelper {
         }
         return false;
     }
-    public void fetchDetailProfile(String id, String url, Consumer<Post> callback){
+    public void fetchDetailProfile(int id, String url, Consumer<Post> callback){
         executor.execute(()->{
             Post post = fetchDetailProfileByOkHttp(id,url);
             callback.accept(post);
         });
     }
-    Post fetchDetailProfileByOkHttp(String id, String url) {
+    Post fetchDetailProfileByOkHttp(int id, String url) {
         PostRequest requestBody = new PostRequest().fill(id);
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()

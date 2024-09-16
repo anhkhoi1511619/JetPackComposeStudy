@@ -3,7 +3,7 @@ package com.example.jetpackcomposeexample.model.experience
 import androidx.annotation.DrawableRes
 
 data class Experiences(
-    val id: String,
+    val id: Int,
     val title: String,
     val subtitle: String,
     val years: Int,
