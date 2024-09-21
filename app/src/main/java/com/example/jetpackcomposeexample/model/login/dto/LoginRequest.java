@@ -1,14 +1,12 @@
 package com.example.jetpackcomposeexample.model.login.dto;
 
-import com.example.jetpackcomposeexample.model.post.dto.PostRequest;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CredentialsRequest {
+public class LoginRequest {
     String id;
     String password;
-    public CredentialsRequest fill(String id, String password) {
+    public LoginRequest fill(String id, String password) {
         this.id = id;
         this.password = password;
         return this;

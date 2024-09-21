@@ -17,22 +17,18 @@ import okio.BufferedSource;
 import okio.Okio;
 
 import com.example.jetpackcomposeexample.model.login.Credentials;
-import com.example.jetpackcomposeexample.model.login.dto.CredentialsRequest;
+import com.example.jetpackcomposeexample.model.login.dto.LoginRequest;
+import com.example.jetpackcomposeexample.model.login.dto.LoginResponse;
 import com.example.jetpackcomposeexample.model.post.AwsDataModel;
 import com.example.jetpackcomposeexample.model.post.dto.Post;
 import com.example.jetpackcomposeexample.model.post.dto.PostRequest;
 import com.example.jetpackcomposeexample.utils.TLog;
-import com.example.jetpackcomposeexample.utils.UrlConstants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
@@ -257,7 +253,7 @@ public class AwsConnectHelper {
         executor.execute(()->callback.accept(loginByOkHttp(url, credentials.getLogin(), credentials.getPassword())));
     }
     Boolean loginByOkHttp(String url, String id, String password) {
-        CredentialsRequest requestBody = new CredentialsRequest().fill(id, password);
+        LoginRequest requestBody = new LoginRequest().fill(id, password);
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
                 .url(url)
@@ -267,10 +263,13 @@ public class AwsConnectHelper {
         try {
             Response response = send(request);
             if (response.isSuccessful()) {
-                TLog.d(TAG, "Login from OkHttps Successfully");
+                JSONObject object = new JSONObject(response.body().string());
+                TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
+                LoginResponse loginRes = new LoginResponse();
+                loginRes.deserialize(object);
                 return true;
             }
-        } catch (IOException e) {
+        } catch (IOException | JSONException e) {
             Log.d(TAG, "Exception");
         }
         return false;
@@ -288,6 +287,7 @@ public class AwsConnectHelper {
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
+                .addHeader("Authorization", LoginResponse.getAuthorization())
                 .build();
         try {
             Response response = send(request);
