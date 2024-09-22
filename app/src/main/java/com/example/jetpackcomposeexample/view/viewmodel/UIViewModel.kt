@@ -96,7 +96,10 @@ class UIViewModel: ViewModel() {
     fun login() {
         if(!SocketControllerManager.getInstance().isMainController) return
         AwsConnectHelper.getInstance().login(LOGIN_API_URL, {result ->
+            TLog.d(TAG,"Result: " + result)
             if (result) moveToHome()
+            updateLogin(result)
+            TLog.d(TAG,"Success is ${_uiState.value.credentials.isSuccessLogin}")
             TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
         },_uiState.value.credentials)
     }
@@ -129,7 +132,20 @@ class UIViewModel: ViewModel() {
                     remember = !currentState.credentials.remember
                 )
             )
-        }    }
+        }
+    }
+    fun updateLogin(result: Boolean) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                credentials = Credentials(
+                    login = currentState.credentials.login,
+                    password = currentState.credentials.password,
+                    remember = currentState.credentials.remember,
+                    isSuccessLogin = result
+                )
+            )
+        }
+    }
     fun moveToHome() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.HOME)
