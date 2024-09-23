@@ -7,7 +7,11 @@ public class UrlConstants {
     public static String LOGIN_API_URL = loginUrl();
 
     public static final String DETAIL_PROFILE_API_URL_LOCAL_HOST = "http://192.168.123.42:5173/profile/detail";
+    public static final String GET_URL_API_OKHTTP = "http://192.168.123.42:5173/geturl";
+
     public static final String UPLOAD_LOG_API_URL_HTTP = "http://192.168.254.249:3000/uploadLog";
+    public static final String UPLOAD_LOG_API_URL_TMP_OkHTTP = "http://192.168.123.42:5173/upload-log?machineID=960";
+
     public static final String UPLOAD_LOG_API_URL_HTTPS = "https://192.168.0.42:4000/uploadLog";
     public static final String LOGIN_API_URL_HTTP = "http://192.168.123.42:5173/login";
     public static final String LOGIN_API_URL_HTTPS = "https://192.168.125.42:4000/login";

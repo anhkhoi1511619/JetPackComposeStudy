@@ -16,6 +16,8 @@ import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
 
+import com.example.jetpackcomposeexample.model.getUrl.GetUrlRequest;
+import com.example.jetpackcomposeexample.model.getUrl.GetUrlResponse;
 import com.example.jetpackcomposeexample.model.login.Credentials;
 import com.example.jetpackcomposeexample.model.login.dto.LoginRequest;
 import com.example.jetpackcomposeexample.model.login.dto.LoginResponse;
@@ -144,6 +146,31 @@ public class AwsConnectHelper {
             Log.e(TAG, "download failed " + e.getMessage());
         }
         return false;
+    }
+
+    public void getUrl(String url, GetUrlRequest request, Consumer<GetUrlResponse> callback) {
+        executor.execute(()->callback.accept(getUrl(url, request)));
+    }
+    public GetUrlResponse getUrl(String url, GetUrlRequest urlRequest) {
+        RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, urlRequest.serialize().toString());
+        Request request = new Request.Builder()
+                .url(url)
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+        try {
+            Response response = send(request);
+            if (response.isSuccessful()) {
+                JSONObject object = new JSONObject(response.body().string());
+                TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
+                GetUrlResponse urlResponse = new GetUrlResponse();
+                urlResponse.deserialize(object);
+                return urlResponse;
+            }
+        } catch (IOException | JSONException e) {
+            Log.d(TAG, "Exception");
+        }
+        return null;
     }
     //    public void upload(String url, Consumer<Boolean> callback) {
 //        executor.execute(()->callback.accept(uploadLog(url)));

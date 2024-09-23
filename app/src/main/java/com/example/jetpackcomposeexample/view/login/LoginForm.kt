@@ -36,7 +36,7 @@ import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 @Composable
 fun LoginForm(uiViewModel: UIViewModel){
     val postUiState by uiViewModel.uiState.collectAsState()
-    if (!postUiState.credentials.isSuccessLogin) { FailureLoginPopup {uiViewModel.updateLogin(true)} }
+    if (!postUiState.credentials.isSuccessLogin) { FailureLoginPopup {uiViewModel.updateLoginScreen(true)} }
     Column (
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,

@@ -1,9 +1,11 @@
 package com.example.jetpackcomposeexample.view.viewmodel
 
 import android.util.Log
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
+import com.example.jetpackcomposeexample.controller.startup.UpdateProcedure
 import com.example.jetpackcomposeexample.controller.train.SocketControllerManager
 import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
@@ -11,6 +13,7 @@ import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.utils.UrlConstants.DETAIL_PROFILE_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.LOGIN_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_API_URL
+import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_LOG_API_URL_TMP_OkHTTP
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -97,8 +100,11 @@ class UIViewModel: ViewModel() {
         if(!SocketControllerManager.getInstance().isMainController) return
         AwsConnectHelper.getInstance().login(LOGIN_API_URL, {result ->
             TLog.d(TAG,"Result: " + result)
-            if (result) moveToHome()
-            updateLogin(result)
+            if (result) {
+                UpdateProcedure().run()
+                moveToHome()
+            }
+            updateLoginScreen(result)
             TLog.d(TAG,"Success is ${_uiState.value.credentials.isSuccessLogin}")
             TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
         },_uiState.value.credentials)
@@ -134,7 +140,7 @@ class UIViewModel: ViewModel() {
             )
         }
     }
-    fun updateLogin(result: Boolean) {
+    fun updateLoginScreen(result: Boolean) {
         _uiState.update { currentState ->
             currentState.copy(
                 credentials = Credentials(
