@@ -1,7 +1,6 @@
 package com.example.jetpackcomposeexample.controller.startup;
 
 import static com.example.jetpackcomposeexample.utils.UrlConstants.GET_URL_API_OKHTTP;
-import static com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_LOG_API_URL_TMP_OkHTTP;
 
 import android.content.Context;
 import android.util.Log;

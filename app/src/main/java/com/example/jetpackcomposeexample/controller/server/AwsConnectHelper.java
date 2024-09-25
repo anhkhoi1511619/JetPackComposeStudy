@@ -6,8 +6,12 @@ import android.webkit.URLUtil;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.util.Consumer;
+
+import okhttp3.Call;
+import okhttp3.EventListener;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.Protocol;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -31,12 +35,19 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -44,8 +55,42 @@ import javax.net.ssl.HttpsURLConnection;
 public class AwsConnectHelper {
     //Use singleton to manage
     static AwsConnectHelper instance = null;
+    EventListener eventListener;
     public AwsConnectHelper() {
-        this.client = new OkHttpClient().newBuilder().build();
+        eventListener = new EventListener() {
+            @Override
+            public void connectStart(Call call, InetSocketAddress inetSocketAddress, Proxy proxy) {
+                TLog.d(TAG, "接続開始" + inetSocketAddress.toString());
+            }
+
+            @Override
+            public void connectFailed(Call call, InetSocketAddress inetSocketAddress, Proxy proxy, Protocol protocol, IOException ioe) {
+                TLog.d(TAG,"接続失敗: " + ioe.getMessage());
+            }
+
+            @Override
+            public void requestBodyStart(Call call) {
+                TLog.d(TAG,"リクエスト書き込み開始");
+            }
+
+            @Override
+            public void requestFailed(Call call, IOException ioe) {
+                TLog.d(TAG,"リクエスト書き込み失敗: " + ioe.getMessage());
+            }
+
+            @Override
+            public void responseBodyStart(Call call) {
+                TLog.d(TAG,"レスポンス読み込み開始");
+            }
+
+            @Override
+            public void responseFailed(Call call, IOException ioe) {
+                TLog.d(TAG,"レスポンス読み込み失敗: " + ioe.getMessage());
+            }
+        };
+        this.client = new OkHttpClient().newBuilder()
+                      .eventListener(eventListener)
+                      .build();
     }
 
     public static synchronized AwsConnectHelper getInstance() {
@@ -61,10 +106,14 @@ public class AwsConnectHelper {
     HttpsURLConnection connectionHttps;
     final String TAG = AwsConnectHelper.class.getSimpleName();
     final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
+    ExecutorService sendExecutor = Executors.newSingleThreadExecutor();
 
-    public Response send(Request r) throws IOException {
+
+    public Response send(Request r) throws IOException, ExecutionException, InterruptedException, TimeoutException {
         Date timeStamp = new Date();
-        Response response = client.newCall(r).execute();
+        Callable<Response> task = () -> client.newCall(r).execute();
+        Future<Response> future = sendExecutor.submit(task);
+        Response response = future.get(1500, TimeUnit.SECONDS);
         Date now = new Date();
         long timeElapsed = now.getTime() - timeStamp.getTime();
         Log.i(TAG, "Request finished in " + timeElapsed + "ms: " + response);
@@ -76,6 +125,7 @@ public class AwsConnectHelper {
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean uploadLogOkHttp(String url, String file) {
+        Response response = null;
         try {
             if (url.isEmpty()) {
                 return false;
@@ -84,6 +134,7 @@ public class AwsConnectHelper {
                     .connectTimeout(50, TimeUnit.SECONDS)
                     .writeTimeout(100, TimeUnit.SECONDS)
                     .readTimeout(50, TimeUnit.SECONDS)
+                    .eventListener(eventListener)
 //                    .addInterceptor(logger)
                     .retryOnConnectionFailure(true)
                     .build();
@@ -97,15 +148,21 @@ public class AwsConnectHelper {
                     .header("Content-Length", String.valueOf(data.length))
                     .header("Content-Type", "application/gzip")
                     .build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             if (response.isSuccessful()) {
                 Log.d(TAG, "Log uploaded successfully!");
             } else {
                 Log.e(TAG,"Failed to upload file: " + response.code() + " " + response.message());
             }
-            return response.isSuccessful();
+            boolean isSuccessful = response.isSuccessful();
+            response.close();
+            return isSuccessful;
         } catch (IOException e) {
             Log.e(TAG, "error while making upload request, " + e);
+        } finally {
+            if (response != null) {
+                response.close(); // 必ず close() を呼び出す
+            }
         }
         return false;
     }
@@ -120,6 +177,7 @@ public class AwsConnectHelper {
             Log.w(TAG, "DOWNLOAD, Link not start with http (" + url + "), skip");
             return false;
         }
+        Response response = null;
         try {
             String filename = URLUtil.guessFileName(url, null, null);
             Log.d(TAG, "DOWNLOAD, file name = " + filename);
@@ -127,7 +185,7 @@ public class AwsConnectHelper {
             dir.mkdirs();
             File file = new File(saveTo + "/" + filename);
             Request request = new Request.Builder().url(url).build();
-            Response response = client.newCall(request).execute();
+            response = client.newCall(request).execute();
             if (response.body() == null) {
                 return false;
             }
@@ -141,9 +199,14 @@ public class AwsConnectHelper {
             sink.flush();
             sink.close();
             source.close();
+            response.close();
             return true;
         } catch (IOException e) {
             Log.e(TAG, "download failed " + e.getMessage());
+        } finally {
+            if (response != null) {
+                response.close(); // 必ず close() を呼び出す
+            }
         }
         return false;
     }
@@ -153,22 +216,31 @@ public class AwsConnectHelper {
     }
     public GetUrlResponse getUrl(String url, GetUrlRequest urlRequest) {
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, urlRequest.serialize().toString());
+        TLog.d(TAG, "Requesting URL:"+url+" request data: " + urlRequest.serialize().toString());
         Request request = new Request.Builder()
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
                 .build();
+        Response response = null;
         try {
-            Response response = send(request);
+            response = send(request);
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
                 TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
                 GetUrlResponse urlResponse = new GetUrlResponse();
                 urlResponse.deserialize(object);
+                response.close();
                 return urlResponse;
             }
         } catch (IOException | JSONException e) {
-            Log.d(TAG, "Exception");
+            TLog.d(TAG, "IOException | JSONException");
+        } catch (ExecutionException | InterruptedException| TimeoutException e) {
+            TLog.d(TAG, "ExecutionException | InterruptedException | TimeoutException");
+        } finally {
+            if (response != null) {
+                response.close(); // 必ず close() を呼び出す
+            }
         }
         return null;
     }
@@ -282,49 +354,64 @@ public class AwsConnectHelper {
     Boolean loginByOkHttp(String url, String id, String password) {
         LoginRequest requestBody = new LoginRequest().fill(id, password);
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
+        TLog.d(TAG, "Requesting URL:"+url+" request data: " + requestBody.serialize().toString());
         Request request = new Request.Builder()
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
                 .build();
+        Response response = null;
         try {
-            Response response = send(request);
+            response = send(request);
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
                 TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
                 LoginResponse loginRes = new LoginResponse();
                 loginRes.deserialize(object);
+                response.close();
                 return true;
             }
         } catch (IOException | JSONException e) {
             Log.d(TAG, "Exception");
+        } catch (ExecutionException | InterruptedException| TimeoutException e) {
+            TLog.d(TAG, "ExecutionException | InterruptedException | TimeoutException");
+        } finally {
+            if (response != null) {
+                response.close(); // 必ず close() を呼び出す
+            }
         }
         return false;
     }
     public void fetchDetailProfile(int id, String url, Consumer<Post> callback){
-        executor.execute(()->{
-            Post post = fetchDetailProfileByOkHttp(id,url);
-            callback.accept(post);
-        });
+        executor.execute(()->callback.accept(fetchDetailProfileByOkHttp(id,url)));
     }
     Post fetchDetailProfileByOkHttp(int id, String url) {
         PostRequest requestBody = new PostRequest().fill(id);
+        TLog.d(TAG, "Requesting URL:"+url+" request data: ID" + id);
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", LoginResponse.getAuthorization())
+                .addHeader("Authorization", LoginResponse.getAuthorization())//TODO:Add Interceptor
                 .build();
+        Response response = null;
         try {
-            Response response = send(request);
+            response = send(request);
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
                 TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
+                response.close();
                 return AwsDataModel.deserializeDetailProfile(object);
             }
         } catch (IOException | JSONException e) {
             Log.d(TAG, "Exception");
+        }  catch (ExecutionException | InterruptedException| TimeoutException e) {
+            TLog.d(TAG, "ExecutionException | InterruptedException | TimeoutException");
+        } finally {
+            if (response != null) {
+                response.close(); // 必ず close() を呼び出す
+            }
         }
         return AwsDataModel.deserializeDetailProfile(new JSONObject());
     }
