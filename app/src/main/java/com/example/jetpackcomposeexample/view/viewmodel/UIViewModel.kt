@@ -63,13 +63,15 @@ class UIViewModel: ViewModel() {
     private fun loadDetailProfile(id: Int){
         AwsConnectHelper.getInstance().fetchDetailProfile(id, DETAIL_PROFILE_API_URL) { result ->
             Log.d(TAG,"result is $result")
-            moveToDetail()
-            _uiState.update { currentState ->
-                currentState.copy(loadedDetailPost = result)
+            if (result != null) {
+                moveToDetail()
+                _uiState.update { currentState ->
+                    currentState.copy(loadedDetailPost = result)
+                }
+                addDB(post = result)
+                Log.d(TAG,"loadedDetailPost is ${_uiState.value.loadedDetailPost}")
+                loadedIDList += id
             }
-            addDB(post = result)
-            Log.d(TAG,"loadedDetailPost is ${_uiState.value.loadedDetailPost}")
-            loadedIDList += id
         }
     }
 

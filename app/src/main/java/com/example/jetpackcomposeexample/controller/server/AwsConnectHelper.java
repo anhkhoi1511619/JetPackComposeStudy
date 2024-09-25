@@ -107,12 +107,12 @@ public class AwsConnectHelper {
     final String TAG = AwsConnectHelper.class.getSimpleName();
     final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
     ExecutorService sendExecutor = Executors.newSingleThreadExecutor();
-
+    Future<Response> future;
 
     public Response send(Request r) throws IOException, ExecutionException, InterruptedException, TimeoutException {
         Date timeStamp = new Date();
         Callable<Response> task = () -> client.newCall(r).execute();
-        Future<Response> future = sendExecutor.submit(task);
+        future = sendExecutor.submit(task);
         Response response = future.get(1500, TimeUnit.SECONDS);
         Date now = new Date();
         long timeElapsed = now.getTime() - timeStamp.getTime();
@@ -126,6 +126,7 @@ public class AwsConnectHelper {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public boolean uploadLogOkHttp(String url, String file) {
         Response response = null;
+        boolean isSuccessful = false;
         try {
             if (url.isEmpty()) {
                 return false;
@@ -150,13 +151,11 @@ public class AwsConnectHelper {
                     .build();
             response = client.newCall(request).execute();
             if (response.isSuccessful()) {
-                Log.d(TAG, "Log uploaded successfully!");
+                TLog.d(TAG, "Log uploaded successfully!");
             } else {
                 Log.e(TAG,"Failed to upload file: " + response.code() + " " + response.message());
             }
-            boolean isSuccessful = response.isSuccessful();
-            response.close();
-            return isSuccessful;
+            isSuccessful = response.isSuccessful();
         } catch (IOException e) {
             Log.e(TAG, "error while making upload request, " + e);
         } finally {
@@ -164,7 +163,7 @@ public class AwsConnectHelper {
                 response.close(); // 必ず close() を呼び出す
             }
         }
-        return false;
+        return isSuccessful;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -178,6 +177,7 @@ public class AwsConnectHelper {
             return false;
         }
         Response response = null;
+        boolean isSuccessful = false;
         try {
             String filename = URLUtil.guessFileName(url, null, null);
             Log.d(TAG, "DOWNLOAD, file name = " + filename);
@@ -199,8 +199,7 @@ public class AwsConnectHelper {
             sink.flush();
             sink.close();
             source.close();
-            response.close();
-            return true;
+            isSuccessful = true;
         } catch (IOException e) {
             Log.e(TAG, "download failed " + e.getMessage());
         } finally {
@@ -208,7 +207,7 @@ public class AwsConnectHelper {
                 response.close(); // 必ず close() を呼び出す
             }
         }
-        return false;
+        return isSuccessful;
     }
 
     public void getUrl(String url, GetUrlRequest request, Consumer<GetUrlResponse> callback) {
@@ -223,15 +222,15 @@ public class AwsConnectHelper {
                 .addHeader("Content-Type", "application/json")
                 .build();
         Response response = null;
+        GetUrlResponse urlResponse = null;
         try {
             response = send(request);
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
                 TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
-                GetUrlResponse urlResponse = new GetUrlResponse();
-                urlResponse.deserialize(object);
-                response.close();
-                return urlResponse;
+                GetUrlResponse urlRes = new GetUrlResponse();
+                urlRes.deserialize(object);
+                urlResponse = urlRes;
             }
         } catch (IOException | JSONException e) {
             TLog.d(TAG, "IOException | JSONException");
@@ -241,8 +240,11 @@ public class AwsConnectHelper {
             if (response != null) {
                 response.close(); // 必ず close() を呼び出す
             }
+            if (future != null) {
+                future.cancel(true); // 必ず close() を呼び出す
+            }
         }
-        return null;
+        return urlResponse;
     }
     //    public void upload(String url, Consumer<Boolean> callback) {
 //        executor.execute(()->callback.accept(uploadLog(url)));
@@ -361,6 +363,7 @@ public class AwsConnectHelper {
                 .addHeader("Content-Type", "application/json")
                 .build();
         Response response = null;
+        boolean isSuccessful = false;
         try {
             response = send(request);
             if (response.isSuccessful()) {
@@ -368,8 +371,7 @@ public class AwsConnectHelper {
                 TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
                 LoginResponse loginRes = new LoginResponse();
                 loginRes.deserialize(object);
-                response.close();
-                return true;
+                isSuccessful = true;
             }
         } catch (IOException | JSONException e) {
             Log.d(TAG, "Exception");
@@ -379,8 +381,11 @@ public class AwsConnectHelper {
             if (response != null) {
                 response.close(); // 必ず close() を呼び出す
             }
+            if (future != null) {
+                future.cancel(true); // 必ず close() を呼び出す
+            }
         }
-        return false;
+        return isSuccessful;
     }
     public void fetchDetailProfile(int id, String url, Consumer<Post> callback){
         executor.execute(()->callback.accept(fetchDetailProfileByOkHttp(id,url)));
@@ -396,13 +401,13 @@ public class AwsConnectHelper {
                 .addHeader("Authorization", LoginResponse.getAuthorization())//TODO:Add Interceptor
                 .build();
         Response response = null;
+        Post post = null;
         try {
             response = send(request);
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
                 TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
-                response.close();
-                return AwsDataModel.deserializeDetailProfile(object);
+                post = AwsDataModel.deserializeDetailProfile(object);
             }
         } catch (IOException | JSONException e) {
             Log.d(TAG, "Exception");
@@ -412,8 +417,11 @@ public class AwsConnectHelper {
             if (response != null) {
                 response.close(); // 必ず close() を呼び出す
             }
+            if (future != null) {
+                future.cancel(true); // 必ず close() を呼び出す
+            }
         }
-        return AwsDataModel.deserializeDetailProfile(new JSONObject());
+        return post;
     }
     void disConnect(){
         connectionHttps.disconnect();
