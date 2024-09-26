@@ -56,7 +56,9 @@ public class AwsConnectHelper {
     //Use singleton to manage
     static AwsConnectHelper instance = null;
     EventListener eventListener;
+    AccessTokenInterceptor interceptor;
     public AwsConnectHelper() {
+        interceptor = new AccessTokenInterceptor();
         eventListener = new EventListener() {
             @Override
             public void connectStart(Call call, InetSocketAddress inetSocketAddress, Proxy proxy) {
@@ -91,6 +93,10 @@ public class AwsConnectHelper {
         this.client = new OkHttpClient().newBuilder()
                       .eventListener(eventListener)
                       .build();
+        this.clientWithAuthorization = new OkHttpClient().newBuilder()
+                .eventListener(eventListener)
+                .addInterceptor(interceptor)
+                .build();
     }
 
     public static synchronized AwsConnectHelper getInstance() {
@@ -103,15 +109,34 @@ public class AwsConnectHelper {
     final MediaType MT_GZIP = MediaType.parse("application/gzip");
 
     OkHttpClient client;
+    OkHttpClient clientWithAuthorization;
+
     HttpsURLConnection connectionHttps;
     final String TAG = AwsConnectHelper.class.getSimpleName();
     final ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
     ExecutorService sendExecutor = Executors.newSingleThreadExecutor();
     Future<Response> future;
-
-    public Response send(Request r) throws IOException, ExecutionException, InterruptedException, TimeoutException {
+    public Response send(Request r) throws IOException {
+        Date timeStamp = new Date();
+        Response response = client.newCall(r).execute();
+        Date now = new Date();
+        long timeElapsed = now.getTime() - timeStamp.getTime();
+        Log.i(TAG, "Request finished in " + timeElapsed + "ms: " + response);
+        return response;
+    }
+    public Response sendWithTimeOut(Request r) throws IOException, ExecutionException, InterruptedException, TimeoutException {
         Date timeStamp = new Date();
         Callable<Response> task = () -> client.newCall(r).execute();
+        future = sendExecutor.submit(task);
+        Response response = future.get(1500, TimeUnit.SECONDS);
+        Date now = new Date();
+        long timeElapsed = now.getTime() - timeStamp.getTime();
+        Log.i(TAG, "Request finished in " + timeElapsed + "ms: " + response);
+        return response;
+    }
+    public Response sendWithAuthorization(Request r) throws IOException, ExecutionException, InterruptedException, TimeoutException {
+        Date timeStamp = new Date();
+        Callable<Response> task = () -> clientWithAuthorization.newCall(r).execute();
         future = sendExecutor.submit(task);
         Response response = future.get(1500, TimeUnit.SECONDS);
         Date now = new Date();
@@ -234,9 +259,11 @@ public class AwsConnectHelper {
             }
         } catch (IOException | JSONException e) {
             TLog.d(TAG, "IOException | JSONException");
-        } catch (ExecutionException | InterruptedException| TimeoutException e) {
-            TLog.d(TAG, "ExecutionException | InterruptedException | TimeoutException");
-        } finally {
+        }
+//        catch (ExecutionException | InterruptedException| TimeoutException e) {
+//            TLog.d(TAG, "ExecutionException | InterruptedException | TimeoutException");
+//        }
+        finally {
             if (response != null) {
                 response.close(); // 必ず close() を呼び出す
             }
@@ -371,20 +398,24 @@ public class AwsConnectHelper {
                 TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
                 LoginResponse loginRes = new LoginResponse();
                 loginRes.deserialize(object);
+                AccessTokenInterceptor.lastToken = loginRes.accessToken;
+                AccessTokenInterceptor.loginRequest = requestBody;
                 isSuccessful = true;
             }
         } catch (IOException | JSONException e) {
             Log.d(TAG, "Exception");
-        } catch (ExecutionException | InterruptedException| TimeoutException e) {
-            TLog.d(TAG, "ExecutionException | InterruptedException | TimeoutException");
-        } finally {
-            if (response != null) {
-                response.close(); // 必ず close() を呼び出す
-            }
-            if (future != null) {
-                future.cancel(true); // 必ず close() を呼び出す
-            }
         }
+//        catch (ExecutionException | InterruptedException| TimeoutException e) {
+//            TLog.d(TAG, "ExecutionException | InterruptedException | TimeoutException");
+//        }
+//        finally {
+//            if (response != null) {
+//                response.close(); // 必ず close() を呼び出す
+//            }
+//            if (future != null) {
+//                future.cancel(true); // 必ず close() を呼び出す
+//            }
+//        }
         return isSuccessful;
     }
     public void fetchDetailProfile(int id, String url, Consumer<Post> callback){
@@ -392,18 +423,17 @@ public class AwsConnectHelper {
     }
     Post fetchDetailProfileByOkHttp(int id, String url) {
         PostRequest requestBody = new PostRequest().fill(id);
-        TLog.d(TAG, "Requesting URL:"+url+" request data: ID" + id);
+        TLog.d(TAG, "Requesting URL:"+url+" request data ID: " + id);
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
-                .addHeader("Authorization", LoginResponse.getAuthorization())//TODO:Add Interceptor
                 .build();
         Response response = null;
         Post post = null;
         try {
-            response = send(request);
+            response = sendWithAuthorization(request);
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
                 TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);

@@ -1,10 +1,29 @@
 package com.example.jetpackcomposeexample.controller.server;
 
-import okhttp3.Interceptor
 
+import static com.example.jetpackcomposeexample.utils.UrlConstants.LOGIN_API_URL;
+
+import androidx.annotation.NonNull;
+
+import com.example.jetpackcomposeexample.model.login.dto.LoginRequest;
+import com.example.jetpackcomposeexample.model.login.dto.LoginResponse;
+import com.example.jetpackcomposeexample.utils.TLog;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+
+import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class AccessTokenInterceptor implements Interceptor {
-    static String lastToken = "";
+    public static LoginRequest loginRequest;
+    public static String lastToken = "";
     static OkHttpClient client = new OkHttpClient().newBuilder()
             .build();
     static MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
@@ -17,9 +36,10 @@ public class AccessTokenInterceptor implements Interceptor {
         Response response = chain.proceed(request);
 
         if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+            TLog.d("AWS", "POST/detailProfile HTTP_UNAUTHORIZED");
+
             synchronized (this) {
-                lastToken = loginAccessToken();
-                //TLog.d("AWS", "fetched access token: "+lastToken);
+                loginAccessToken();
                 changeUI();
                 response.close();
                 return chain.proceed(newRequestWithAccessToken(request, lastToken));
@@ -33,48 +53,16 @@ public class AccessTokenInterceptor implements Interceptor {
     private Request newRequestWithAccessToken(@NonNull Request request, @NonNull String accessToken) {
         return request.newBuilder()
                 .header("Authorization", "Bearer " + accessToken)
-                //.header("ABT-ReaderId", "0000001")
                 .build();
     }
 
     /**
      * ログイン後、アクセストークンを取得
      */
-    public String loginAccessToken() {
-//        var input = UserInfoRepository.clientId +":"+ UserInfoRepository.clientSecret;
-        //TLog.d("AWS", "fetching access token with "+input);
-        //var input = CAR_ID +":"+ CLIENT_SECRET;
-//        var credential = Base64
-//                .getEncoder()
-//                .encodeToString(input.getBytes());
-//        RequestBody body = RequestBody.create(mediaType, "grant_type=client_credentials&client_id=" + UserInfoRepository.unitId);
-//        var url = "";
-//        switch (CurrentOperateInfo.getRuntimeEnvironment()) {
-//            case PRODUCTION:
-//                url = API_OAUTH_TOKEN;
-//                break;
-//            case NORMAL_TEST:
-//                url = API_OAUTH_TOKEN_STAGING;
-//                break;
-//            case ANNUAL_POLICY_TEST:
-//                url = API_OAUTH_TOKEN_ANNUAL;
-//                break;
-//            case KUMANO_TOWN:
-//                url = API_OAUTH_TOKEN_KUMANO;
-//                break;
-//        }
-        Request request = new Request.Builder()
-                .url(url)
-                .method("POST", body)
-                .addHeader("Authorization", "Basic "+credential)
-                .build();
-        try {
-            Response response = client.newCall(request).execute();
-            return new JSONObject(response.body().string()).getString("access_token");
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
+    public void loginAccessToken() {
+        if(AwsConnectHelper.getInstance().loginByOkHttp(LOGIN_API_URL, loginRequest.id, loginRequest.password)){
+            TLog.d("AWS", "fetching access token with "+lastToken);
         }
-        return "";
     }
 
     /**

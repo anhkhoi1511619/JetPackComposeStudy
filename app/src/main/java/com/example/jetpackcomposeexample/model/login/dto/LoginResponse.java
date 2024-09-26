@@ -6,14 +6,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LoginResponse {
-    static String accessToken ="";
+    public String accessToken ="";
     int expiresIn;
-    static String tokenType = "Bearer ";
+    public String tokenType = "Bearer ";
 
-    public static String getAuthorization() {
-        Log.d("LoginResponse","Send Authorization: "+ tokenType + " "+accessToken);
-        return tokenType + " "+accessToken;
-    }
+//    public static String getAuthorization() {
+//        Log.d("LoginResponse","Send Authorization: "+ tokenType + " "+accessToken);
+//        return tokenType + " "+accessToken;
+//    }
 
     public void deserialize(JSONObject jsonObject) throws JSONException {
         accessToken = (String) jsonObject.get("access_token");

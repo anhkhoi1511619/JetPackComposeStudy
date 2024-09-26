@@ -4,8 +4,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class LoginRequest {
-    String id;
-    String password;
+    public String id;
+    public String password;
     public LoginRequest fill(String id, String password) {
         this.id = id;
         this.password = password;
