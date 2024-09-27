@@ -1,5 +1,6 @@
 package com.example.jetpackcomposeexample.view.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
@@ -98,12 +99,12 @@ class UIViewModel: ViewModel() {
         }
         TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
     }
-    fun login() {
+    fun login(context: Context) {
         if(!SocketControllerManager.getInstance().isMainController) return
         AwsConnectHelper.getInstance().login(LOGIN_API_URL, {result ->
             TLog.d(TAG,"Result: " + result)
             if (result) {
-                UpdateProcedure().run()
+                UpdateProcedure(context).run()
                 moveToHome()
             }
             updateLoginScreen(result)

@@ -7,10 +7,11 @@ public class UpdateProcedure extends Job{
     DownloadProfileList downloadProfileList;
     DownloadProfile downloadProfile;
     UploadLog uploadLog;
-    public UpdateProcedure() {
-        downloadProfileList = new DownloadProfileList();
-        downloadProfile = new DownloadProfile();
-        uploadLog = new UploadLog();
+    public UpdateProcedure(Context context) {
+        super(context);
+        downloadProfileList = new DownloadProfileList(context);
+        downloadProfile = new DownloadProfile(context);
+        uploadLog = new UploadLog(context);
 
         downloadProfileList
                 .chain(downloadProfile, ChainCondition.RUN_IF_SUCCESS)

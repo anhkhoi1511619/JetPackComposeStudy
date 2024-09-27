@@ -11,6 +11,10 @@ import com.example.jetpackcomposeexample.model.getUrl.GetUrlResponse;
 
 public class UploadLog extends Job{
 
+    public UploadLog(Context context) {
+        super(context);
+    }
+
     @Override
     protected void doRun() {
         int machineId = 960;

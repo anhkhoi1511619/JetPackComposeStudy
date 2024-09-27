@@ -1,6 +1,10 @@
 package com.example.jetpackcomposeexample
 
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Arrangement
@@ -9,13 +13,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
@@ -24,8 +26,9 @@ import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.view.HomeScreen
 import com.example.jetpackcomposeexample.view.login.LoginForm
 import com.example.jetpackcomposeexample.view.theme.JetpackComposeExampleTheme
-import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
+import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +52,16 @@ class MainActivity : ComponentActivity() {
         PostHistoryController(
             applicationContext
         )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (!packageManager.canRequestPackageInstalls()) {
+                val intent = Intent(
+                    Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse(
+                        "package:$packageName"
+                    )
+                )
+                startActivityForResult(intent, 1234) // Handle the result in onActivityResult
+            }
+        }
     }
 
     override fun onDestroy() {

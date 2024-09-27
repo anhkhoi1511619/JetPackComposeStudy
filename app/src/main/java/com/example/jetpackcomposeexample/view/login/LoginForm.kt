@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.modifier.modifierLocalConsumer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -35,6 +36,7 @@ import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 
 @Composable
 fun LoginForm(uiViewModel: UIViewModel){
+    val context = LocalContext.current
     val postUiState by uiViewModel.uiState.collectAsState()
     if (!postUiState.credentials.isSuccessLogin) { FailureLoginPopup {uiViewModel.updateLoginScreen(true)} }
     Column (
@@ -66,7 +68,7 @@ fun LoginForm(uiViewModel: UIViewModel){
             isChecked = postUiState.credentials.remember
         )
         Button(
-            onClick = { uiViewModel.login() },
+            onClick = { uiViewModel.login(context) },
             enabled = true,
             shape = RoundedCornerShape(5.dp),
             modifier = Modifier.fillMaxWidth()

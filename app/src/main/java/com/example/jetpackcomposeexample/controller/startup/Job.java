@@ -30,9 +30,9 @@ public abstract class Job {
     }
     Context context;
 
-//    public Job(Context context) {
-//        this.context = context;
-//    }
+    public Job(Context context) {
+        this.context = context;
+    }
 
     ChainCondition condition = ChainCondition.RUN_ALWAYS;
     public Status status = Status.PENDING;
