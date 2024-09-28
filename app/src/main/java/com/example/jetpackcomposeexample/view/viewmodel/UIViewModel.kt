@@ -6,6 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
+import com.example.jetpackcomposeexample.controller.startup.Job
 import com.example.jetpackcomposeexample.controller.startup.UpdateProcedure
 import com.example.jetpackcomposeexample.controller.train.SocketControllerManager
 import com.example.jetpackcomposeexample.model.login.Credentials
@@ -104,8 +105,12 @@ class UIViewModel: ViewModel() {
         AwsConnectHelper.getInstance().login(LOGIN_API_URL, {result ->
             TLog.d(TAG,"Result: " + result)
             if (result) {
+                UpdateProcedure.setCallback({status->
+                    if (status != Job.Status.PENDING) {
+                        moveToHome()
+                    }
+                })
                 UpdateProcedure(context).run()
-                moveToHome()
             }
             updateLoginScreen(result)
             TLog.d(TAG,"Success is ${_uiState.value.credentials.isSuccessLogin}")

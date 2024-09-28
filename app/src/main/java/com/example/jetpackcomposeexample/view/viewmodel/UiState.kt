@@ -25,5 +25,6 @@ enum class ScreenID {
     LOGIN,
     HOME,
     DETAIL_POST,
+    UPDATE,
     SETTING
 }

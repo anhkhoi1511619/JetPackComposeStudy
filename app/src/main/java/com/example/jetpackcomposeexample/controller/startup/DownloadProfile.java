@@ -16,8 +16,6 @@ public class DownloadProfile extends Job{
 
     @Override
     protected void doRun() {
-        File file = new File("/storage/emulated/0/log/Server/download/app/app-debug.apk");
-        ApkInstaller.installAPK(context, file);
         setStatus(Status.DONE);
     }
 }
