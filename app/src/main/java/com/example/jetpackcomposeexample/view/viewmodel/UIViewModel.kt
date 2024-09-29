@@ -14,8 +14,6 @@ import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.utils.UrlConstants.DETAIL_PROFILE_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.LOGIN_API_URL
-import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_API_URL
-import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_LOG_API_URL_TMP_OkHTTP
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -101,15 +99,15 @@ class UIViewModel: ViewModel() {
         TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
     }
     fun login(context: Context) {
-        if(!SocketControllerManager.getInstance().isMainController) return
+//        if(!SocketControllerManager.getInstance().isMainController) return
         AwsConnectHelper.getInstance().login(LOGIN_API_URL, {result ->
             TLog.d(TAG,"Result: " + result)
             if (result) {
-                UpdateProcedure.setCallback({status->
+                UpdateProcedure.setCallback { status ->
                     if (status != Job.Status.PENDING) {
                         moveToHome()
                     }
-                })
+                }
                 UpdateProcedure(context).run()
             }
             updateLoginScreen(result)

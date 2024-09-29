@@ -20,6 +20,8 @@ import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
 
+import com.example.jetpackcomposeexample.model.aplver.AppVersionRequest;
+import com.example.jetpackcomposeexample.model.aplver.AppVersionResponse;
 import com.example.jetpackcomposeexample.model.getUrl.GetUrlRequest;
 import com.example.jetpackcomposeexample.model.getUrl.GetUrlResponse;
 import com.example.jetpackcomposeexample.model.login.Credentials;
@@ -156,7 +158,7 @@ public class AwsConnectHelper {
             if (url.isEmpty()) {
                 return false;
             }
-            OkHttpClient client = new OkHttpClient.Builder()
+            var client = new OkHttpClient.Builder()
                     .connectTimeout(50, TimeUnit.SECONDS)
                     .writeTimeout(100, TimeUnit.SECONDS)
                     .readTimeout(50, TimeUnit.SECONDS)
@@ -201,22 +203,20 @@ public class AwsConnectHelper {
             Log.w(TAG, "DOWNLOAD, Link not start with http (" + url + "), skip");
             return false;
         }
-        Response response = null;
-        boolean isSuccessful = false;
         try {
-            String filename = URLUtil.guessFileName(url, null, null);
+            var filename = URLUtil.guessFileName(url, null, null);
             Log.d(TAG, "DOWNLOAD, file name = " + filename);
-            File dir = new File(saveTo);
+            var dir = new File(saveTo);
             dir.mkdirs();
-            File file = new File(saveTo + "/" + filename);
-            Request request = new Request.Builder().url(url).build();
-            response = client.newCall(request).execute();
+            var file = new File(saveTo + "/" + filename);
+            var request = new Request.Builder().url(url).build();
+            var response = client.newCall(request).execute();
             if (response.body() == null) {
                 return false;
             }
-            BufferedSource source = response.body().source();
-            BufferedSink sink = Okio.buffer(Okio.sink(file));
-            Buffer buffer = sink.getBuffer();
+            var source = response.body().source();
+            var sink = Okio.buffer(Okio.sink(file));
+            var buffer = sink.getBuffer();
             final int DOWNLOAD_CHUNK_SIZE = 8 * 1024;
             while (source.read(buffer, DOWNLOAD_CHUNK_SIZE) != -1) {
                 sink.emit();
@@ -224,24 +224,20 @@ public class AwsConnectHelper {
             sink.flush();
             sink.close();
             source.close();
-            isSuccessful = true;
+            return true;
         } catch (IOException e) {
             Log.e(TAG, "download failed " + e.getMessage());
-        } finally {
-            if (response != null) {
-                response.close(); // 必ず close() を呼び出す
-            }
         }
-        return isSuccessful;
+        return false;
     }
 
     public void getUrl(String url, GetUrlRequest request, Consumer<GetUrlResponse> callback) {
         executor.execute(()->callback.accept(getUrl(url, request)));
     }
     public GetUrlResponse getUrl(String url, GetUrlRequest urlRequest) {
-        RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, urlRequest.serialize().toString());
+        var body = RequestBody.create(MEDIA_TYPE_JSON, urlRequest.serialize().toString());
         TLog.d(TAG, "Requesting URL:"+url+" request data: " + urlRequest.serialize().toString());
-        Request request = new Request.Builder()
+        var request = new Request.Builder()
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
@@ -251,9 +247,9 @@ public class AwsConnectHelper {
         try {
             response = send(request);
             if (response.isSuccessful()) {
-                JSONObject object = new JSONObject(response.body().string());
+                var object = new JSONObject(response.body().string());
                 TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
-                GetUrlResponse urlRes = new GetUrlResponse();
+                var urlRes = new GetUrlResponse();
                 urlRes.deserialize(object);
                 urlResponse = urlRes;
             }
@@ -272,6 +268,35 @@ public class AwsConnectHelper {
             }
         }
         return urlResponse;
+    }
+    public AppVersionResponse getAplVer(String url, AppVersionRequest appVersionRequest) {
+        Response response = null;
+        AppVersionResponse aplVerRes = null;
+        try {
+            TLog.d(TAG, "Requesting URL:"+url+" request data: " + appVersionRequest.serialize().toString());
+            RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, appVersionRequest.serialize().toString());
+            var request = new Request.Builder()
+                    .url(url)
+                    .method("POST", body)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+            response = send(request);
+            if (response.isSuccessful()) {
+                var object = new JSONObject(response.body().string());
+                TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
+                var appVersionResponse = new AppVersionResponse();
+                appVersionResponse.deserialize(object);
+                aplVerRes = appVersionResponse;
+            }
+        } catch (IOException | JSONException e) {
+            TLog.d(TAG, "IOException | JSONException");
+        }
+        finally {
+            if (response != null) {
+                response.close(); // 必ず close() を呼び出す
+            }
+        }
+        return aplVerRes;
     }
     //    public void upload(String url, Consumer<Boolean> callback) {
 //        executor.execute(()->callback.accept(uploadLog(url)));
@@ -381,10 +406,10 @@ public class AwsConnectHelper {
         executor.execute(()->callback.accept(loginByOkHttp(url, credentials.getLogin(), credentials.getPassword())));
     }
     Boolean loginByOkHttp(String url, String id, String password) {
-        LoginRequest requestBody = new LoginRequest().fill(id, password);
+        var requestBody = new LoginRequest().fill(id, password);
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         TLog.d(TAG, "Requesting URL:"+url+" request data: " + requestBody.serialize().toString());
-        Request request = new Request.Builder()
+        var request = new Request.Builder()
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
@@ -394,9 +419,9 @@ public class AwsConnectHelper {
         try {
             response = send(request);
             if (response.isSuccessful()) {
-                JSONObject object = new JSONObject(response.body().string());
+                var object = new JSONObject(response.body().string());
                 TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
-                LoginResponse loginRes = new LoginResponse();
+                var loginRes = new LoginResponse();
                 loginRes.deserialize(object);
                 AccessTokenInterceptor.lastToken = loginRes.accessToken;
                 AccessTokenInterceptor.loginRequest = requestBody;
@@ -422,10 +447,10 @@ public class AwsConnectHelper {
         executor.execute(()->callback.accept(fetchDetailProfileByOkHttp(id,url)));
     }
     Post fetchDetailProfileByOkHttp(int id, String url) {
-        PostRequest requestBody = new PostRequest().fill(id);
+        var requestBody = new PostRequest().fill(id);
         TLog.d(TAG, "Requesting URL:"+url+" request data ID: " + id);
-        RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
-        Request request = new Request.Builder()
+        var body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
+        var request = new Request.Builder()
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
@@ -435,7 +460,7 @@ public class AwsConnectHelper {
         try {
             response = sendWithAuthorization(request);
             if (response.isSuccessful()) {
-                JSONObject object = new JSONObject(response.body().string());
+                var object = new JSONObject(response.body().string());
                 TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
                 post = AwsDataModel.deserializeDetailProfile(object);
             }

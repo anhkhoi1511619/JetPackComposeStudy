@@ -9,7 +9,8 @@ import java.util.function.Consumer;
 
 public class UpdateProcedure extends Job{
     ContinueOngoingUpdate continueOngoingUpdate;
-
+    DownloadAplVerList downloadAplVerList;
+    DownloadAplVer downloadAplVer;
     DownloadProfileList downloadProfileList;
     DownloadProfile downloadProfile;
     UploadLog uploadLog;
@@ -23,18 +24,24 @@ public class UpdateProcedure extends Job{
         super(context);
         downloadProfileList = new DownloadProfileList(context);
         downloadProfile = new DownloadProfile(context);
-        uploadLog = new UploadLog(context);
+        downloadAplVerList = new DownloadAplVerList(context);
+        downloadAplVer = new DownloadAplVer(context);
         continueOngoingUpdate = new ContinueOngoingUpdate(context);
-        continueOngoingUpdate
-                .chain(downloadProfileList, ChainCondition.RUN_IF_STRICTLY_SUCCESS)
+        uploadLog = new UploadLog(context);
+        downloadProfileList
                 .chain(downloadProfile, ChainCondition.RUN_IF_SUCCESS)
+                .chain(downloadAplVerList, ChainCondition.RUN_IF_SUCCESS)
+                .chain(downloadAplVer, ChainCondition.RUN_IF_SUCCESS)
+                .chain(continueOngoingUpdate, ChainCondition.RUN_ALWAYS)
                 .chain(uploadLog, ChainCondition.RUN_ALWAYS)
                 .then(this::report);
     }
     void report() {
-        Log.d(TAG, "continueOngoingUpdate: "+continueOngoingUpdate.status);
+        Log.d(TAG, "downloadAplVerList: "+downloadAplVerList.status);
+        Log.d(TAG, "downloadAplVer:"+downloadAplVer.status);
         Log.d(TAG, "downloadProfileList: "+downloadProfileList.status);
         Log.d(TAG, "downloadProfile:"+downloadProfile.status);
+        Log.d(TAG, "continueOngoingUpdate: "+continueOngoingUpdate.status);
         Log.d(TAG, "uploadLog:"+uploadLog.status);
         if(continueOngoingUpdate.status == Status.PENDING)  {
             setStatus(Status.PENDING);
@@ -48,6 +55,6 @@ public class UpdateProcedure extends Job{
 
     @Override
     protected void doRun() {
-        continueOngoingUpdate.run();
+        downloadProfileList.run();
     }
 }
