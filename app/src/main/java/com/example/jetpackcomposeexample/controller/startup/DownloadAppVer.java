@@ -3,16 +3,16 @@ package com.example.jetpackcomposeexample.controller.startup;
 import android.content.Context;
 import android.util.Log;
 
-import com.example.jetpackcomposeexample.controller.fileUtils.FileTransferUtils;
 import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper;
-import com.example.jetpackcomposeexample.controller.startup.repository.AppPackageRepository;
+import com.example.jetpackcomposeexample.controller.startup.repository.SoftwarePackageRepository;
+import com.example.jetpackcomposeexample.utils.FileTransferUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DownloadAplVer extends Job{
+public class DownloadAppVer extends Job{
     List<Status> downloadStatus = new ArrayList<>();
-    public DownloadAplVer(Context context) {
+    public DownloadAppVer(Context context) {
         super(context);
     }
 
@@ -31,7 +31,7 @@ public class DownloadAplVer extends Job{
                 downloadStatus.add(Status.DONE);
                 continue;
             }
-            var success = helper.download(v.url, AppPackageRepository.TMP_PACKAGE_PATH+"/"+v.id);
+            var success = helper.download(v.url, SoftwarePackageRepository.TMP_PACKAGE_PATH+"/"+v.id);
             if(!success) {
                 Log.d(TAG, "[DOWNLOAD] app data download failed! "+v.id);
                 downloadStatus.add(Status.FAILED);
@@ -42,8 +42,8 @@ public class DownloadAplVer extends Job{
 
             if(done(downloadStatus)) {
                 Log.i(TAG, "copying downloaded app files from tmp...");
-                FileTransferUtils.syncArchive(AppPackageRepository.TMP_PACKAGE_PATH,
-                        AppPackageRepository.UPDATE_PACKAGE_PATH);
+                FileTransferUtils.syncArchive(SoftwarePackageRepository.TMP_PACKAGE_PATH,
+                        SoftwarePackageRepository.UPDATE_PACKAGE_PATH);
                 setStatus(Status.DONE);
             } else {
                 Log.d(TAG, "download app failed somewhere !");

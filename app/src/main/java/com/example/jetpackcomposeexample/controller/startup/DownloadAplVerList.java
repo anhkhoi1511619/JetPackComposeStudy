@@ -6,7 +6,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper;
-import com.example.jetpackcomposeexample.controller.startup.repository.AppPackageRepository;
+import com.example.jetpackcomposeexample.controller.startup.repository.SoftwarePackageRepository;
 import com.example.jetpackcomposeexample.model.aplver.AppVersionRequest;
 import com.example.jetpackcomposeexample.model.aplver.AppVersionResponse;
 
@@ -22,9 +22,9 @@ public class DownloadAplVerList extends Job{
     @Override
     protected void doRun() {
         AppVersionRequest request = new AppVersionRequest(1511619);
-        AppPackageRepository.load();
-        AppPackageRepository.data.forEach(request::addVersion);
-        AppVersionResponse response = AwsConnectHelper.getInstance().getAplVer(APL_VER_API_OKHTTP, request);
+        SoftwarePackageRepository.load();
+        SoftwarePackageRepository.data.forEach(request::addVersion);
+        var response = AwsConnectHelper.getInstance().getAplVer(APL_VER_API_OKHTTP, request);
         try {
             if(response == null) {
                 throw new Exception("Invalid result");

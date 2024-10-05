@@ -1,4 +1,4 @@
-package com.example.jetpackcomposeexample.controller.fileUtils;
+package com.example.jetpackcomposeexample.utils;
 
 import android.os.Build;
 import android.util.Log;

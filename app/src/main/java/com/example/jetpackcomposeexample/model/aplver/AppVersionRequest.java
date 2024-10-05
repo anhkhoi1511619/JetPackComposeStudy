@@ -42,6 +42,7 @@ public class AppVersionRequest {
                     .put("version", v.version)
             );
         }
+        object.put("appVerList", versions);
         return object;
     }
 }
