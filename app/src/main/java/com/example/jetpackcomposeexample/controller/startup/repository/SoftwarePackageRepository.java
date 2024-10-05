@@ -9,12 +9,18 @@ import androidx.annotation.RequiresApi;
 import com.example.jetpackcomposeexample.utils.FileTransferUtils;
 import com.example.jetpackcomposeexample.utils.TLog;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class SoftwarePackageRepository {
     public enum DataType {
@@ -30,6 +36,13 @@ public class SoftwarePackageRepository {
         public String getTmpLocation() {
             return TMP_PACKAGE_PATH+"/"+value;
         }
+        public String toString() {
+            switch (value) {
+                case "11":
+                    return "制御器アプリケーション";
+            }
+            return "";
+        }
     }
     final static String TAG = SoftwarePackageRepository.class.getSimpleName();
 
@@ -37,6 +50,8 @@ public class SoftwarePackageRepository {
     public static final String TMP_PACKAGE_PATH = PATH+"/log/Server/download/app-tmp";
     public static final String UPDATE_PACKAGE_PATH  = PATH+"/log/Server/download/app";
     static final String SAVE_PATH = "AppVersion.csv";
+    static final Pattern PACKAGE_NAME_PATTERN =
+            Pattern.compile("^\\d{2}_\\d{4}_\\d{8}_\\d{3}$", Pattern.CASE_INSENSITIVE);
     public static Map<String, String> data = new HashMap<>();
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -76,6 +91,44 @@ public class SoftwarePackageRepository {
         }
         TLog.d(TAG, "checking new package for "+software.value+", download folder has nothing");
         return false;
+    }
+
+    public static void markedPackageResolved(DataType software) {
+        var entry = new File(software.getLocation());
+        var children = entry.listFiles(FileTransferUtils::isArchive);
+        if(children != null && children.length != 0) {
+            var next = children[0].getName();
+            next = next.substring(0, next.indexOf("."));
+            var valid = PACKAGE_NAME_PATTERN.matcher(next).find();
+            if(valid) {
+                data.put(software.value, next);
+            } else {
+                Log.w(TAG, "Found invalid package name "+next
+                        + ", ignore it, current package name is "+data.get(software.value));
+            }
+        }
+
+        try {
+            save();
+        } catch (IOException e) {
+            Log.e(TAG, "Error while writing package repository file "+e.getMessage());
+        }
+    }
+
+    static void save() throws IOException {
+        new File(UPDATE_PACKAGE_PATH).mkdirs();
+        var title = Arrays.stream(DataType.values())
+                .map(e->e.toString())
+                .collect(Collectors.joining(","));
+        var value = Arrays.stream(DataType.values())
+                .map(e->e.value)
+                .map(k->data.getOrDefault(k, ""))
+                .collect(Collectors.joining(","));
+        var bw = new BufferedWriter(new FileWriter(UPDATE_PACKAGE_PATH+"/"+SAVE_PATH));
+        bw.write(title);
+        bw.newLine();
+        bw.write(value);
+        bw.close();
     }
 
 

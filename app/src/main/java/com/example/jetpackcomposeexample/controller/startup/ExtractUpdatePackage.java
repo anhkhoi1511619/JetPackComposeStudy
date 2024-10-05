@@ -35,6 +35,7 @@ public class ExtractUpdatePackage extends Job{
             FileTransferUtils.emptyDirectory(software.getTmpLocation());
             if(!extractAllArchive(software.getLocation(), software.getTmpLocation())) return false;
             FileTransferUtils.copyDirectory(software.getTmpLocation(), software.getLocation());
+            SoftwarePackageRepository.markedPackageResolved(software);
         }
         return true;
     }
