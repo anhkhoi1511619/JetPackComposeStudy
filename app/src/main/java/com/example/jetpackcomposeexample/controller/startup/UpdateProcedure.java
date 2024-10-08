@@ -1,8 +1,13 @@
 package com.example.jetpackcomposeexample.controller.startup;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
+
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 public class UpdateProcedure extends Job{
@@ -36,7 +41,36 @@ public class UpdateProcedure extends Job{
         } else {
             setStatus(Status.DONE);
         }
-        callback.accept(status);
+        retry(uploadLog.done());
+//        callback.accept(status);
+    }
+
+    public static boolean isScreenToRun = true;
+    ScheduledFuture<?> runningTask;
+    static int retryCount = 0;
+
+    synchronized void increment() {
+        retryCount++;
+    }
+    final int MAX_RETRY = 5;
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    void retry(boolean isSuccess) {
+        if(!isSuccess) {
+            Log.d(TAG, "retry: "+retryCount+"/"+MAX_RETRY);
+            if(retryCount>MAX_RETRY) {
+                Log.d(TAG, "over 5 times. Stop");
+                retryCount = 0;
+                if(runningTask!=null) runningTask.cancel(true);
+                return;
+            }
+            increment();
+            runningTask = executor.scheduleAtFixedRate(()->{
+                if (isScreenToRun) {
+                    new UpdateProcedure(context).run();
+                    runningTask.cancel(true);
+                }
+            },10, 10, TimeUnit.SECONDS);
+        }
     }
 
     @Override
