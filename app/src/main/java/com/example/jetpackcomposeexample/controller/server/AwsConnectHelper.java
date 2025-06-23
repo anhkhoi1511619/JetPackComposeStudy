@@ -16,6 +16,8 @@ import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
 
+import com.example.jetpackcomposeexample.model.balance.BalanceRequest;
+import com.example.jetpackcomposeexample.model.balance.BalanceResponse;
 import com.example.jetpackcomposeexample.model.login.Credentials;
 import com.example.jetpackcomposeexample.model.login.dto.LoginRequest;
 import com.example.jetpackcomposeexample.model.login.dto.LoginResponse;
@@ -273,6 +275,31 @@ public class AwsConnectHelper {
             Log.d(TAG, "Exception");
         }
         return false;
+    }
+    public void getBalanceInfo(String subtractAmount, String date, String time, String url, Consumer<BalanceResponse> callback){
+        executor.execute(()->callback.accept(getBalance(subtractAmount, date, time, url)));
+    }
+    BalanceResponse getBalance(String subtractAmount, String date, String time, String url) {
+        BalanceRequest requestBody = new BalanceRequest(subtractAmount, date, time);
+        RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
+        Request request = new Request.Builder()
+                .url(url)
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+        try {
+            Response response = send(request);
+            if (response.isSuccessful()) {
+                JSONObject object = new JSONObject(response.body().string());
+                TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
+                BalanceResponse balanceResponse = new BalanceResponse();
+                balanceResponse.deserialize(object);
+                return balanceResponse;
+            }
+        } catch (IOException | JSONException e) {
+            Log.d(TAG, "Exception");
+        }
+        return new BalanceResponse();
     }
     public void fetchDetailProfile(int id, String url, Consumer<Post> callback){
         executor.execute(()->{

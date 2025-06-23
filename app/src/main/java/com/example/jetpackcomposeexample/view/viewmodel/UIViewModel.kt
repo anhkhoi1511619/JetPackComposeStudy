@@ -8,6 +8,7 @@ import com.example.jetpackcomposeexample.controller.train.SocketControllerManage
 import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
+import com.example.jetpackcomposeexample.utils.UrlConstants.BALANCE_API_URL_LOCAL_HOST
 import com.example.jetpackcomposeexample.utils.UrlConstants.DETAIL_PROFILE_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.LOGIN_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_API_URL
@@ -49,11 +50,11 @@ class UIViewModel: ViewModel() {
     }
 
     fun load(id: Int){
-        if(loadedIDList.contains(id)) {//Avoid duplicate
-            moveToDetail()
-            TLog.d(TAG,"Load with duplicate id")
-            return
-        }
+//        if(loadedIDList.contains(id)) {//Avoid duplicate
+//            moveToDetail()
+//            TLog.d(TAG,"Load with duplicate id")
+//            return
+//        }
         TLog.d(TAG,"Load new id")
         loadDetailProfile(id)
     }
@@ -67,6 +68,9 @@ class UIViewModel: ViewModel() {
             }
             addDB(post = result)
             Log.d(TAG,"loadedDetailPost is ${_uiState.value.loadedDetailPost}")
+        }
+        AwsConnectHelper.getInstance().getBalanceInfo("0", "June 23", "22:40:00", BALANCE_API_URL_LOCAL_HOST) { result ->
+            Log.d(TAG,"result is OK")
         }
     }
 
@@ -93,8 +97,16 @@ class UIViewModel: ViewModel() {
         }
         TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
     }
+    fun loginUI() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                screenID = ScreenID.LOGIN
+            )
+        }
+        TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+    }
     fun login() {
-        if(!SocketControllerManager.getInstance().isMainController) return
+        //if(!SocketControllerManager.getInstance().isMainController) return
         AwsConnectHelper.getInstance().login(LOGIN_API_URL, {result ->
             TLog.d(TAG,"Result: " + result)
             if (result) moveToHome()

@@ -53,7 +53,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        SocketControllerManager.getInstance().close()
+        //SocketControllerManager.getInstance().close()
     }
 
 }
@@ -69,7 +69,7 @@ fun Home(uiViewModel: UIViewModel =  viewModel()) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = "Flash Screen")
-                uiViewModel.openSocket()
+                uiViewModel.loginUI()
             }
         }
         ScreenID.LOGIN -> {
