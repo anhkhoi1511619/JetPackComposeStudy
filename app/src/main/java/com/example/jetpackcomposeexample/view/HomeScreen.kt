@@ -31,6 +31,7 @@ import com.example.jetpackcomposeexample.model.post.post3
 import com.example.jetpackcomposeexample.view.chart.ChartCode
 import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.jetpackcomposeexample.model.balance.BalanceResponse
 import com.example.jetpackcomposeexample.model.experience.Experiences
 import com.example.jetpackcomposeexample.model.experience.experiencesExampleList
 import com.example.jetpackcomposeexample.model.history.HistoryDataModel
@@ -54,6 +55,7 @@ fun HomeScreen(uiViewModel: UIViewModel){
                 detailPost = postUiState.loadedDetailPost,
                 historyPosts = postUiState.historyPost,
                 posts = postUiState.showingPostList,
+                balanceList = postUiState.balanceList,
                 favorites = emptySet(),
                 onArticleTapped = {
                     uiViewModel.load(it)
@@ -78,12 +80,20 @@ fun HomeScreen(uiViewModel: UIViewModel){
         }
     }
 }
+var balanceListTest = arrayListOf(
+    BalanceResponse.SFInfo(1.5f.toString(), "June 20", "12:00:00"),
+    BalanceResponse.SFInfo(2.3f.toString(), "June 21", "12:00:00"),
+    BalanceResponse.SFInfo(1.8f.toString(), "June 22", "12:00:00"),
+    BalanceResponse.SFInfo(3.0f.toString(), "June 23", "12:00:00"),
+    BalanceResponse.SFInfo(2.6f.toString(), "June 24", "12:00:00")
+)
 @Composable
 fun PostList(
     detailPost: Post,
     historyPosts: List<PostHistoryData>,
 //    posts: List<Post>,
     posts: List<Experiences>,
+    balanceList: ArrayList<BalanceResponse.SFInfo>,
     favorites: Set<String>,
     onArticleTapped: (postId: Int) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -99,7 +109,7 @@ fun PostList(
             PostTopSection(post = detailPost  , onArticleTapped)
             ExperienceWorking(posts = posts, navigateToArticle = onArticleTapped)
 //            PostSocialActivities(posts = posts, navigateToArticle = onArticleTapped)
-            ChartCode(modifier = Modifier.padding(16.dp))
+            ChartCode(balanceList, modifier = Modifier.padding(16.dp))
             PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
         }
     }
@@ -210,7 +220,7 @@ fun PostListToSectionTest(){
 @Preview
 @Composable
 fun PostListTest() {
-    PostList(post3, HistoryDataModel.list, experiencesExampleList, emptySet(), {})
+    PostList(post3, HistoryDataModel.list, experiencesExampleList,ArrayList(), emptySet(), {})
 }
 @Preview
 @Composable

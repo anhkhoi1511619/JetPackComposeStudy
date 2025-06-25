@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
 import com.example.jetpackcomposeexample.controller.train.SocketControllerManager
+import com.example.jetpackcomposeexample.model.balance.BalanceResponse
 import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.util.ArrayList
 
 class UIViewModel: ViewModel() {
     val TAG: String = "UIViewModel"
@@ -68,9 +70,6 @@ class UIViewModel: ViewModel() {
             }
             addDB(post = result)
             Log.d(TAG,"loadedDetailPost is ${_uiState.value.loadedDetailPost}")
-        }
-        AwsConnectHelper.getInstance().getBalanceInfo("0", "June 23", "22:40:00", BALANCE_API_URL_LOCAL_HOST) { result ->
-            Log.d(TAG,"result is OK")
         }
     }
 
@@ -161,6 +160,13 @@ class UIViewModel: ViewModel() {
     fun moveToHome() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.HOME)
+        }
+        AwsConnectHelper.getInstance().getBalanceInfo("0", "June 25", "22:40:00", BALANCE_API_URL_LOCAL_HOST) { result ->
+            for (s in result.sfInfos) Log.d(TAG,"result is ${s.postSubtractBalance}")
+            //Log.d(TAG,"result is ${result.sfInfos}")
+            _uiState.update { currentState ->
+                currentState.copy(balanceList = result.sfInfos)
+            }
         }
         TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
     }

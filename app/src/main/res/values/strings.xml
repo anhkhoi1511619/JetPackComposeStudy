@@ -38,7 +38,7 @@
     <string name="home_history_title">Posted History</string>
     <string name="home_social_activities_title">Social Activities</string>
     <string name="home_experience_working_title">Experience Of Working</string>
-    <string name="home_chart">Activity on LeetCode</string>
+    <string name="home_chart">Daily Balance</string>
     <string name="home_post_min_read">%1$s - %2$s posted</string>
     <string name="home_post_based_on_history">BASED ON YOUR HISTORY</string>
     <string name="home_search">Search articles</string>

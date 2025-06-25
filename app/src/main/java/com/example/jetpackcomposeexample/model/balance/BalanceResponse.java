@@ -10,11 +10,25 @@ import java.util.Arrays;
 import java.util.Calendar;
 
 public class BalanceResponse {
-    public class SFInfo {
+    public static class SFInfo {
+        public SFInfo(String postSubtractBalance, String date) {
+            this.postSubtractBalance = postSubtractBalance;
+            this.date = date;
+        }
+
+        public SFInfo(String postSubtractBalance, String date, String time) {
+            this.postSubtractBalance = postSubtractBalance;
+            this.date = date;
+            this.time = time;
+        }
+
+        public SFInfo() {
+        }
+
         String subtractAmount;
-        String postSubtractBalance;
-        String date;
-        String time;
+        public String postSubtractBalance;
+        public String date;
+        public String time;
     }
     public String resultCode = "";
     public String resultDetailCode = "";
