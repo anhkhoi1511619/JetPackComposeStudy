@@ -78,6 +78,10 @@ dependencies {
     // More icon for UI
     implementation ("androidx.compose.material:material-icons-extended:1.4.3")
 
+    //Tar.Gz File
+    implementation ("org.apache.commons:commons-compress:1.24.0")
+
+
 
     implementation(libs.core.ktx)
     implementation(libs.lifecycle.runtime.ktx)

@@ -99,13 +99,13 @@ public class AwsConnectHelper {
                     .build();
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
-                Log.d(TAG, "Log uploaded successfully!");
+                TLog.d(TAG, "Log uploaded successfully!");
             } else {
-                Log.e(TAG,"Failed to upload file: " + response.code() + " " + response.message());
+                TLog.d(TAG,"Failed to upload file: " + response.code() + " " + response.message());
             }
             return response.isSuccessful();
         } catch (IOException e) {
-            Log.e(TAG, "error while making upload request, " + e);
+            TLog.d(TAG, "error while making upload request, " + e);
         }
         return false;
     }
@@ -256,6 +256,7 @@ public class AwsConnectHelper {
     }
     Boolean loginByOkHttp(String url, String id, String password) {
         LoginRequest requestBody = new LoginRequest().fill(id, password);
+        TLog.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
                 .url(url)
@@ -281,6 +282,7 @@ public class AwsConnectHelper {
     }
     BalanceResponse getBalance(String subtractAmount, String date, String time, String url) {
         BalanceRequest requestBody = new BalanceRequest(subtractAmount, date, time);
+        TLog.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
                 .url(url)
@@ -291,7 +293,7 @@ public class AwsConnectHelper {
             Response response = send(request);
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
-                TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
+                TLog.d(TAG, "Received data :" + object);
                 BalanceResponse balanceResponse = new BalanceResponse();
                 balanceResponse.deserialize(object);
                 return balanceResponse;
@@ -309,6 +311,7 @@ public class AwsConnectHelper {
     }
     Post fetchDetailProfileByOkHttp(int id, String url) {
         PostRequest requestBody = new PostRequest().fill(id);
+        TLog.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
                 .url(url)
@@ -320,7 +323,7 @@ public class AwsConnectHelper {
             Response response = send(request);
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
-                TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
+                TLog.d(TAG, "Received data :" + object);
                 return AwsDataModel.deserializeDetailProfile(object);
             }
         } catch (IOException | JSONException e) {

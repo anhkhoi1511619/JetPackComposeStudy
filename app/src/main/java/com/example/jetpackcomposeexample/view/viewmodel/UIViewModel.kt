@@ -9,6 +9,7 @@ import com.example.jetpackcomposeexample.model.balance.BalanceResponse
 import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
+import com.example.jetpackcomposeexample.utils.TarGzMaker
 import com.example.jetpackcomposeexample.utils.UrlConstants.BALANCE_API_URL_LOCAL_HOST
 import com.example.jetpackcomposeexample.utils.UrlConstants.DETAIL_PROFILE_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.LOGIN_API_URL
@@ -75,16 +76,20 @@ class UIViewModel: ViewModel() {
 
     fun uploadLog() {
         //TODO: Add Upload Feature
-//        TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
-//        AwsConnectHelper.getInstance().upload(UPLOAD_API_URL) { result ->
+        //TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+        Log.d(TAG, "Make TarGz file")
+        TarGzMaker.createTarGzFromCsv("/sdcard/DCIM/ProfileApp/app_log.csv", "/sdcard/DCIM/ProfileApp/app_log.tar.gz")
+        Log.d(TAG, "Sending.... TarGz file")
+        AwsConnectHelper.getInstance().uploadLogOkHttp(UPLOAD_API_URL, "/sdcard/DCIM/ProfileApp/app_log.tar.gz") { result ->
 //            _uiState.update { currentState ->
 //                currentState.copy(
 //                        upLoadDone = result,
 //                        screenID = ScreenID.LOGIN
 //                    )
 //            }
-//            TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
-//        }
+            if (result) TarGzMaker.delete("/sdcard/DCIM/ProfileApp/app_log.csv")
+            Log.d(TAG,"result is $result")
+        }
     }
     fun openSocket() {
 //        SocketControllerManager.getInstance().run();
@@ -168,6 +173,7 @@ class UIViewModel: ViewModel() {
                 currentState.copy(balanceList = result.sfInfos)
             }
         }
+        uploadLog()
         TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
     }
     private fun moveToDetail() {

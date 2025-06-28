@@ -3,6 +3,9 @@ package com.example.jetpackcomposeexample.model.post.dto;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Field;
+import java.util.Calendar;
+
 public class PostRequest {
     int id;
     String machine;
@@ -12,6 +15,20 @@ public class PostRequest {
         this.id = id;
         this.machine = "Samsung SM-N960U";
         return this;
+    }
+    public String toString() {
+        StringBuilder ret = new StringBuilder();
+        for (Field field : this.getClass().getDeclaredFields()) {
+            try {
+                Object val = field.get(this);
+                String valStr = val != null ? val.toString() : "null";
+                if(field.getType() == Calendar.class) valStr = "...";
+                ret.append(field.getName()).append(": ").append(valStr).append(",");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return ret.toString();
     }
 
     public JSONObject serialize() {

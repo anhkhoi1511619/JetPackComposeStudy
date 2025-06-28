@@ -9,7 +9,7 @@ public class UrlConstants {
     public static final String DETAIL_PROFILE_API_URL_LOCAL_HOST = "http://192.168.120.104:5173/profile/detail";
     public static final String BALANCE_API_URL_LOCAL_HOST = "http://192.168.120.104:5173/subtract-balance";
 
-    public static final String UPLOAD_LOG_API_URL_HTTP = "http://192.168.254.249:3000/uploadLog";
+    public static final String UPLOAD_LOG_API_URL_HTTP = "http://192.168.120.104:5173/upload-log";
     public static final String UPLOAD_LOG_API_URL_HTTPS = "https://192.168.0.42:4000/uploadLog";
     public static final String LOGIN_API_URL_HTTP = "http://192.168.120.104:5173/login";
     public static final String LOGIN_API_URL_HTTPS = "https://192.168.125.42:4000/login";
