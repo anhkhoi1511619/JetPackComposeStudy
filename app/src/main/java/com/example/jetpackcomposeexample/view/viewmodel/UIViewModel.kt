@@ -161,7 +161,7 @@ class UIViewModel: ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.HOME)
         }
-        AwsConnectHelper.getInstance().getBalanceInfo("0", "June 25", "22:40:00", BALANCE_API_URL_LOCAL_HOST) { result ->
+        AwsConnectHelper.getInstance().getBalanceInfo("0", "June 28", "22:40:00", BALANCE_API_URL_LOCAL_HOST) { result ->
             for (s in result.sfInfos) Log.d(TAG,"result is ${s.postSubtractBalance}")
             //Log.d(TAG,"result is ${result.sfInfos}")
             _uiState.update { currentState ->
