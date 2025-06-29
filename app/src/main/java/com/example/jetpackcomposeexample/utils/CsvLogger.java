@@ -1,17 +1,16 @@
 package com.example.jetpackcomposeexample.utils;
 
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.text.DateFormat;
-import java.util.Arrays;
 import java.util.List;
 
 public class CsvLogger {
     static final String TAG = CsvLogger.class.getSimpleName();
     private int idx = 1;
-    private File file;
+    private final File file;
     public CsvLogger(String fileName, String[] cols) {
         File folder = new File("/sdcard/DCIM/ProfileApp");
         boolean isFolderExists = folder.mkdirs();
