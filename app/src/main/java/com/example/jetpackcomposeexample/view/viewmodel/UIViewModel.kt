@@ -4,11 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
-import com.example.jetpackcomposeexample.controller.train.SocketControllerManager
-import com.example.jetpackcomposeexample.model.balance.BalanceResponse
 import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
+import com.example.jetpackcomposeexample.utils.TLog_Sync
 import com.example.jetpackcomposeexample.utils.TarGzMaker
 import com.example.jetpackcomposeexample.utils.UrlConstants.BALANCE_API_URL_LOCAL_HOST
 import com.example.jetpackcomposeexample.utils.UrlConstants.DETAIL_PROFILE_API_URL
@@ -18,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import java.util.ArrayList
 
 class UIViewModel: ViewModel() {
     val TAG: String = "UIViewModel"
@@ -58,7 +56,7 @@ class UIViewModel: ViewModel() {
 //            TLog.d(TAG,"Load with duplicate id")
 //            return
 //        }
-        TLog.d(TAG,"Load new id")
+        TLog_Sync.d(TAG,"Load new id")
         loadDetailProfile(id)
     }
     private fun loadDetailProfile(id: Int){
@@ -75,18 +73,10 @@ class UIViewModel: ViewModel() {
     }
 
     fun uploadLog() {
-        //TODO: Add Upload Feature
-        //TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
         Log.d(TAG, "Make TarGz file")
         TarGzMaker.createTarGzFromCsv("/sdcard/DCIM/ProfileApp/app_log.csv", "/sdcard/DCIM/ProfileApp/app_log.tar.gz")
         Log.d(TAG, "Sending.... TarGz file")
         AwsConnectHelper.getInstance().uploadLogOkHttp(UPLOAD_API_URL, "/sdcard/DCIM/ProfileApp/app_log.tar.gz") { result ->
-//            _uiState.update { currentState ->
-//                currentState.copy(
-//                        upLoadDone = result,
-//                        screenID = ScreenID.LOGIN
-//                    )
-//            }
             if (result) TarGzMaker.delete("/sdcard/DCIM/ProfileApp/app_log.csv")
             Log.d(TAG,"result is $result")
         }
@@ -99,7 +89,7 @@ class UIViewModel: ViewModel() {
                 screenID = ScreenID.LOGIN
             )
         }
-        TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+        TLog_Sync.d(TAG,"Screen ID is ${_uiState.value.screenID}")
     }
     fun loginUI() {
         _uiState.update { currentState ->
@@ -107,16 +97,16 @@ class UIViewModel: ViewModel() {
                 screenID = ScreenID.LOGIN
             )
         }
-        TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+        TLog_Sync.d(TAG,"Screen ID is ${_uiState.value.screenID}")
     }
     fun login() {
         //if(!SocketControllerManager.getInstance().isMainController) return
         AwsConnectHelper.getInstance().login(LOGIN_API_URL, {result ->
-            TLog.d(TAG,"Result: " + result)
+            TLog_Sync.d(TAG,"Result: " + result)
             if (result) moveToHome()
             updateLogin(result)
-            TLog.d(TAG,"Success is ${_uiState.value.credentials.isSuccessLogin}")
-            TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+            TLog_Sync.d(TAG,"Success is ${_uiState.value.credentials.isSuccessLogin}")
+            TLog_Sync.d(TAG,"Screen ID is ${_uiState.value.screenID}")
         },_uiState.value.credentials)
     }
     fun typingID(ID: String) {
@@ -174,19 +164,19 @@ class UIViewModel: ViewModel() {
             }
         }
         uploadLog()
-        TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+        TLog_Sync.d(TAG,"Screen ID is ${_uiState.value.screenID}")
     }
     private fun moveToDetail() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.DETAIL_POST)
         }
-        TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+        TLog_Sync.d(TAG,"Screen ID is ${_uiState.value.screenID}")
     }
     fun backHome() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.HOME)
         }
         isUpdated = false
-        TLog.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+        TLog_Sync.d(TAG,"Screen ID is ${_uiState.value.screenID}")
     }
 }

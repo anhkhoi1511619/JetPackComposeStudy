@@ -5,7 +5,7 @@ import android.util.Log;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.List;
-
+//USELESS
 public class TLog {
     static CsvLogger logger = new CsvLogger("app_log.csv", new String[] {
             "記録日時",

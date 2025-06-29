@@ -10,6 +10,7 @@ import com.example.jetpackcomposeexample.database.PostHistoryEntity;
 import com.example.jetpackcomposeexample.model.post.dto.Post;
 import com.example.jetpackcomposeexample.model.history.PostHistoryData;
 import com.example.jetpackcomposeexample.utils.TLog;
+import com.example.jetpackcomposeexample.utils.TLog_Sync;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -34,7 +35,7 @@ public class PostHistoryController {
         String authorName = post.getMetaData().getAuthor().getName();
         String title = post.getTitle();
         PostHistoryEntity entity = new PostHistoryEntity(currentTime, authorName, title);
-        TLog.d(TAG,"Set system time  "+ currentTime+"  author: "+authorName+"  title"+title+" to Database");
+        TLog_Sync.d(TAG,"Set system time  "+ currentTime+"  author: "+authorName+"  title"+title+" to Database");
         historyExecutor.execute(()->dao.insertPost(entity));
     }
 
@@ -44,7 +45,7 @@ public class PostHistoryController {
                     .map(e->new PostHistoryData(e.getDate(), e.getAuthor(), e.getTitle()))
                     .collect(Collectors.toList());
             list.stream().forEach(value->{
-                TLog.d(TAG,"Get System Time  "+ value.getDate()+" Author: "+value.getAuthor()+" Title:   "+value.getTitle()+"  from Database");
+                TLog_Sync.d(TAG,"Get System Time  "+ value.getDate()+" Author: "+value.getAuthor()+" Title:   "+value.getTitle()+"  from Database");
             });
             callback.accept(list);
         });

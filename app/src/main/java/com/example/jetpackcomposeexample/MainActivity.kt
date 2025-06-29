@@ -9,18 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
-import com.example.jetpackcomposeexample.controller.train.SocketControllerManager
 import com.example.jetpackcomposeexample.utils.TLog
+import com.example.jetpackcomposeexample.utils.TLog_Sync
 import com.example.jetpackcomposeexample.view.HomeScreen
 import com.example.jetpackcomposeexample.view.login.LoginForm
 import com.example.jetpackcomposeexample.view.theme.JetpackComposeExampleTheme
@@ -41,7 +39,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        TLog.d("MainActivity", "App is starting")
+        TLog_Sync.d("MainActivity", "App is starting")
     }
 
     override fun onResume() {

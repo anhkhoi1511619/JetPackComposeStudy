@@ -40,6 +40,16 @@ public class CsvLogger {
             Log.d(TAG, "Error when writing header in file");
         }
     }
+    public void pushString(String data) {
+        try {
+            FileOutputStream fout = new FileOutputStream(file, true);
+            fout.write(data.getBytes());
+            fout.write(("\r\n").getBytes());
+            fout.close();
+            idx++;
+        } catch (Exception e) {
+        }
+    }
 
     public void pushRawString(List<String> data) {
         try {

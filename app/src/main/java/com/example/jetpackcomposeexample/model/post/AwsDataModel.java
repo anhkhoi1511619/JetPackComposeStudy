@@ -8,6 +8,7 @@ import com.example.jetpackcomposeexample.model.post.dto.Post;
 import com.example.jetpackcomposeexample.model.post.dto.PostAuthor;
 import com.example.jetpackcomposeexample.model.post.dto.Publication;
 import com.example.jetpackcomposeexample.utils.TLog;
+import com.example.jetpackcomposeexample.utils.TLog_Sync;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,7 +60,7 @@ public class AwsDataModel {
 //                paragraphs.add(paragraph);
 //            }
         } catch (Exception e) {
-            TLog.d("AwsDataModel", "Exception: "+e);
+            TLog_Sync.d("AwsDataModel", "Exception: "+e);
             throw new RuntimeException(e);
         }
 

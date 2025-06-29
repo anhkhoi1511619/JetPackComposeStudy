@@ -25,6 +25,7 @@ import com.example.jetpackcomposeexample.model.post.AwsDataModel;
 import com.example.jetpackcomposeexample.model.post.dto.Post;
 import com.example.jetpackcomposeexample.model.post.dto.PostRequest;
 import com.example.jetpackcomposeexample.utils.TLog;
+import com.example.jetpackcomposeexample.utils.TLog_Sync;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -99,13 +100,13 @@ public class AwsConnectHelper {
                     .build();
             Response response = client.newCall(request).execute();
             if (response.isSuccessful()) {
-                TLog.d(TAG, "Log uploaded successfully!");
+                TLog_Sync.dLogToFileNow(TAG, "Log uploaded successfully!");
             } else {
-                TLog.d(TAG,"Failed to upload file: " + response.code() + " " + response.message());
+                TLog_Sync.dLogToFileNow(TAG,"Failed to upload file: " + response.code() + " " + response.message());
             }
             return response.isSuccessful();
         } catch (IOException e) {
-            TLog.d(TAG, "error while making upload request, " + e);
+            TLog_Sync.dLogToFileNow(TAG, "error while making upload request, " + e);
         }
         return false;
     }
@@ -256,7 +257,7 @@ public class AwsConnectHelper {
     }
     Boolean loginByOkHttp(String url, String id, String password) {
         LoginRequest requestBody = new LoginRequest().fill(id, password);
-        TLog.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
+        TLog_Sync.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
                 .url(url)
@@ -267,13 +268,13 @@ public class AwsConnectHelper {
             Response response = send(request);
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
-                TLog.d(TAG, "Received data what have fetched from OkHttps:" + object);
+                TLog_Sync.dLogToFileNow(TAG, "Received data what have fetched from OkHttps:" + object);
                 LoginResponse loginRes = new LoginResponse();
                 loginRes.deserialize(object);
                 return true;
             }
         } catch (IOException | JSONException e) {
-            Log.d(TAG, "Exception");
+            TLog_Sync.dLogToFileNow(TAG, "Exception");
         }
         return false;
     }
@@ -282,7 +283,7 @@ public class AwsConnectHelper {
     }
     BalanceResponse getBalance(String subtractAmount, String date, String time, String url) {
         BalanceRequest requestBody = new BalanceRequest(subtractAmount, date, time);
-        TLog.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
+        TLog_Sync.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
                 .url(url)
@@ -293,13 +294,13 @@ public class AwsConnectHelper {
             Response response = send(request);
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
-                TLog.d(TAG, "Received data :" + object);
+                TLog_Sync.dLogToFileNow(TAG, "Received data :" + object);
                 BalanceResponse balanceResponse = new BalanceResponse();
                 balanceResponse.deserialize(object);
                 return balanceResponse;
             }
         } catch (IOException | JSONException e) {
-            Log.d(TAG, "Exception");
+            TLog_Sync.dLogToFileNow(TAG, "Exception");
         }
         return new BalanceResponse();
     }
@@ -311,7 +312,7 @@ public class AwsConnectHelper {
     }
     Post fetchDetailProfileByOkHttp(int id, String url) {
         PostRequest requestBody = new PostRequest().fill(id);
-        TLog.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
+        TLog_Sync.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
                 .url(url)
@@ -323,11 +324,11 @@ public class AwsConnectHelper {
             Response response = send(request);
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
-                TLog.d(TAG, "Received data :" + object);
+                TLog_Sync.dLogToFileNow(TAG, "Received data :" + object);
                 return AwsDataModel.deserializeDetailProfile(object);
             }
         } catch (IOException | JSONException e) {
-            Log.d(TAG, "Exception");
+            TLog_Sync.dLogToFileNow(TAG, "Exception");
         }
         return AwsDataModel.deserializeDetailProfile(new JSONObject());
     }
