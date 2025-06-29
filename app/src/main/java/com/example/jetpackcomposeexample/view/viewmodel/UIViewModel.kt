@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
+import com.example.jetpackcomposeexample.model.card.TransitHistory
 import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog
@@ -45,6 +46,12 @@ class UIViewModel: ViewModel() {
             isUpdated = true
             Log.d(TAG,"data base have $result")
         }
+    }
+
+    fun loadTransitList(list: List<TransitHistory>) {
+            _uiState.update { currentState ->
+                currentState.copy(historyTransitList = list)
+            }
     }
     private fun addDB(post: Post) {
         PostHistoryController.set(post, System.currentTimeMillis())
