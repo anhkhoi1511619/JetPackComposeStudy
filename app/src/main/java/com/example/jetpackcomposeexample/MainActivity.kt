@@ -52,11 +52,13 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this)
-        if (nfcAdapter == null) {
-            Toast.makeText(this, "Devices that do not support NFC", Toast.LENGTH_LONG).show()
-            finish()
+        try {
+            nfcAdapter = NfcAdapter.getDefaultAdapter(this)
+        } catch (e: Exception)
+        {
+            TLog_Sync.d("NfcAdapter", "Devices that do not support NFC with error " +e.message)
         }
+        //nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         TLog_Sync.d("MainActivity", "App is starting")
     }
 
@@ -69,7 +71,12 @@ class MainActivity : ComponentActivity() {
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE)
         val filters = arrayOf(IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED))
         val techList = arrayOf(arrayOf(NfcF::class.java.name))
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, filters, techList)
+        try {
+            this.nfcAdapter.enableForegroundDispatch(this, pendingIntent, filters, techList)
+        } catch (e: Exception)
+        {
+            TLog_Sync.d("NfcAdapter", "NfcAdapter is not enable Foreground" +e.message)
+        }
     }
 
     override fun onPause() {
