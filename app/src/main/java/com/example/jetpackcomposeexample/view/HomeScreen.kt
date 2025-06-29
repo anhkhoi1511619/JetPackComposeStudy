@@ -32,6 +32,8 @@ import com.example.jetpackcomposeexample.view.chart.ChartCode
 import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.jetpackcomposeexample.model.balance.BalanceResponse
+import com.example.jetpackcomposeexample.model.card.TransitHistory
+import com.example.jetpackcomposeexample.model.card.transitHistoryList
 import com.example.jetpackcomposeexample.model.experience.Experiences
 import com.example.jetpackcomposeexample.model.experience.experiencesExampleList
 import com.example.jetpackcomposeexample.model.history.HistoryDataModel
@@ -41,6 +43,7 @@ import com.example.jetpackcomposeexample.view.article.PostCardExperienceWorking
 import com.example.jetpackcomposeexample.view.article.PostCardSimple
 import com.example.jetpackcomposeexample.view.article.PostCardTop
 import com.example.jetpackcomposeexample.view.article.Search
+import com.example.jetpackcomposeexample.view.article.TransitCardSimple
 import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
 
 
@@ -53,6 +56,7 @@ fun HomeScreen(uiViewModel: UIViewModel){
             uiViewModel.update()
             PostList(
                 detailPost = postUiState.loadedDetailPost,
+                transitHistoryList = postUiState.historyTransitList,
                 historyPosts = postUiState.historyPost,
                 posts = postUiState.showingPostList,
                 balanceList = postUiState.balanceList,
@@ -90,6 +94,7 @@ var balanceListTest = arrayListOf(
 @Composable
 fun PostList(
     detailPost: Post,
+    transitHistoryList: List<TransitHistory>,
     historyPosts: List<PostHistoryData>,
 //    posts: List<Post>,
     posts: List<Experiences>,
@@ -110,7 +115,25 @@ fun PostList(
             ExperienceWorking(posts = posts, navigateToArticle = onArticleTapped)
 //            PostSocialActivities(posts = posts, navigateToArticle = onArticleTapped)
             ChartCode(balanceList, modifier = Modifier.padding(16.dp))
-            PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
+            TransitListHistory(historyTransits = transitHistoryList)
+            //PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
+        }
+    }
+}
+
+@Composable
+fun TransitListHistory(
+    historyTransits: List<TransitHistory>,
+) {
+    Column {
+        Text(
+            modifier = Modifier.padding(16.dp),
+            text = stringResource(id = R.string.transit_history_title) ,
+            style = MaterialTheme.typography.titleLarge
+        )
+        historyTransits.forEach { list ->
+            TransitCardSimple(data = list)
+            PostListDivider()
         }
     }
 }
@@ -220,7 +243,7 @@ fun PostListToSectionTest(){
 @Preview
 @Composable
 fun PostListTest() {
-    PostList(post3, HistoryDataModel.list, experiencesExampleList,ArrayList(), emptySet(), {})
+    PostList(post3, transitHistoryList, HistoryDataModel.list, experiencesExampleList,ArrayList(), emptySet(), {})
 }
 @Preview
 @Composable

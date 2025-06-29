@@ -59,7 +59,7 @@ public class CsvLogger {
             idx++;
             Log.d(TAG, "Write content in File is done");
         } catch (Exception e) {
-            Log.d(TAG, "Error when writing content in file");
+            Log.d(TAG, "Error when writing content in file "+e.getMessage());
         }
     }
 }
