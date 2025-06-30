@@ -81,7 +81,12 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        nfcAdapter.disableForegroundDispatch(this)
+        try {
+            nfcAdapter.disableForegroundDispatch(this)
+        } catch (e: Exception)
+        {
+            TLog_Sync.d("NfcAdapter", "NfcAdapter is not enable ForegroundDispatch " +e.message)
+        }
     }
 
     override fun onNewIntent(intent: Intent?) {
