@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.chart.line.lineSpec
 import com.patrykandpatrick.vico.compose.component.lineComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
@@ -78,15 +79,27 @@ fun ChartCode(
         val xLabelsMap = floatEntries.zip(balanceList.map { it.date }).associate { (entry, date) ->
             entry.x to date
         }
-        val xAxisFormatter =
-            AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, chartValues -> xLabelsMap[value] ?: "" }
+// 1. Formatter cho nhãn trục X
+        val xAxisFormatter = AxisValueFormatter<AxisPosition.Horizontal.Bottom> { value, _ ->
+            if (value.toInt() % 2 == 0) xLabelsMap[value] ?: "" else ""
+        }
+
+// 2. Khai báo bottomAxis với itemPlacer
+        val customBottomAxis = bottomAxis(
+            valueFormatter = xAxisFormatter,
+            itemPlacer = AxisItemPlacer.Horizontal.default(spacing = 1) // tăng khoảng cách label
+        )
+
+// 3. lineChart với entrySpacing để giãn các điểm dữ liệu
+        val customLineChart = lineChart(
+            lines = listOf(LineChart.LineSpec()),
+            spacing = 100.dp // tăng khoảng cách giữa các entry
+        )
         Chart(
-            chart = lineChart(), // Dạng biểu đồ đường
+            chart = customLineChart, // Dạng biểu đồ đường
             chartModelProducer = chartEntryModelProducer,
             startAxis = startAxis(),      // Trục Y bên trái
-            bottomAxis = bottomAxis(
-                valueFormatter = xAxisFormatter
-            )
+            bottomAxis = customBottomAxis
         )
     }
 }
