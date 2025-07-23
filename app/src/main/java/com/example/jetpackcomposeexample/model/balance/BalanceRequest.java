@@ -11,10 +11,13 @@ public class BalanceRequest {
     String date;
     String time;
 
-    public BalanceRequest(String subtractAmount, String date, String time) {
+    String mode;
+
+    public BalanceRequest(String subtractAmount, String date, String time, String mode) {
         this.subtractAmount = subtractAmount;
         this.date = date;
         this.time = time;
+        this.mode = mode;
     }
     public String toString() {
         StringBuilder ret = new StringBuilder();
@@ -39,6 +42,7 @@ public class BalanceRequest {
             sFInfoObj.put("subtractAmount", subtractAmount);
             sFInfoObj.put("date", date);
             sFInfoObj.put("time", time);
+            sFInfoObj.put("mode", mode);
             object.put("sFInfo", sFInfoObj);
         } catch (JSONException e) {
             throw new RuntimeException(e);

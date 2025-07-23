@@ -278,11 +278,11 @@ public class AwsConnectHelper {
         }
         return false;
     }
-    public void getBalanceInfo(String subtractAmount, String date, String time, String url, Consumer<BalanceResponse> callback){
-        executor.execute(()->callback.accept(getBalance(subtractAmount, date, time, url)));
+    public void getBalanceInfo(String subtractAmount, String date, String time, String mode, String url, Consumer<BalanceResponse> callback){
+        executor.execute(()->callback.accept(getBalance(subtractAmount, date, time, mode, url)));
     }
-    BalanceResponse getBalance(String subtractAmount, String date, String time, String url) {
-        BalanceRequest requestBody = new BalanceRequest(subtractAmount, date, time);
+    BalanceResponse getBalance(String subtractAmount, String date, String time, String mode, String url) {
+        BalanceRequest requestBody = new BalanceRequest(subtractAmount, date, time, mode);
         TLog_Sync.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
@@ -298,6 +298,8 @@ public class AwsConnectHelper {
                 BalanceResponse balanceResponse = new BalanceResponse();
                 balanceResponse.deserialize(object);
                 return balanceResponse;
+            } else {
+                TLog_Sync.dLogToFileNow(TAG, "response is not successful");
             }
         } catch (IOException | JSONException e) {
             TLog_Sync.dLogToFileNow(TAG, "Exception");

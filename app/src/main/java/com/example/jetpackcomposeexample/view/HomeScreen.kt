@@ -17,10 +17,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +35,7 @@ import com.example.jetpackcomposeexample.model.post.post3
 import com.example.jetpackcomposeexample.view.chart.ChartCode
 import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.compose.jetchat.components.ChannelNameBar
 import com.example.jetpackcomposeexample.model.balance.BalanceResponse
 import com.example.jetpackcomposeexample.model.card.TransitHistory
 import com.example.jetpackcomposeexample.model.card.transitHistoryList
@@ -84,13 +89,7 @@ fun HomeScreen(uiViewModel: UIViewModel){
         }
     }
 }
-var balanceListTest = arrayListOf(
-    BalanceResponse.SFInfo(1.5f.toString(), "June 20", "12:00:00"),
-    BalanceResponse.SFInfo(2.3f.toString(), "June 21", "12:00:00"),
-    BalanceResponse.SFInfo(1.8f.toString(), "June 22", "12:00:00"),
-    BalanceResponse.SFInfo(3.0f.toString(), "June 23", "12:00:00"),
-    BalanceResponse.SFInfo(2.6f.toString(), "June 24", "12:00:00")
-)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostList(
     detailPost: Post,
@@ -104,21 +103,47 @@ fun PostList(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     state: LazyListState = rememberLazyListState(),
     ) {
-    LazyColumn(
-        modifier = Modifier,
-        contentPadding = contentPadding,
-        state = state
+//    val authorMe = stringResource(R.string.author_me)
+//    val timeNow = stringResource(id = R.string.now)
+
+    val scrollState = rememberLazyListState()
+    val topBarState = rememberTopAppBarState()
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
+    val scope = rememberCoroutineScope()
+
+    Scaffold(
+        topBar = {
+            ChannelNameBar(
+                channelName = "Detail Profile",
+                channelMembers = 1,
+//                onNavIconPressed = onNavIconPressed,
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        // Exclude ime and navigation bar padding so this can be added by the UserInput composable
+//        contentWindowInsets = ScaffoldDefaults
+//            .contentWindowInsets
+//            .exclude(WindowInsets.navigationBars)
+//            .exclude(WindowInsets.ime),
+//        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+    ) { paddingValues ->
+        LazyColumn(
+            modifier = Modifier,
+            contentPadding = paddingValues,
+            state = state
         ) {
-        item {
-            Search(modifier = Modifier.padding(horizontal = 16.dp), onSearchInputChanged = {})
-            PostTopSection(post = detailPost  , onArticleTapped)
-            ExperienceWorking(posts = posts, navigateToArticle = onArticleTapped)
+            item {
+//                Search(modifier = Modifier.padding(horizontal = 16.dp), onSearchInputChanged = {})
+                PostTopSection(post = detailPost  , onArticleTapped)
+                ExperienceWorking(posts = posts, navigateToArticle = onArticleTapped)
 //            PostSocialActivities(posts = posts, navigateToArticle = onArticleTapped)
-            ChartCode(balanceList, modifier = Modifier.padding(16.dp))
-            TransitListHistory(historyTransits = transitHistoryList)
-            //PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
+                ChartCode(balanceList, modifier = Modifier.padding(16.dp))
+                TransitListHistory(historyTransits = transitHistoryList)
+                //PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
+            }
         }
     }
+
 }
 
 @Composable

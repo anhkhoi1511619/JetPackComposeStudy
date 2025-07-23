@@ -152,7 +152,7 @@ private fun TopAppBar (
 }
 
 @Composable
-private fun FunctionalityNotAvailablePopup(onDismiss: () -> Unit) {
+public fun FunctionalityNotAvailablePopup(onDismiss: () -> Unit) {
     AlertDialog(onDismissRequest = onDismiss,
         text = {
             Text(text = stringResource(id = R.string.article_functionality_not_available),

@@ -33,6 +33,7 @@
 
     <!-- Home Screen -->
     <string name="home_title">Home</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="home_tap_to_load_content">Tap to load content</string>
     <string name="home_top_section_title">Top stories for you</string>
     <string name="home_history_title">Posted History</string>
@@ -64,6 +65,13 @@
     <string name="cd_navigate_interests">Navigate to the interests screen</string>
 
     <string name="failure_login_popup">Failure Login</string>
+
+    <string name="search">Search</string>
+    <string name="members">%d members</string>
+    <string name="name">Nguyen Tran Anh Khoi</string>
+    <string name="info">Information</string>
+
+
 
 
 </resources>

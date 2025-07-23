@@ -11,6 +11,7 @@ import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.utils.TLog_Sync
 import com.example.jetpackcomposeexample.utils.TarGzMaker
 import com.example.jetpackcomposeexample.utils.UrlConstants.BALANCE_API_URL_LOCAL_HOST
+import com.example.jetpackcomposeexample.utils.UrlConstants.BALANCE_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.DETAIL_PROFILE_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.LOGIN_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_API_URL
@@ -163,7 +164,7 @@ class UIViewModel: ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.HOME)
         }
-        AwsConnectHelper.getInstance().getBalanceInfo("0", "June 28", "22:40:00", BALANCE_API_URL_LOCAL_HOST) { result ->
+        AwsConnectHelper.getInstance().getBalanceInfo("0", "July 08", "22:40:00", "reset", BALANCE_URL) { result ->
             for (s in result.sfInfos) Log.d(TAG,"result is ${s.postSubtractBalance}")
             //Log.d(TAG,"result is ${result.sfInfos}")
             _uiState.update { currentState ->

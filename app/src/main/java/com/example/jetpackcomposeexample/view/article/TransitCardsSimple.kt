@@ -62,7 +62,7 @@ fun TransitAuthorAndReadTime(
 @Composable
 fun TransitCardTitle(data: TransitHistory ){
     Text(
-        text = "Station "+data.stationCode +" Line "+data.lineCode,
+        text = "Station "+data.stationCode +" Type "+data.type,
         style = MaterialTheme.typography.titleMedium,
         maxLines = 3,
         overflow = TextOverflow.Ellipsis
