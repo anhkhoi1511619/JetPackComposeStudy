@@ -16,15 +16,16 @@ import okio.BufferedSink;
 import okio.BufferedSource;
 import okio.Okio;
 
-import com.example.jetpackcomposeexample.model.balance.BalanceRequest;
-import com.example.jetpackcomposeexample.model.balance.BalanceResponse;
+import com.example.jetpackcomposeexample.model.balance.AddBalanceRequest;
+import com.example.jetpackcomposeexample.model.balance.AddBalanceResponse;
+import com.example.jetpackcomposeexample.model.balance.SubtractBalanceRequest;
+import com.example.jetpackcomposeexample.model.balance.SubtractBalanceResponse;
 import com.example.jetpackcomposeexample.model.login.Credentials;
 import com.example.jetpackcomposeexample.model.login.dto.LoginRequest;
 import com.example.jetpackcomposeexample.model.login.dto.LoginResponse;
 import com.example.jetpackcomposeexample.model.post.AwsDataModel;
 import com.example.jetpackcomposeexample.model.post.dto.Post;
 import com.example.jetpackcomposeexample.model.post.dto.PostRequest;
-import com.example.jetpackcomposeexample.utils.TLog;
 import com.example.jetpackcomposeexample.utils.TLog_Sync;
 
 import org.json.JSONException;
@@ -260,6 +261,7 @@ public class AwsConnectHelper {
         TLog_Sync.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
+                .header("Connection", "close") // 毎回新しいTCP接続を使用
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
@@ -278,14 +280,15 @@ public class AwsConnectHelper {
         }
         return false;
     }
-    public void getBalanceInfo(String subtractAmount, String date, String time, String mode, String url, Consumer<BalanceResponse> callback){
-        executor.execute(()->callback.accept(getBalance(subtractAmount, date, time, mode, url)));
+    public void addBalance(String subtractAmount, String date, String time, String mode, String url, Consumer<AddBalanceResponse> callback){
+        executor.execute(()->callback.accept(addBalance(subtractAmount, date, time, mode, url)));
     }
-    BalanceResponse getBalance(String subtractAmount, String date, String time, String mode, String url) {
-        BalanceRequest requestBody = new BalanceRequest(subtractAmount, date, time, mode);
+    AddBalanceResponse addBalance(String addAmount, String date, String time, String mode, String url) {
+        AddBalanceRequest requestBody = new AddBalanceRequest(addAmount, date, time, mode);
         TLog_Sync.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
+                .header("Connection", "close") // 毎回新しいTCP接続を使用
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")
@@ -295,16 +298,45 @@ public class AwsConnectHelper {
             if (response.isSuccessful()) {
                 JSONObject object = new JSONObject(response.body().string());
                 TLog_Sync.dLogToFileNow(TAG, "Received data :" + object);
-                BalanceResponse balanceResponse = new BalanceResponse();
-                balanceResponse.deserialize(object);
-                return balanceResponse;
+                AddBalanceResponse addBalanceResponse = new AddBalanceResponse();
+                addBalanceResponse.deserialize(object);
+                return addBalanceResponse;
             } else {
                 TLog_Sync.dLogToFileNow(TAG, "response is not successful");
             }
         } catch (IOException | JSONException e) {
             TLog_Sync.dLogToFileNow(TAG, "Exception");
         }
-        return new BalanceResponse();
+        return new AddBalanceResponse();
+    }
+    public void subtractBalance(String subtractAmount, String date, String time, String mode, String url, Consumer<SubtractBalanceResponse> callback){
+        executor.execute(()->callback.accept(subtractBalance(subtractAmount, date, time, mode, url)));
+    }
+    SubtractBalanceResponse subtractBalance(String subtractAmount, String date, String time, String mode, String url) {
+        SubtractBalanceRequest requestBody = new SubtractBalanceRequest(subtractAmount, date, time, mode);
+        TLog_Sync.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
+        RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
+        Request request = new Request.Builder()
+                .header("Connection", "close") // 毎回新しいTCP接続を使用
+                .url(url)
+                .method("POST", body)
+                .addHeader("Content-Type", "application/json")
+                .build();
+        try {
+            Response response = send(request);
+            if (response.isSuccessful()) {
+                JSONObject object = new JSONObject(response.body().string());
+                TLog_Sync.dLogToFileNow(TAG, "Received data :" + object);
+                SubtractBalanceResponse subtractBalanceResponse = new SubtractBalanceResponse();
+                subtractBalanceResponse.deserialize(object);
+                return subtractBalanceResponse;
+            } else {
+                TLog_Sync.dLogToFileNow(TAG, "response is not successful");
+            }
+        } catch (IOException | JSONException e) {
+            TLog_Sync.dLogToFileNow(TAG, "Exception");
+        }
+        return new SubtractBalanceResponse();
     }
     public void fetchDetailProfile(int id, String url, Consumer<Post> callback){
         executor.execute(()->{
@@ -317,6 +349,7 @@ public class AwsConnectHelper {
         TLog_Sync.d(TAG, "Requesting url: "+url+" with "+requestBody.toString());
         RequestBody body = RequestBody.create(MEDIA_TYPE_JSON, requestBody.serialize().toString());
         Request request = new Request.Builder()
+                .header("Connection", "close") // 毎回新しいTCP接続を使用
                 .url(url)
                 .method("POST", body)
                 .addHeader("Content-Type", "application/json")

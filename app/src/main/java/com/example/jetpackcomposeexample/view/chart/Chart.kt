@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -13,7 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
-import com.example.jetpackcomposeexample.model.balance.BalanceResponse
+import com.example.jetpackcomposeexample.model.balance.SubtractBalanceResponse
 import com.example.jetpackcomposeexample.view.theme.JetpackComposeExampleTheme
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
@@ -34,13 +33,11 @@ import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.FloatEntry
 import com.patrykandpatrick.vico.core.entry.composed.plus
 import com.patrykandpatrick.vico.core.entry.entryModelOf
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import java.util.Locale
@@ -48,7 +45,7 @@ import java.util.Locale
 
 @Composable
 fun ChartCode(
-    balanceList: ArrayList<BalanceResponse.SFInfo>,
+    balanceList: ArrayList<SubtractBalanceResponse.SFInfo>,
     modifier: Modifier
 ){
 
@@ -227,11 +224,11 @@ fun ChartExample4Preview(){
 @Composable
 fun ChartExample5Preview(){
     val balanceList = arrayListOf(
-        BalanceResponse.SFInfo(1.5f.toString(), "June 20", "12:00:00"),
-        BalanceResponse.SFInfo(2.3f.toString(), "June 21", "19:00:00"),
-        BalanceResponse.SFInfo(1.8f.toString(), "June 22", "18:00:00"),
-        BalanceResponse.SFInfo(3.0f.toString(), "June 23", "08:30:00"),
-        BalanceResponse.SFInfo(2.6f.toString(), "June 24", "15:00:00")
+        SubtractBalanceResponse.SFInfo(1.5f.toString(), "June 20", "12:00:00"),
+        SubtractBalanceResponse.SFInfo(2.3f.toString(), "June 21", "19:00:00"),
+        SubtractBalanceResponse.SFInfo(1.8f.toString(), "June 22", "18:00:00"),
+        SubtractBalanceResponse.SFInfo(3.0f.toString(), "June 23", "08:30:00"),
+        SubtractBalanceResponse.SFInfo(2.6f.toString(), "June 24", "15:00:00")
     )
     ChartCode(balanceList, modifier = Modifier.padding(16.dp))
 }

@@ -4,28 +4,21 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -35,13 +28,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
@@ -51,21 +40,18 @@ import com.example.jetpackcomposeexample.view.chart.ChartCode
 import com.example.jetpackcomposeexample.view.viewmodel.UIViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.compose.jetchat.components.ChannelNameBar
-import com.example.jetpackcomposeexample.model.balance.BalanceResponse
+import com.example.jetpackcomposeexample.model.balance.SubtractBalanceResponse
 import com.example.jetpackcomposeexample.model.card.TransitHistory
-import com.example.jetpackcomposeexample.model.card.transitHistoryList
 import com.example.jetpackcomposeexample.model.experience.Experiences
 import com.example.jetpackcomposeexample.model.experience.experiencesExampleList
-import com.example.jetpackcomposeexample.model.history.HistoryDataModel
-import com.example.jetpackcomposeexample.model.history.PostHistoryData
+import com.example.jetpackcomposeexample.utils.TLog
+import com.example.jetpackcomposeexample.utils.TLog_Sync
 import com.example.jetpackcomposeexample.view.article.ArticleScreen
 import com.example.jetpackcomposeexample.view.article.BalanceAddForm
 import com.example.jetpackcomposeexample.view.article.BalanceCardSimple
 import com.example.jetpackcomposeexample.view.article.BalanceHistoryHeader
 import com.example.jetpackcomposeexample.view.article.PostCardExperienceWorking
-import com.example.jetpackcomposeexample.view.article.PostCardSimple
 import com.example.jetpackcomposeexample.view.article.PostCardTop
-import com.example.jetpackcomposeexample.view.article.Search
 import com.example.jetpackcomposeexample.view.article.TransitCardSimple
 import com.example.jetpackcomposeexample.view.utils.formatValues
 import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
@@ -88,12 +74,19 @@ fun HomeScreen(uiViewModel: UIViewModel){
                 onArticleTapped = {
                     uiViewModel.load(it)
                 },
+                onSubtractConfirm = { money, date, time ->
+                    // Khi nhấn Xác nhận
+                    Log.d("ADD", "Khi nhấn Subtract money "+money+" date "+date+" time "+time)
+                    val (formattedMoney, formattedDate, formattedTime) = formatValues(money, date, time)
+                    TLog_Sync.d("ADD", "Khi nhấn Subtract money "+formattedMoney+" date "+formattedDate+" time "+formattedTime)
+                    uiViewModel.subtractBalance(formattedMoney, formattedDate, formattedTime)
+                },
                 onAddConfirm = { money, date, time ->
                     // Khi nhấn Xác nhận
-                    Log.d("ADD", "Khi nhấn Xác nhận money "+money+" date "+date+" time "+time)
+                    Log.d("ADD", "Khi nhấn Add money "+money+" date "+date+" time "+time)
                     val (formattedMoney, formattedDate, formattedTime) = formatValues(money, date, time)
-                    Log.d("ADD", "Khi nhấn Xác nhận money "+formattedMoney+" date "+formattedDate+" time "+formattedTime)
-                    uiViewModel.subtractBalance(formattedMoney, formattedDate, formattedTime)
+                    TLog_Sync.d("ADD", "Khi nhấn Add money "+formattedMoney+" date "+formattedDate+" time "+formattedTime)
+                    uiViewModel.addBalance(formattedMoney, formattedDate, formattedTime)
                 }
             )
         }
@@ -121,10 +114,11 @@ fun PostList(
     detailPost: Post,
     transitHistoryList: List<TransitHistory>,
     posts: List<Experiences>,
-    balanceList: ArrayList<BalanceResponse.SFInfo>,
+    balanceList: ArrayList<SubtractBalanceResponse.SFInfo>,
     favorites: Set<String>,
     onArticleTapped: (postId: Int) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    onSubtractConfirm: (String, String, String) -> Unit, // money, date, time
     onAddConfirm: (String, String, String) -> Unit, // money, date, time
     state: LazyListState = rememberLazyListState(),
     ) {
@@ -152,7 +146,7 @@ fun PostList(
                 ExperienceWorking(posts = posts, navigateToArticle = onArticleTapped)
 //            PostSocialActivities(posts = posts, navigateToArticle = onArticleTapped)
                 ChartCode(balanceList, modifier = Modifier.padding(16.dp))
-                BalanceListHistory(balanceList, onAddConfirm = onAddConfirm)
+                BalanceListHistory(balanceList, onSubtractConfirm = onSubtractConfirm, onAddConfirm = onAddConfirm)
                 TransitListHistory(transitHistoryList)
                 //PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
             }
@@ -180,7 +174,8 @@ fun TransitListHistory(
 
 @Composable
 fun BalanceListHistory(
-    historyTransits: List<BalanceResponse.SFInfo>,
+    historyTransits: List<SubtractBalanceResponse.SFInfo>,
+    onSubtractConfirm: (String, String, String) -> Unit, // money, date, time
     onAddConfirm: (String, String, String) -> Unit // money, date, time
 ) {
     var showAddForm by remember { mutableStateOf(false) }
@@ -203,7 +198,14 @@ fun BalanceListHistory(
                 onMoneyChange = { moneyInput = it },
                 onDateChange = { dateInput = it },
                 onTimeChange = { timeInput = it },
-                onConfirm = {
+                onSubtract = {
+                    onSubtractConfirm(moneyInput, dateInput, timeInput)
+                    showAddForm = false
+                    moneyInput = ""
+                    dateInput = ""
+                    timeInput = ""
+                },
+                onAdd = {
                     onAddConfirm(moneyInput, dateInput, timeInput)
                     showAddForm = false
                     moneyInput = ""

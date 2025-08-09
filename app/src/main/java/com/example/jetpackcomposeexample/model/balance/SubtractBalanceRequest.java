@@ -6,14 +6,14 @@ import org.json.JSONObject;
 import java.lang.reflect.Field;
 import java.util.Calendar;
 
-public class BalanceRequest {
+public class SubtractBalanceRequest {
     String subtractAmount;
     String date;
     String time;
 
     String mode;
 
-    public BalanceRequest(String subtractAmount, String date, String time, String mode) {
+    public SubtractBalanceRequest(String subtractAmount, String date, String time, String mode) {
         this.subtractAmount = subtractAmount;
         this.date = date;
         this.time = time;

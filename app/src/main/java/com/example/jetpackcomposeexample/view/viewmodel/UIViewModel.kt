@@ -7,14 +7,14 @@ import com.example.jetpackcomposeexample.controller.history.PostHistoryControlle
 import com.example.jetpackcomposeexample.model.card.TransitHistory
 import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
-import com.example.jetpackcomposeexample.utils.TLog
 import com.example.jetpackcomposeexample.utils.TLog_Sync
 import com.example.jetpackcomposeexample.utils.TarGzMaker
-import com.example.jetpackcomposeexample.utils.UrlConstants.BALANCE_API_URL_LOCAL_HOST
+import com.example.jetpackcomposeexample.utils.UrlConstants.ADD_BALANCE_API_URL_HTTPS
 import com.example.jetpackcomposeexample.utils.UrlConstants.BALANCE_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.DETAIL_PROFILE_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.LOGIN_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_API_URL
+import com.example.jetpackcomposeexample.view.utils.validateValues
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -170,11 +170,29 @@ class UIViewModel: ViewModel() {
     }
 
     fun subtractBalance(subtractAmount: String, date: String, time:String){
+        if (!validateValues(subtractAmount, date, time)) {
+            TLog_Sync.d(TAG,"invalid value")
+            return
+        }
         changeBalance(subtractAmount, date, time, "subtract")
+    }
+    fun addBalance(subtractAmount: String, date: String, time:String){
+        if (!validateValues(subtractAmount, date, time)) {
+            TLog_Sync.d(TAG,"invalid value")
+            return
+        }
+        changeBalance(subtractAmount, date, time, "add")
     }
 
     fun changeBalance(subtractAmount: String, date: String, time:String, mode:String) {
-        AwsConnectHelper.getInstance().getBalanceInfo(subtractAmount, date, time, mode, BALANCE_URL) { result ->
+        if (mode == "add"){
+            AwsConnectHelper.getInstance().addBalance(subtractAmount, date, time, mode, ADD_BALANCE_API_URL_HTTPS) { result ->
+                for (s in result.sfInfos) TLog_Sync.d(TAG,"result is ${s.postAddBalance}")
+                //Log.d(TAG,"result is ${result.sfInfos}")
+            }
+            return
+        }
+        AwsConnectHelper.getInstance().subtractBalance(subtractAmount, date, time, mode, BALANCE_URL) { result ->
             for (s in result.sfInfos) Log.d(TAG,"result is ${s.postSubtractBalance}")
             //Log.d(TAG,"result is ${result.sfInfos}")
             _uiState.update { currentState ->

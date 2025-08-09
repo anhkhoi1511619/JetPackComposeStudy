@@ -23,15 +23,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
-import com.example.jetpackcomposeexample.model.balance.BalanceResponse
+import com.example.jetpackcomposeexample.model.balance.SubtractBalanceResponse
 import com.example.jetpackcomposeexample.model.card.TransitHistory
-import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.model.post.post3
-import com.example.jetpackcomposeexample.model.history.HistoryDataModel
-import com.example.jetpackcomposeexample.model.history.PostHistoryData
 import com.example.jetpackcomposeexample.view.utils.BookmarkButton
-import java.text.DateFormat
-
 
 
 @Composable
@@ -42,7 +37,8 @@ fun BalanceAddForm(
     onMoneyChange: (String) -> Unit,
     onDateChange: (String) -> Unit,
     onTimeChange: (String) -> Unit,
-    onConfirm: () -> Unit
+    onSubtract: () -> Unit,
+    onAdd: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -53,26 +49,38 @@ fun BalanceAddForm(
         OutlinedTextField(
             value = money,
             onValueChange = onMoneyChange,
-            label = { Text("Tiền cần thêm vào") },
+            label = { Text("Money") },
             singleLine = true
         )
         OutlinedTextField(
             value = date,
             onValueChange = onDateChange,
-            label = { Text("Ngày tháng năm") },
+            label = { Text("Date") },
             singleLine = true
         )
         OutlinedTextField(
             value = time,
             onValueChange = onTimeChange,
-            label = { Text("Giờ phút") },
+            label = { Text("Time") },
             singleLine = true
         )
-        Button(
-            onClick = onConfirm,
-            modifier = Modifier.align(Alignment.End)
+        // Hai nút nằm cạnh nhau
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Xác nhận")
+            Button(
+                onClick = onSubtract,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Subtract")
+            }
+            Button(
+                onClick = onAdd,
+                modifier = Modifier.weight(1f)
+            ) {
+                Text("Add")
+            }
         }
     }
 }
@@ -108,7 +116,7 @@ fun BalanceHistoryHeader(
 
 @Composable
 fun BalanceCardSimple(
-    data: BalanceResponse.SFInfo,
+    data: SubtractBalanceResponse.SFInfo,
 ) {
     Row {
         BalanceImage(modifier = Modifier.padding(16.dp))
@@ -125,7 +133,7 @@ fun BalanceCardSimple(
 }
 @Composable
 fun BalanceAuthorAndReadTime(
-    data: BalanceResponse.SFInfo,
+    data: SubtractBalanceResponse.SFInfo,
     modifier: Modifier = Modifier
 ) {
     Text(
@@ -141,7 +149,7 @@ fun BalanceAuthorAndReadTime(
 }
 
 @Composable
-fun BalanceCardTitle(data: BalanceResponse.SFInfo ){
+fun BalanceCardTitle(data: SubtractBalanceResponse.SFInfo ){
     Text(
         text = data.date + " - "+data.time,
         style = MaterialTheme.typography.titleMedium,

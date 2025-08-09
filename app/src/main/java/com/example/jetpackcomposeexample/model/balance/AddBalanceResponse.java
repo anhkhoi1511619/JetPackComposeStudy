@@ -6,18 +6,17 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 
-public class BalanceResponse {
+public class AddBalanceResponse {
     public static class SFInfo {
-        public SFInfo(String postSubtractBalance, String date) {
-            this.postSubtractBalance = postSubtractBalance;
+        public SFInfo(String postAddBalance, String date) {
+            this.postAddBalance = postAddBalance;
             this.date = date;
         }
 
-        public SFInfo(String postSubtractBalance, String date, String time) {
-            this.postSubtractBalance = postSubtractBalance;
+        public SFInfo(String postAddBalance, String date, String time) {
+            this.postAddBalance = postAddBalance;
             this.date = date;
             this.time = time;
         }
@@ -25,8 +24,8 @@ public class BalanceResponse {
         public SFInfo() {
         }
 
-        public String subtractAmount;
-        public String postSubtractBalance;
+        public String addAmount;
+        public String postAddBalance;
         public String date;
         public String time;
     }
@@ -43,8 +42,8 @@ public class BalanceResponse {
         for (int i = 0; i < jsonArray.length(); i++) {
             SFInfo sfInfo = new SFInfo();
             JSONObject object = jsonArray.getJSONObject(i);
-            sfInfo.subtractAmount = object.getString("subtractAmount");
-            sfInfo.postSubtractBalance = object.getString("postSubtractBalance");
+            sfInfo.addAmount = object.getString("addAmount");
+            sfInfo.postAddBalance = object.getString("postAddBalance");
             sfInfo.time = object.getString("time");
             sfInfo.date = object.getString("date");
             sfInfos.add(sfInfo);

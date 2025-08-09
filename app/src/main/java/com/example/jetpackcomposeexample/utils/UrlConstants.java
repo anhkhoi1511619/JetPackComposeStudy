@@ -12,7 +12,7 @@ public class UrlConstants {
     public static final String BALANCE_API_URL_LOCAL_HOST = "http://192.168.105.104:5174/subtract-balance";
     public static final String BALANCE_API_URL_HTTPS = "https://5z732cnm-5173.asse.devtunnels.ms/subtract-balance";
 
-
+    public static final String ADD_BALANCE_API_URL_HTTPS = "https://5z732cnm-5173.asse.devtunnels.ms/add-balance";
     public static final String UPLOAD_LOG_API_URL_HTTP = "http://192.168.105.104:5174/upload-log";
     public static final String UPLOAD_LOG_API_URL_HTTPS = "https://5z732cnm-5173.asse.devtunnels.ms/upload-log";
     public static final String LOGIN_API_URL_HTTP = "http://192.168.105.104:5174/login";
