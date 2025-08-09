@@ -1,5 +1,7 @@
 package com.example.jetpackcomposeexample.model.post.dto;
 
+import android.os.Build;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,7 +15,7 @@ public class PostRequest {
 
     public PostRequest fill(int id) {
         this.id = id;
-        this.machine = "Samsung SM-N960U";
+        this.machine = Build.DEVICE;
         return this;
     }
     public String toString() {

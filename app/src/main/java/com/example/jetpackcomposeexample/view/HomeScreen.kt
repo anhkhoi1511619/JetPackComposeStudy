@@ -1,22 +1,31 @@
 package com.example.jetpackcomposeexample.view
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
@@ -24,9 +33,15 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.jetpackcomposeexample.R
@@ -44,11 +59,15 @@ import com.example.jetpackcomposeexample.model.experience.experiencesExampleList
 import com.example.jetpackcomposeexample.model.history.HistoryDataModel
 import com.example.jetpackcomposeexample.model.history.PostHistoryData
 import com.example.jetpackcomposeexample.view.article.ArticleScreen
+import com.example.jetpackcomposeexample.view.article.BalanceAddForm
+import com.example.jetpackcomposeexample.view.article.BalanceCardSimple
+import com.example.jetpackcomposeexample.view.article.BalanceHistoryHeader
 import com.example.jetpackcomposeexample.view.article.PostCardExperienceWorking
 import com.example.jetpackcomposeexample.view.article.PostCardSimple
 import com.example.jetpackcomposeexample.view.article.PostCardTop
 import com.example.jetpackcomposeexample.view.article.Search
 import com.example.jetpackcomposeexample.view.article.TransitCardSimple
+import com.example.jetpackcomposeexample.view.utils.formatValues
 import com.example.jetpackcomposeexample.view.viewmodel.ScreenID
 
 
@@ -58,16 +77,23 @@ fun HomeScreen(uiViewModel: UIViewModel){
     val postUiState by uiViewModel.uiState.collectAsState()
     when(postUiState.screenID) {
         ScreenID.HOME -> {
-            uiViewModel.update()
+//            uiViewModel.update()
             PostList(
                 detailPost = postUiState.loadedDetailPost,
                 transitHistoryList = postUiState.historyTransitList,
-                historyPosts = postUiState.historyPost,
+//                historyPosts = postUiState.historyPost,
                 posts = postUiState.showingPostList,
                 balanceList = postUiState.balanceList,
                 favorites = emptySet(),
                 onArticleTapped = {
                     uiViewModel.load(it)
+                },
+                onAddConfirm = { money, date, time ->
+                    // Khi nhấn Xác nhận
+                    Log.d("ADD", "Khi nhấn Xác nhận money "+money+" date "+date+" time "+time)
+                    val (formattedMoney, formattedDate, formattedTime) = formatValues(money, date, time)
+                    Log.d("ADD", "Khi nhấn Xác nhận money "+formattedMoney+" date "+formattedDate+" time "+formattedTime)
+                    uiViewModel.subtractBalance(formattedMoney, formattedDate, formattedTime)
                 }
             )
         }
@@ -94,38 +120,26 @@ fun HomeScreen(uiViewModel: UIViewModel){
 fun PostList(
     detailPost: Post,
     transitHistoryList: List<TransitHistory>,
-    historyPosts: List<PostHistoryData>,
-//    posts: List<Post>,
     posts: List<Experiences>,
     balanceList: ArrayList<BalanceResponse.SFInfo>,
     favorites: Set<String>,
     onArticleTapped: (postId: Int) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    onAddConfirm: (String, String, String) -> Unit, // money, date, time
     state: LazyListState = rememberLazyListState(),
     ) {
-//    val authorMe = stringResource(R.string.author_me)
-//    val timeNow = stringResource(id = R.string.now)
 
-    val scrollState = rememberLazyListState()
     val topBarState = rememberTopAppBarState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topBarState)
-    val scope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
             ChannelNameBar(
                 channelName = "Detail Profile",
                 channelMembers = 1,
-//                onNavIconPressed = onNavIconPressed,
                 scrollBehavior = scrollBehavior,
             )
         },
-        // Exclude ime and navigation bar padding so this can be added by the UserInput composable
-//        contentWindowInsets = ScaffoldDefaults
-//            .contentWindowInsets
-//            .exclude(WindowInsets.navigationBars)
-//            .exclude(WindowInsets.ime),
-//        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier,
@@ -138,7 +152,8 @@ fun PostList(
                 ExperienceWorking(posts = posts, navigateToArticle = onArticleTapped)
 //            PostSocialActivities(posts = posts, navigateToArticle = onArticleTapped)
                 ChartCode(balanceList, modifier = Modifier.padding(16.dp))
-                TransitListHistory(historyTransits = transitHistoryList)
+                BalanceListHistory(balanceList, onAddConfirm = onAddConfirm)
+                TransitListHistory(transitHistoryList)
                 //PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
             }
         }
@@ -164,23 +179,49 @@ fun TransitListHistory(
 }
 
 @Composable
-fun PostListHistory(
-    historyPosts: List<PostHistoryData>,
-    navigateToArticle: (Int) -> Unit,
-    favorites: Set<String>
+fun BalanceListHistory(
+    historyTransits: List<BalanceResponse.SFInfo>,
+    onAddConfirm: (String, String, String) -> Unit // money, date, time
 ) {
-    Column {
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = stringResource(id = R.string.home_history_title) ,
-            style = MaterialTheme.typography.titleLarge
+    var showAddForm by remember { mutableStateOf(false) }
+    var moneyInput by remember { mutableStateOf("") }
+    var dateInput by remember { mutableStateOf("") }
+    var timeInput by remember { mutableStateOf("") }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+
+        BalanceHistoryHeader(
+            title = stringResource(id = R.string.balance_history_title),
+            onAddClick = { showAddForm = !showAddForm }
         )
-        historyPosts.forEach { list ->
-            PostCardSimple(data = list, isFavorite =favorites.contains(""))
+
+        if (showAddForm) {
+            BalanceAddForm(
+                money = moneyInput,
+                date = dateInput,
+                time = timeInput,
+                onMoneyChange = { moneyInput = it },
+                onDateChange = { dateInput = it },
+                onTimeChange = { timeInput = it },
+                onConfirm = {
+                    onAddConfirm(moneyInput, dateInput, timeInput)
+                    showAddForm = false
+                    moneyInput = ""
+                    dateInput = ""
+                    timeInput = ""
+                }
+            )
+        }
+
+        historyTransits.forEach { list ->
+            BalanceCardSimple(data = list)
             PostListDivider()
         }
     }
 }
+
+
+
 @Composable
 fun ExperienceWorking(
     posts: List<Experiences>,
@@ -207,33 +248,6 @@ fun ExperienceWorking(
         }
     }
 }
-
-//@Composable
-//fun ExperienceWorking(
-//    posts: List<Post>,
-//    navigateToArticle: (String) -> Unit
-//) {
-//    Column {
-//        Text(
-//            modifier = Modifier.padding(16.dp),
-//            text = stringResource(id = R.string.home_social_activities_title) ,
-//            style = MaterialTheme.typography.titleLarge
-//        )
-//        Row (
-//            modifier = Modifier
-//                .horizontalScroll(rememberScrollState())
-//                .height(IntrinsicSize.Max)
-//                .padding(16.dp),
-//            horizontalArrangement = Arrangement.spacedBy(8.dp)
-//        ) {
-//            posts.forEach { x ->
-//                PostCardPopular(post = x, navigateToArticle =navigateToArticle, modifier =Modifier)
-//            }
-//            Spacer(Modifier.height(16.dp))
-//            PostListDivider()
-//        }
-//    }
-//}
 
 @Composable
 fun PostTopSection(post: Post, navigateToArticle: (Int)->Unit) {
@@ -268,7 +282,7 @@ fun PostListToSectionTest(){
 @Preview
 @Composable
 fun PostListTest() {
-    PostList(post3, transitHistoryList, HistoryDataModel.list, experiencesExampleList,ArrayList(), emptySet(), {})
+//    PostList(post3, transitHistoryList, experiencesExampleList,ArrayList(), emptySet(), {}, {})
 }
 @Preview
 @Composable

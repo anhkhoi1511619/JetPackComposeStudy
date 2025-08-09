@@ -71,7 +71,7 @@ fun ChartCode(
         val floatEntries = balanceList.map {
             val date = LocalDate.parse("2025 ${it.date}", formatter)
             val daysFromBase = ChronoUnit.DAYS.between(baseDateTime, date).toFloat()
-            FloatEntry(daysFromBase, it.postSubtractBalance.toFloatOrNull() ?: 0f)
+            FloatEntry(daysFromBase, (it.postSubtractBalance.toFloatOrNull()?.div(10000f)) ?: 0f)
         }
 
         val chartEntryModelProducer = ChartEntryModelProducer(floatEntries)

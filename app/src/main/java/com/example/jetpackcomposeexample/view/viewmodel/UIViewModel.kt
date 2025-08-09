@@ -75,7 +75,7 @@ class UIViewModel: ViewModel() {
             _uiState.update { currentState ->
                 currentState.copy(loadedDetailPost = result)
             }
-            addDB(post = result)
+//            addDB(post = result)
             Log.d(TAG,"loadedDetailPost is ${_uiState.value.loadedDetailPost}")
         }
     }
@@ -164,15 +164,23 @@ class UIViewModel: ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(screenID = ScreenID.HOME)
         }
-        AwsConnectHelper.getInstance().getBalanceInfo("0", "July 08", "22:40:00", "reset", BALANCE_URL) { result ->
+        changeBalance("0", "July 08", "22:40:00","reset")
+        uploadLog()
+        TLog_Sync.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+    }
+
+    fun subtractBalance(subtractAmount: String, date: String, time:String){
+        changeBalance(subtractAmount, date, time, "subtract")
+    }
+
+    fun changeBalance(subtractAmount: String, date: String, time:String, mode:String) {
+        AwsConnectHelper.getInstance().getBalanceInfo(subtractAmount, date, time, mode, BALANCE_URL) { result ->
             for (s in result.sfInfos) Log.d(TAG,"result is ${s.postSubtractBalance}")
             //Log.d(TAG,"result is ${result.sfInfos}")
             _uiState.update { currentState ->
                 currentState.copy(balanceList = result.sfInfos)
             }
         }
-        uploadLog()
-        TLog_Sync.d(TAG,"Screen ID is ${_uiState.value.screenID}")
     }
     private fun moveToDetail() {
         _uiState.update { currentState ->

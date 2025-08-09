@@ -25,7 +25,7 @@ public class BalanceResponse {
         public SFInfo() {
         }
 
-        String subtractAmount;
+        public String subtractAmount;
         public String postSubtractBalance;
         public String date;
         public String time;

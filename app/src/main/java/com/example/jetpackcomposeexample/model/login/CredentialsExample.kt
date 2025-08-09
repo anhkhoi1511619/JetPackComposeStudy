@@ -2,6 +2,6 @@ package com.example.jetpackcomposeexample.model.login
 
 val credentialsExample = Credentials(
     login = "admin",
-    password = "12345",
+    password = "Systems1511619",
     remember = false
 )
