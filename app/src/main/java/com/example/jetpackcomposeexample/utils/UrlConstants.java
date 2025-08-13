@@ -5,7 +5,7 @@ public class UrlConstants {
     public static String DETAIL_PROFILE_API_URL = getDetailProfileUrl();
     public static String UPLOAD_API_URL = getUploadUrl();
     public static String LOGIN_API_URL = loginUrl();
-    public static String BALANCE_URL = getBalance();
+    public static String SUBTRACT_BALANCE_URL = getBalance();
 
 
     public static final String DETAIL_PROFILE_API_URL_LOCAL_HOST = "http://192.168.105.104:5174/profile/detail";

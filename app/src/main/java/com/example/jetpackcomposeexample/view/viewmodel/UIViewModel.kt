@@ -4,13 +4,14 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
+import com.example.jetpackcomposeexample.controller.tcp_ip_v2.DataProcessor
 import com.example.jetpackcomposeexample.model.card.TransitHistory
 import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
 import com.example.jetpackcomposeexample.utils.TLog_Sync
 import com.example.jetpackcomposeexample.utils.TarGzMaker
 import com.example.jetpackcomposeexample.utils.UrlConstants.ADD_BALANCE_API_URL_HTTPS
-import com.example.jetpackcomposeexample.utils.UrlConstants.BALANCE_URL
+import com.example.jetpackcomposeexample.utils.UrlConstants.SUBTRACT_BALANCE_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.DETAIL_PROFILE_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.LOGIN_API_URL
 import com.example.jetpackcomposeexample.utils.UrlConstants.UPLOAD_API_URL
@@ -111,7 +112,10 @@ class UIViewModel: ViewModel() {
         //if(!SocketControllerManager.getInstance().isMainController) return
         AwsConnectHelper.getInstance().login(LOGIN_API_URL, {result ->
             TLog_Sync.d(TAG,"Result: " + result)
-            if (result) moveToHome()
+            if (result) {
+                runTCP()
+                moveToHome()
+            }
             updateLogin(result)
             TLog_Sync.d(TAG,"Success is ${_uiState.value.credentials.isSuccessLogin}")
             TLog_Sync.d(TAG,"Screen ID is ${_uiState.value.screenID}")
@@ -192,7 +196,7 @@ class UIViewModel: ViewModel() {
             }
             return
         }
-        AwsConnectHelper.getInstance().subtractBalance(subtractAmount, date, time, mode, BALANCE_URL) { result ->
+        AwsConnectHelper.getInstance().subtractBalance(subtractAmount, date, time, mode, SUBTRACT_BALANCE_URL) { result ->
             for (s in result.sfInfos) Log.d(TAG,"result is ${s.postSubtractBalance}")
             //Log.d(TAG,"result is ${result.sfInfos}")
             _uiState.update { currentState ->
@@ -212,5 +216,12 @@ class UIViewModel: ViewModel() {
         }
         isUpdated = false
         TLog_Sync.d(TAG,"Screen ID is ${_uiState.value.screenID}")
+    }
+
+    fun runTCP() {
+        DataProcessor.start()
+    }
+    fun changeCMDTCP(cmd: String, data: String) {
+        DataProcessor.setCommand(cmd, data)
     }
 }

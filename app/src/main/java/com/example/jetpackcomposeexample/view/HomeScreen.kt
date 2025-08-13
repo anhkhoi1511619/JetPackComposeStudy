@@ -215,7 +215,9 @@ fun BalanceListHistory(
             )
         }
 
-        historyTransits.forEach { list ->
+        historyTransits
+            .takeLast(10)
+            .forEach { list ->
             BalanceCardSimple(data = list)
             PostListDivider()
         }

@@ -97,6 +97,7 @@ class MainActivity : ComponentActivity() {
                 val idm = it.id // 8 bytes IDm
                 TLog_Sync.d("NFC", "PASMO card or similar detected")
                 val idmHex = idm.joinToString("") { byte -> "%02X".format(byte) }
+                uiViewModel.changeCMDTCP("10", idmHex)
                 TLog_Sync.d("FeliCa", "IDm (PASMO IDm): $idmHex")
                 Toast.makeText(this, "Card PASMO IDm: $idmHex", Toast.LENGTH_SHORT).show()
                 try {
