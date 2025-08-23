@@ -10,12 +10,17 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -87,6 +93,10 @@ fun HomeScreen(uiViewModel: UIViewModel){
                     val (formattedMoney, formattedDate, formattedTime) = formatValues(money, date, time)
                     TLog_Sync.d("ADD", "Khi nhấn Add money "+formattedMoney+" date "+formattedDate+" time "+formattedTime)
                     uiViewModel.addBalance(formattedMoney, formattedDate, formattedTime)
+                },
+                isEnable = postUiState.isSendDone,
+                onFixTCP = {
+                    uiViewModel.closeTCP()
                 }
             )
         }
@@ -120,6 +130,8 @@ fun PostList(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     onSubtractConfirm: (String, String, String) -> Unit, // money, date, time
     onAddConfirm: (String, String, String) -> Unit, // money, date, time
+    isEnable: Boolean,
+    onFixTCP: () -> Unit,
     state: LazyListState = rememberLazyListState(),
     ) {
 
@@ -147,7 +159,7 @@ fun PostList(
 //            PostSocialActivities(posts = posts, navigateToArticle = onArticleTapped)
                 ChartCode(balanceList, modifier = Modifier.padding(16.dp))
                 BalanceListHistory(balanceList, onSubtractConfirm = onSubtractConfirm, onAddConfirm = onAddConfirm)
-                TransitListHistory(transitHistoryList)
+                TransitListHistory(transitHistoryList, isEnable, onFixTCP)
                 //PostListHistory(historyPosts = historyPosts, navigateToArticle = onArticleTapped, favorites = favorites)
             }
         }
@@ -158,13 +170,31 @@ fun PostList(
 @Composable
 fun TransitListHistory(
     historyTransits: List<TransitHistory>,
+    isEnable: Boolean,
+    onAddClick: () -> Unit
 ) {
     Column {
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = stringResource(id = R.string.transit_history_title) ,
-            style = MaterialTheme.typography.titleLarge
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(id = R.string.transit_history_title) ,
+                style = MaterialTheme.typography.titleLarge
+            )
+            Button(
+                onClick = onAddClick,
+                enabled = isEnable,
+                shape = RoundedCornerShape(4.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp), // khoảng cách bên trong
+            ) {
+                Text("Disable", style = MaterialTheme.typography.titleLarge)
+            }
+        }
         historyTransits.forEach { list ->
             TransitCardSimple(data = list)
             PostListDivider()

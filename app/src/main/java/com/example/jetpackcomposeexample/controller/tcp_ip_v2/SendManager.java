@@ -159,11 +159,11 @@ public class SendManager {
 				return false;
 			}
 			//　データ取得実施
-//			if (!rxTransmitData(address)) {
-//				System.out.println( "Receive command error, " + lcpComSrv.getRxCmd() + " <- " + address);
-//				ConnectionManager.getInstance().close(address);
-//				return false;
-//			}
+			if (!rxTransmitData(address)) {
+				TLog_Sync.d( "Receive command error, " + lcpComSrv.getRxCmd() + " <- " + address);
+				ConnectionManager.getInstance().close(address);
+				return false;
+			}
 		}
 		log = "successfully communicated with " + connection.getSocket().getRemoteSocketAddress().toString();
 		if(critical) {
@@ -192,7 +192,7 @@ public class SendManager {
 		//　データ取得行う
 		int rxDataSize = 0;
 		try {
-			rxDataSize = tcpConn.getInBuf().read(tRxByteData, 0 , 2048);
+			rxDataSize = tcpConn.getInBuf().read(tRxByteData);
 		} catch (SocketTimeoutException e) {
 			Log.d( "SendManager", "Socket timed out "+
 					tcpConn.getSocket().getRemoteSocketAddress().toString()+" : "+e.getMessage());
@@ -205,9 +205,9 @@ public class SendManager {
 			return false;
 		}
         // 有無交データ確認行う
-		if (rxDataSize < 8) {
-			return false;
-		}
+//		if (rxDataSize < 8) {
+//			return false;
+//		}
 		//　データ抽出行う
 		System.arraycopy(tRxByteData, 0, rxByteData, rxIndex, rxDataSize);
 		rxIndex += rxDataSize;

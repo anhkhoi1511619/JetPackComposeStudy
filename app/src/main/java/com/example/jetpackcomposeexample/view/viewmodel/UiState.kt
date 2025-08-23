@@ -19,7 +19,7 @@ data class UiState (
     val historyPost: List<PostHistoryData> = HistoryDataModel.list,
     val historyTransitList: List<TransitHistory> = transitHistoryList,
     val balanceList: ArrayList<SubtractBalanceResponse.SFInfo> = ArrayList(),
-    val upLoadDone: Boolean = false,
+    val isSendDone: Boolean = false,
     val screenID: ScreenID = ScreenID.FLASH
 )
 

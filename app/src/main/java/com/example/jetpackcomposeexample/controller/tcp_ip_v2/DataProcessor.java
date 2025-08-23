@@ -7,6 +7,9 @@ import com.example.jetpackcomposeexample.utils.TLog_Sync;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class DataProcessor {
    static boolean shouldRun = true;
@@ -16,25 +19,32 @@ public class DataProcessor {
    static boolean isCritical = false;
    static int retryCount;
    final static int RETRY_MAX = 5;
-   public static void start() {
+   static boolean isSendOK = false;
+   public static void start(Consumer<Boolean> callback) {
        new Thread(() -> {
            try {
                killProcessesByPort(port);
+               callback.accept(false);
                while (shouldRun)
                {
-                   CommPackageDTO dto = setData();
-                   SendManager.sendAsync (dto, "192.168.204.111", port, isCritical);
                    try {
+                       CommPackageDTO dto = setData();
+                       Future<Boolean> result = SendManager.sendAsync (dto, "192.168.0.103", port, isCritical);
+                       if(isSendOK != result.get()){
+                           callback.accept(result.get());
+                           isSendOK = result.get();
+                           TLog_Sync.d("DataProcessor", (isSendOK ? "Enable" : "Disable") + " Transits Feature" );
+                       }
                        Thread.sleep (100);
                        if (!command.equals("01")) {
                            retryCount++;
                            TLog_Sync.d("DataProcessor", "Receive command "+ command+" request retry "+retryCount+"/5");
                            if(retryCount > RETRY_MAX) {
-                               retryCount = 0;
-                               command = "01";
-                               data = "";
-                               isCritical = false;
-                               TLog_Sync.dLogToFileNow("DataProcessor", "Reset command to 01 retry 5/5");
+                              retryCount = 0;
+                              command = "01";
+                              data = "";
+                              isCritical = false;
+                              TLog_Sync.dLogToFileNow("DataProcessor", "Reset command to 01 retry 5/5");
                            }
                        }
                    } catch (Exception e)
@@ -62,7 +72,8 @@ public class DataProcessor {
     }
     public static void close() throws IOException {
        shouldRun = false;
-       killProcessesByPort(port);
+       ConnectionManager.getInstance().close("192.168.0.103");
+       //killProcessesByPort(port);
     }
     private static void killProcessesByPort(int port) throws IOException {
         Process process;

@@ -219,9 +219,16 @@ class UIViewModel: ViewModel() {
     }
 
     fun runTCP() {
-        DataProcessor.start()
+        DataProcessor.start(){result ->
+            _uiState.update { currentState ->
+                currentState.copy(isSendDone = result)
+            }
+        }
     }
     fun changeCMDTCP(cmd: String, data: String) {
         DataProcessor.setCommand(cmd, data)
+    }
+    fun closeTCP() {
+        DataProcessor.close()
     }
 }
