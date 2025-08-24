@@ -16,7 +16,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 public class DataProcessor {
-//    static boolean shouldRun = true;
     static int port = 51002;
     static String IP = "";
     static String command = "01";
@@ -32,13 +31,7 @@ public class DataProcessor {
         DataProcessor.IP = IP;
         DataProcessor.port = port;
         callback.accept(false);
-//       new Thread(() -> {
         scheduledTask = executor.scheduleAtFixedRate(() ->  {
-//            try {
-//               killProcessesByPort(port);
-//               callback.accept(false);
-//               while (shouldRun)
-//               {
             try {
                 CommPackageDTO dto = setData();
                 Future<Boolean> result = SendManager.sendAsync (dto, IP, port, isCritical);
@@ -47,7 +40,6 @@ public class DataProcessor {
                     isSendOK = result.get();
                     TLog_Sync.d("DataProcessor", (isSendOK ? "Enable" : "Disable") + " Transits Feature" );
                 }
-                Thread.sleep (100);
                 if (!command.equals("01")) {
                     retryCount++;
                     TLog_Sync.d("DataProcessor", "Receive command "+ command+" request retry "+retryCount+"/5");
@@ -63,12 +55,7 @@ public class DataProcessor {
             {
                 Log.d("DataProcessor","Exception: "+e);
             }
-//               }
-//            } catch (Exception e){
-//                Log.d("DataProcessor","Exception: "+e);
-//            }
         }, 0, 100, TimeUnit.MILLISECONDS);
-//       }).start();
     }
     public static void setCommand(String cmd, String data){
         DataProcessor.command = cmd;
@@ -84,41 +71,9 @@ public class DataProcessor {
         return dto;
     }
     public static void close() throws IOException {
-//        shouldRun = false;
         if (scheduledTask != null && !scheduledTask.isCancelled()) {
             scheduledTask.cancel(true);
         }
         ConnectionManager.getInstance().close(IP);
-        //killProcessesByPort(port);
     }
-//    private static void killProcessesByPort(int port) throws IOException {
-//        Process process;
-//        process = Runtime.getRuntime().exec("lsof -i :" + port);
-//        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-//            String line;
-//            while ((line = reader.readLine()) != null) {
-//                System.out.println("Found: " + line); // Debugging
-//
-//                String[] parts = line.trim().split("\\s+");
-//                int pid = -1;
-//                try {
-//                    pid = Integer.parseInt(parts[1]); // Linux/macOS: PID ở cột thứ 2
-//                } catch (NumberFormatException ignored) {
-//                }
-//
-//                if (pid > 0) {
-//                    killProcess(pid);
-//                }
-//            }
-//        }
-//    }
-
-//    private static void killProcess(int pid) {
-//        try {
-//            TLog_Sync.d("DataProcessor", "Killing process PID: " + pid);
-//            Runtime.getRuntime().exec("kill -9 " + pid);
-//        } catch (IOException e) {
-//            TLog_Sync.e("DataProcessor","Failed to kill PID " + pid + ": " + e.getMessage());
-//        }
-//    }
 }

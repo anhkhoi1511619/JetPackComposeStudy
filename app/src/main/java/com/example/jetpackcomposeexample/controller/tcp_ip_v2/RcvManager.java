@@ -27,12 +27,9 @@ public class RcvManager {
         this.port = port;
         this.txManager = new TxManager();
         TLog_Sync.d("RcvManager", "[RX]RcvManager initialized for " + port);
-//        startCheckStatus(port);
         startListening(callback);
     }
-//    void startCheckStatus(int port) {
-//        new PortMonitorCompact(port).startMonitoring();
-//    }
+
     void startListening(Consumer<byte[]> callback) {
         shouldReconnect = false;
         executor.execute(() -> {
