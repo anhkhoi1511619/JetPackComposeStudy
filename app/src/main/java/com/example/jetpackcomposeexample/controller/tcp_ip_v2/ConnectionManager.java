@@ -1,5 +1,7 @@
 package com.example.jetpackcomposeexample.controller.tcp_ip_v2;
 
+import android.util.Log;
+
 import com.example.jetpackcomposeexample.utils.TLog_Sync;
 
 import java.io.IOException;
@@ -106,16 +108,16 @@ public class ConnectionManager {
             try {
                 final int TIME_OUT = 500;
                 if(!InetAddress.getByName(address).isReachable(TIME_OUT)) {
-                    System.out.println( "Address not reachable "+address);
+                    Log.d( "ConnectionManager","[TX]Address not reachable "+address);
                     return false;
                 }
                 Socket socket = new Socket(address, port);
                 socket.setSoTimeout(TIME_OUT);
                 Config config = new Config(socket, socket.getOutputStream(), socket.getInputStream());
                 create(address, config);
-                TLog_Sync.d( "ConnectionManager","Openned socket "+socket.getRemoteSocketAddress().toString());
+                TLog_Sync.d( "ConnectionManager","[TX]Openned socket "+socket.getRemoteSocketAddress().toString());
             } catch (IOException e) {
-                TLog_Sync.d( "ConnectionManager", "Error while openning socket "+address+":"+port+" - "+e.getMessage());
+                TLog_Sync.d( "ConnectionManager", "[TX]Error while openning socket "+address+":"+port+" - "+e.getMessage());
                 e.printStackTrace();
                 return false;
             }
@@ -135,7 +137,7 @@ public class ConnectionManager {
                 remove(address);
             }
         } catch ( Exception e) {
-            TLog_Sync.d( "ConnectionManager", "Error while closing socket "+ address);
+            TLog_Sync.d( "ConnectionManager", "[TX]Error while closing socket "+ address);
             e.printStackTrace();
         }
     }

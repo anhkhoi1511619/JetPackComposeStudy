@@ -121,7 +121,7 @@ public class CommPackageDTO {
 
 			strTxData = stx + strSize + sizeSum + txData + dataSum + etx;
 
-			System.err.println("sending data : " + strTxData);
+			//System.err.println("sending data : " + strTxData);
 
 		} catch (Exception e) {
 			e.printStackTrace();

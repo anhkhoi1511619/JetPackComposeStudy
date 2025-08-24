@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import com.example.jetpackcomposeexample.controller.server.AwsConnectHelper
 import com.example.jetpackcomposeexample.controller.history.PostHistoryController
 import com.example.jetpackcomposeexample.controller.tcp_ip_v2.DataProcessor
+import com.example.jetpackcomposeexample.controller.tcp_ip_v2.RcvManager
 import com.example.jetpackcomposeexample.model.card.TransitHistory
 import com.example.jetpackcomposeexample.model.login.Credentials
 import com.example.jetpackcomposeexample.model.post.dto.Post
+import com.example.jetpackcomposeexample.utils.DataTypeConverter
 import com.example.jetpackcomposeexample.utils.TLog_Sync
 import com.example.jetpackcomposeexample.utils.TarGzMaker
 import com.example.jetpackcomposeexample.utils.UrlConstants.ADD_BALANCE_API_URL_HTTPS
@@ -219,10 +221,13 @@ class UIViewModel: ViewModel() {
     }
 
     fun runTCP() {
-        DataProcessor.start(){result ->
+        DataProcessor.start("192.168.0.103", 51002){result ->
             _uiState.update { currentState ->
                 currentState.copy(isSendDone = result)
             }
+        }
+        RcvManager(52002) {result ->
+            Log.d(TAG, "[RX-Callback]RcvManager result is ${DataTypeConverter.format(result)}")
         }
     }
     fun changeCMDTCP(cmd: String, data: String) {

@@ -36,15 +36,15 @@ public class SendManager {
 		}
 		ScheduledThreadPoolExecutor executor = commExecutor.get(address);
 		if(executor.getActiveCount() > executor.getCorePoolSize()/2 && !critical) {
-			TLog_Sync.d( "SendManager", "About to send to "+address+", connection pool is half way full "+executor.getActiveCount()+", drop this package");
-			if(executor.getActiveCount() >= 25)checkThreadStatus();
+			TLog_Sync.d( "SendManager", "[TX]About to send to "+address+", connection pool is half way full "+executor.getActiveCount()+", drop this package");
+			//if(executor.getActiveCount() >= 25)checkThreadStatus();
 			return null;
 		}
 		if(executor.getQueue().size() > 20) {
-			TLog_Sync.d( "SendManager", "About to send to "+address+", connection queue is full "+executor.getQueue().size());
+			TLog_Sync.d( "SendManager", "[TX]About to send to "+address+", connection queue is full "+executor.getQueue().size());
 		}
 		if(executor.getActiveCount() >= executor.getCorePoolSize() && critical) {
-			TLog_Sync.d( "SendManager","About to send to "+address+", connection pool is full "+executor.getActiveCount()+", this package may be stuck");
+			TLog_Sync.d( "SendManager","[TX]About to send to "+address+", connection pool is full "+executor.getActiveCount()+", this package may be stuck");
 		}
 		return executor.submit(() -> send(lcpComSrv, address, port, critical));
 	}
@@ -66,57 +66,57 @@ public class SendManager {
 					}})
 		);
 	}
-	/**
-	 * 概要：
-	 * スレッドの状態をチェックし、BLOCKED状態のスレッドをログに記録し、必要に応じて interrupt をリクエストする。
-	 *
-	 * 詳細：
-	 * - すべてのスレッドを "Thread-1" から "Thread-50" の順にソートする。
-	 * - 各スレッドの状態を取得し、ログに記録する。
-	 * - BLOCKED状態のスレッドがある場合、interrupt をリクエストし、対応するログを出力する。
-	 * - BLOCKED状態のスレッドがない場合、interrupt のリクエストは行わない。
-	 *
-	 * 注意：
-	 * - interrupt をリクエストしても、対象のスレッドが確実に解除される保証はない。
-	 * - スレッドの状態チェックは非同期に実行されるため、ログの情報が最新とは限らない。
-	 */
-	private static void checkThreadStatus() {
-		StringBuilder statusLog = new StringBuilder("==== CHECK READER THREAD STATUS ====\n");
-		StringBuilder interruptedLog = new StringBuilder();
-
-		// スレッドリストをThread-1、Thread-2、...、Thread-50の順にソートする
-		List<Map.Entry<String, Thread>> sortedThreads = new ArrayList<>(threadMap.entrySet());
-		sortedThreads.sort(Comparator.comparing(entry -> Integer.valueOf(entry.getKey().replace("Thread-", ""))));
-		List<Thread> blockedThreads = new ArrayList<>();
-
-		for (Map.Entry<String, Thread> entry : sortedThreads) {
-			String threadName = entry.getKey();
-			Thread thread = entry.getValue();
-			Thread.State state = thread.getState();
-
-			// スレッドの状態を処理する
-			if (state == Thread.State.BLOCKED) {
-				statusLog.append(String.format("[Thread-%s: BLOCKED], ", threadName.replace("Thread-", "")));
-				interruptedLog.append(String.format("[Thread-%s], ", threadName.replace("Thread-", "")));
-				blockedThreads.add(thread);
-			}
-			else {
-				statusLog.append(String.format("[Thread-%s: %s], ", threadName.replace("Thread-", ""), state));
-			}
-		}
-
-		// スレッドの状態ログを出力し、最後のカンマを削除する
-		TLog_Sync.d( "SendManager",statusLog.toString().replaceAll(", $", ""));
-
-		// BLOCKED状態のスレッドがあり、interruptを要求する場合、2行目のログを出力する
-		if(blockedThreads.isEmpty()) return;
-		TLog_Sync.d( "SendManager",interruptedLog.toString().replaceAll(", $", "")+"\n  ---> requested for INTERRUPT");
-		// BLOCKED状態のスレッドをinterruptする
-		for (Thread blocked : blockedThreads) {
-			blocked.interrupt();// interruptを要求するが、成功したかどうかは確認しない
-		}
-		TLog_Sync.d( "SendManager","==== FINISH CHECK READER THREAD STATUS ====");
-	}
+//	/**
+//	 * 概要：
+//	 * スレッドの状態をチェックし、BLOCKED状態のスレッドをログに記録し、必要に応じて interrupt をリクエストする。
+//	 *
+//	 * 詳細：
+//	 * - すべてのスレッドを "Thread-1" から "Thread-50" の順にソートする。
+//	 * - 各スレッドの状態を取得し、ログに記録する。
+//	 * - BLOCKED状態のスレッドがある場合、interrupt をリクエストし、対応するログを出力する。
+//	 * - BLOCKED状態のスレッドがない場合、interrupt のリクエストは行わない。
+//	 *
+//	 * 注意：
+//	 * - interrupt をリクエストしても、対象のスレッドが確実に解除される保証はない。
+//	 * - スレッドの状態チェックは非同期に実行されるため、ログの情報が最新とは限らない。
+//	 */
+//	private static void checkThreadStatus() {
+//		StringBuilder statusLog = new StringBuilder("==== CHECK READER THREAD STATUS ====\n");
+//		StringBuilder interruptedLog = new StringBuilder();
+//
+//		// スレッドリストをThread-1、Thread-2、...、Thread-50の順にソートする
+//		List<Map.Entry<String, Thread>> sortedThreads = new ArrayList<>(threadMap.entrySet());
+//		sortedThreads.sort(Comparator.comparing(entry -> Integer.valueOf(entry.getKey().replace("Thread-", ""))));
+//		List<Thread> blockedThreads = new ArrayList<>();
+//
+//		for (Map.Entry<String, Thread> entry : sortedThreads) {
+//			String threadName = entry.getKey();
+//			Thread thread = entry.getValue();
+//			Thread.State state = thread.getState();
+//
+//			// スレッドの状態を処理する
+//			if (state == Thread.State.BLOCKED) {
+//				statusLog.append(String.format("[Thread-%s: BLOCKED], ", threadName.replace("Thread-", "")));
+//				interruptedLog.append(String.format("[Thread-%s], ", threadName.replace("Thread-", "")));
+//				blockedThreads.add(thread);
+//			}
+//			else {
+//				statusLog.append(String.format("[Thread-%s: %s], ", threadName.replace("Thread-", ""), state));
+//			}
+//		}
+//
+//		// スレッドの状態ログを出力し、最後のカンマを削除する
+//		TLog_Sync.d( "SendManager",statusLog.toString().replaceAll(", $", ""));
+//
+//		// BLOCKED状態のスレッドがあり、interruptを要求する場合、2行目のログを出力する
+//		if(blockedThreads.isEmpty()) return;
+//		TLog_Sync.d( "SendManager",interruptedLog.toString().replaceAll(", $", "")+"\n  ---> requested for INTERRUPT");
+//		// BLOCKED状態のスレッドをinterruptする
+//		for (Thread blocked : blockedThreads) {
+//			blocked.interrupt();// interruptを要求するが、成功したかどうかは確認しない
+//		}
+//		TLog_Sync.d( "SendManager","==== FINISH CHECK READER THREAD STATUS ====");
+//	}
 	/***
 	 * 概要：TCPでデータ送信実施
 	 *
@@ -126,7 +126,7 @@ public class SendManager {
 	 * @return			送信状況：成功　OR　失敗
 	 */
 	public static boolean send(CommPackageDTO lcpComSrv, String address, int port, boolean critical) throws InterruptedException{
-		String log = "Communicating to " + address + ":" + port +
+		String log = "[TX]Communicating to " + address + ":" + port +
 				" command "+lcpComSrv.getTxCmd()+
 				" data "+lcpComSrv.getTxData()+
 				" in Thread : " + Thread.currentThread().getName();
@@ -141,31 +141,31 @@ public class SendManager {
 		ConnectionManager conn = ConnectionManager.getInstance();
 		//　TCP接続状況確認　→　失敗なら何もしない
 		if (!conn.createIfNotExist(address, port)) {
-			System.out.println( "Client of Reader-Controller Comm not connected to " +address+":"+port);
+			TLog_Sync.d("SendManager", "Client of Reader-Controller Comm not connected to " +address+":"+port);
 			return false;
 		}
 		ConnectionManager.Config connection = ConnectionManager.getInstance().get(address);
 		synchronized(connection) {
-			if (currentThread.isInterrupted()) {
-				TLog_Sync.d( "SendManager",currentThread.getName() + " is received request interrupt!. "+
-						"[Ignore] Transmit command, " + lcpComSrv.getTxCmd() + " -> " + address+
-						" and receive command, " + lcpComSrv.getRxCmd() + " <-"+ address);
-				return false;
-			}
+//			if (currentThread.isInterrupted()) {
+//				TLog_Sync.d( "SendManager",currentThread.getName() + " is received request interrupt!. "+
+//						"[Ignore] Transmit command, " + lcpComSrv.getTxCmd() + " -> " + address+
+//						" and receive command, " + lcpComSrv.getRxCmd() + " <-"+ address);
+//				return false;
+//			}
 			//　データ送信実施
 			if (!txTransmitData(lcpComSrv, address)) {
-				TLog_Sync.d( "SendManager", "Transmit command failed, " + lcpComSrv.getTxCmd() + " -> " + address);
+				TLog_Sync.d( "SendManager", "[TX]Transmit command failed, " + lcpComSrv.getTxCmd() + " -> " + address);
 				ConnectionManager.getInstance().close(address);
 				return false;
 			}
 			//　データ取得実施
 			if (!rxTransmitData(address)) {
-				TLog_Sync.d( "Receive command error, " + lcpComSrv.getRxCmd() + " <- " + address);
+				TLog_Sync.d( "SendManager","[TX-RES]Receive command error, " + lcpComSrv.getRxCmd() + " <- " + address);
 				ConnectionManager.getInstance().close(address);
 				return false;
 			}
 		}
-		log = "successfully communicated with " + connection.getSocket().getRemoteSocketAddress().toString();
+		log = "[TX]successfully communicated with " + connection.getSocket().getRemoteSocketAddress().toString();
 		if(critical) {
 			TLog_Sync.d( "SendManager",log);
 		} else {
@@ -194,12 +194,12 @@ public class SendManager {
 		try {
 			rxDataSize = tcpConn.getInBuf().read(tRxByteData);
 		} catch (SocketTimeoutException e) {
-			Log.d( "SendManager", "Socket timed out "+
+			Log.d( "SendManager", "[TX]Socket timed out "+
 					tcpConn.getSocket().getRemoteSocketAddress().toString()+" : "+e.getMessage());
 			e.printStackTrace();
 			return false;
 		} catch (IOException e) {
-			TLog_Sync.d( "SendManager", "Error while reading data from socket "+
+			TLog_Sync.d( "SendManager", "[TX]Error while reading data from socket "+
 					tcpConn.getSocket().getRemoteSocketAddress().toString()+" : "+e.getMessage());
 			e.printStackTrace();
 			return false;
@@ -223,7 +223,7 @@ public class SendManager {
 			rxBuf = Arrays.copyOfRange(rxByteData, 0, rxDataSize);
 			// データ処理行い
 			final int DUMMY_PORT = 0;
-			Log.d( "SendManager", "received " +
+			Log.d( "SendManager", "[TX-RES]received " +
 					DataTypeConverter.format(rxBuf) +
 					" bytes from " +
 					tcpConn.getSocket().getRemoteSocketAddress().toString() );
@@ -245,13 +245,13 @@ public class SendManager {
 		ConnectionManager.Config config = ConnectionManager.getInstance().get(address);
 		//　データ送信
 		try {
-			System.err.println("Sending: " + DataTypeConverter.format(data) + " length : " +
+			Log.d("SendManager","[TX]Sending: " + DataTypeConverter.format(data) + " length : " +
 					data.length + " to : " + config.getSocket().getRemoteSocketAddress().toString());
 			config.getOutBuf().write(data);
 			config.getOutBuf().flush();
-			Log.d( "SendManager", "Done sending data to " + config.getSocket().getRemoteSocketAddress().toString());
+			Log.d( "SendManager", "[TX]Done sending data to " + config.getSocket().getRemoteSocketAddress().toString());
 		} catch (IOException e) {
-			TLog_Sync.d( "SendManager", "Error while writing data to "+
+			TLog_Sync.d( "SendManager", "[TX]Error while writing data to "+
 					config.getSocket().getRemoteSocketAddress().toString()+": "+e.getMessage());
 			e.printStackTrace();
 			return false;
